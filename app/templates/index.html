@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Available Vehicles for Rent</h2>
+    
+    {% if vehicles %}
+        <ul>
+            {% for vehicle in vehicles %}
+                <li>
+                    <strong>{{ vehicle.brand }} {{ vehicle.model }}</strong> - 
+                    Rp {{ vehicle.price_per_day }} / day
+                    
+                    {% if vehicle.is_available %}
+                        <span style="color: green;">(Available)</span>
+                        <button>Rent Now</button>
+                    {% else %}
+                        <span style="color: red;">(Rented)</span>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No vehicles found in the database. We need to add some!</p>
+    {% endif %}
+{% endblock %}
