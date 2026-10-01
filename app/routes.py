@@ -21,24 +21,47 @@ def index():
         
     query = Vehicle.query
     
-    # Ambil parameter dari form filter (GET)
+    # ========== FILTER DARI SIDEBAR ==========
     transmissions = request.args.getlist('transmission')
     capacities = request.args.getlist('capacity')
     
-    # 1. Logika Filter Transmisi
     if transmissions:
         query = query.filter(Vehicle.transmission.in_(transmissions))
         
-    # 2. Logika Filter Kapasitas
     if capacities:
         capacity_filters = []
         if '4' in capacities:
-            capacity_filters.append(Vehicle.seats <= 5) # Mobil 4-5 kursi
+            capacity_filters.append(Vehicle.seats <= 5)
         if '6' in capacities:
-            capacity_filters.append(Vehicle.seats >= 6) # Mobil 6+ kursi
-            
+            capacity_filters.append(Vehicle.seats >= 6)
         if capacity_filters:
             query = query.filter(or_(*capacity_filters))
+    
+    # ========== FILTER DARI SEARCH BAR ==========
+    # 1. Filter Harga Maksimum (Slider)
+    max_price = request.args.get('max_price', type=int)
+    if max_price:
+        query = query.filter(Vehicle.price_per_day <= max_price)
+    
+    # 2. Filter Pencarian Nama Mobil (Keyword)
+    search_query = request.args.get('q', '').strip()
+    if search_query:
+        search_pattern = f'%{search_query}%'
+        query = query.filter(
+            or_(
+                Vehicle.brand.ilike(search_pattern),
+                Vehicle.model.ilike(search_pattern)
+            )
+        )
+    
+    # 3. Sorting (Urutkan berdasarkan)
+    sort_by = request.args.get('sort', 'default')
+    if sort_by == 'price_asc':
+        query = query.order_by(Vehicle.price_per_day.asc())
+    elif sort_by == 'price_desc':
+        query = query.order_by(Vehicle.price_per_day.desc())
+    elif sort_by == 'name_asc':
+        query = query.order_by(Vehicle.brand.asc(), Vehicle.model.asc())
             
     # Eksekusi query
     vehicles = query.all()
@@ -47,7 +70,10 @@ def index():
                            selected_transmissions=transmissions, 
                            selected_capacities=capacities,
                            current_date=current_date,
-                           current_time=current_time)
+                           current_time=current_time,
+                           max_price=max_price or 1000000,
+                           search_query=search_query,
+                           sort_by=sort_by)
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
@@ -71,4 +97,6 @@ def login():
 @bp.route('/logout')
 def logout():
     session.pop('user_id', None)
+    session.pop('user_name', None)
+    session.pop('user_email', None)
     return redirect(url_for('main.login'))
