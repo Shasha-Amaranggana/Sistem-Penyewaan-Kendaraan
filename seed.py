@@ -10,7 +10,7 @@ with app.app_context():
 
     # 2. Buat akun tester
     print("Membuat akun tester (sanasini@gmail.com)...")
-    tester = User(email="sanasini@gmail.com")
+    tester = User(name="Sana Sini", email="sanasini@gmail.com")
     tester.set_password("admin123")
     db.session.add(tester)
 

@@ -474,7 +474,7 @@ main {
     box-shadow: 0 5px 15px rgba(0,0,0,0.06);
 }
 
-/* Lingkaran Avatar */
+/* Lingkaran Avatar (Huruf Inisial) */
 .profile-avatar {
     width: 45px;
     height: 45px;
@@ -483,8 +483,11 @@ main {
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 20px;
+    font-size: 22px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
     box-shadow: 0 4px 12px rgba(214, 40, 40, 0.3);
+    user-select: none;
 }
 
 .profile-info {

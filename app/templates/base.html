@@ -64,11 +64,11 @@
             <div class="profile-wrapper" onclick="toggleProfile()">
                 <div class="profile-trigger">
                     <div class="profile-avatar">
-                        <i class="fa-solid fa-user"></i>
+                        {{ session.get('user_name', 'U')[0] | upper }}
                     </div>
                     <div class="profile-info">
-                        <span class="profile-name">Admin</span>
-                        <span class="profile-email">sanasini@gmail.com</span>
+                        <span class="profile-name">{{ session.get('user_name', 'Pengguna') }}</span>
+                        <span class="profile-email">{{ session.get('user_email', '') }}</span>
                     </div>
                     <i class="fa-solid fa-chevron-down profile-chevron" id="profileChevron"></i>
                 </div>

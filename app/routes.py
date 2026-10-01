@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from app.models import User, Vehicle
 from sqlalchemy import or_
+from datetime import datetime
 
 bp = Blueprint('main', __name__)
 
@@ -9,6 +10,14 @@ def index():
     # Cek apakah user sudah login
     if 'user_id' not in session:
         return redirect(url_for('main.login'))
+    
+    # Ambil data user yang sedang login
+    user = User.query.get(session['user_id'])
+    
+    # Dapatkan waktu sekarang
+    now = datetime.now()
+    current_date = now.strftime('%Y-%m-%d')
+    current_time = now.strftime('%H:%M')
         
     query = Vehicle.query
     
@@ -34,9 +43,11 @@ def index():
     # Eksekusi query
     vehicles = query.all()
     
-    return render_template('index.html', vehicles=vehicles, 
+    return render_template('index.html', vehicles=vehicles, user=user,
                            selected_transmissions=transmissions, 
-                           selected_capacities=capacities)
+                           selected_capacities=capacities,
+                           current_date=current_date,
+                           current_time=current_time)
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
@@ -48,6 +59,8 @@ def login():
         
         if user and user.check_password(password):
             session['user_id'] = user.id
+            session['user_name'] = user.name
+            session['user_email'] = user.email
             return redirect(url_for('main.index'))
         else:
             flash('Email atau kata sandi salah. Silakan coba lagi.')
