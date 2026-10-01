@@ -1,25 +1,91 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h2>Available Vehicles for Rent</h2>
+<!-- KOTAK PUTIH KREM RAKSASA (Membungkus seluruh konten Menu Utama) -->
+<div style="margin: 40px auto; padding: 40px; background-color: #FFF3E0; border-radius: 5px; width: 95%; max-width: 1335px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
     
-    {% if vehicles %}
-        <ul>
+    <h2 style="font-family: 'Inter', sans-serif; font-weight: 600; font-size: 36px; color: #2C1A11; margin-bottom: 25px;">
+        Halo, kamu. Langsung sewa siap jalan
+    </h2>
+    
+    <!-- Kotak Pencarian / Filter (Warna Kuning Solid #FFBE0C) -->
+    <div style="background: #FFBE0C; padding: 25px; margin-bottom: 40px; display: flex; gap: 20px; align-items: center; border-radius: 5px;">
+        
+        <div style="background: #FFF3E0; border: 1px solid #757575; border-radius: 15px; padding: 10px 20px; display: flex; align-items: center; gap: 10px; height: 60px;">
+            <input type="text" value="1 Okt 2026" style="border: none; background: transparent; font-family: 'Inter', sans-serif; font-weight: 500; font-size: 24px; color: #2C1A11; width: 130px; outline: none;">
+            <i class="fa-regular fa-calendar" style="color: #2C1A11; font-size: 24px;"></i>
+        </div>
+        
+        <div style="background: #FFF3E0; border: 1px solid #757575; border-radius: 15px; padding: 10px 20px; display: flex; align-items: center; gap: 10px; height: 60px;">
+            <input type="time" value="10:00" style="border: none; background: transparent; font-family: 'Inter', sans-serif; font-weight: 500; font-size: 24px; color: #2C1A11; outline: none;">
+        </div>
+        
+        <select style="background: #FFF3E0; border: 1px solid #757575; border-radius: 15px; padding: 10px 20px; height: 60px; font-family: 'Inter', sans-serif; font-weight: 500; font-size: 24px; color: #2C1A11; outline: none;">
+            <option>2 hari</option>
+        </select>
+        
+        <select style="background: #FFF3E0; border: 1px solid #757575; border-radius: 15px; padding: 10px 20px; height: 60px; font-family: 'Inter', sans-serif; font-weight: 500; font-size: 24px; color: #2C1A11; outline: none; flex: 1;">
+            <option>Mobil</option>
+        </select>
+        
+        <div style="background: #FFF3E0; border: 1px solid #757575; border-radius: 15px; padding: 10px 20px; height: 60px; display: flex; align-items: center;">
+            <span style="font-family: 'Inter', sans-serif; font-weight: 500; font-size: 24px; color: #2C1A11;">Rp300rb</span>
+        </div>
+        
+        <button style="background: #2C1A11; border: 1px solid #757575; border-radius: 15px; height: 60px; padding: 0 40px; color: #FFF3E0; font-family: 'Inter', sans-serif; font-weight: 500; font-size: 24px; cursor: pointer;">
+            Cari
+        </button>
+    </div>
+
+    <!-- Judul Kendaraan -->
+    <h3 style="font-family: 'Inter', sans-serif; font-weight: 600; font-size: 36px; color: #2C1A11; margin-bottom: 25px;">
+        Kendaraan
+    </h3>
+    
+    <!-- Grid Kendaraan -->
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px;">
+        {% if vehicles %}
             {% for vehicle in vehicles %}
-                <li>
-                    <strong>{{ vehicle.brand }} {{ vehicle.model }}</strong> - 
-                    Rp {{ vehicle.price_per_day }} / day
+                <div style="display: flex; flex-direction: column;">
                     
-                    {% if vehicle.is_available %}
-                        <span style="color: green;">(Available)</span>
-                        <button>Rent Now</button>
-                    {% else %}
-                        <span style="color: red;">(Rented)</span>
-                    {% endif %}
-                </li>
+                    <!-- Header (Nama Mobil) -->
+                    <div style="background: #FFF3E0; border: 1px solid #757575; border-bottom: none; height: 48px; display: flex; justify-content: center; align-items: center;">
+                        <span style="font-family: 'Work Sans', sans-serif; font-weight: 500; font-size: 24px; color: #2C1A11;">
+                            {{ vehicle.brand }} {{ vehicle.model }}
+                        </span>
+                    </div>
+                    
+                    <!-- Gambar Area -->
+                    <div style="background: rgba(255, 190, 12, 0.25); border: 1px solid #757575; border-bottom: none; height: 217px; display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 10px;">
+                        
+                        <img src="{{ url_for('static', filename='images/' + vehicle.brand | lower + '_' + vehicle.model | lower + '.png') }}" 
+                             alt="{{ vehicle.model }}" 
+                             style="max-height: 100%; max-width: 95%; object-fit: contain;"
+                             onerror="this.onerror=null; this.outerHTML='<span style=\'color: #757575; font-size: 20px; font-weight: bold;\'><i class=\'fa-solid fa-car\' style=\'font-size: 40px; display: block; margin-bottom: 10px;\'></i> [Upload foto '+ '{{vehicle.model}}' + '.png]</span>';">
+                             
+                    </div>
+                    
+                    <!-- Footer Info (Kursi, Harga, Tombol) -->
+                    <div style="background: #FFF3E0; border: 1px solid #757575; height: 70px; display: flex; justify-content: space-between; align-items: center; padding: 0 15px;">
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <i class="fa-solid fa-chair" style="color: #2C1A11; font-size: 20px;"></i>
+                                <span style="font-family: 'Inter', sans-serif; font-weight: 500; font-size: 20px; color: #2C1A11;">{{ vehicle.seats }}</span>
+                            </div>
+                            <div style="font-family: 'Work Sans', sans-serif; font-weight: 500; font-size: 22px; color: #2C1A11; margin-top: 2px;">
+                                Rp {{ "{:,.0f}".format(vehicle.price_per_day).replace(',', '.') }} / day
+                            </div>
+                        </div>
+                        
+                        <button style="background: #D62828; border: 1px solid #757575; border-radius: 10px; width: 69px; height: 38px; color: #FFF3E0; font-family: 'Work Sans', sans-serif; font-weight: 500; font-size: 20px; cursor: pointer;">
+                            sewa
+                        </button>
+                    </div>
+                </div>
             {% endfor %}
-        </ul>
-    {% else %}
-        <p>No vehicles found in the database. We need to add some!</p>
-    {% endif %}
+        {% else %}
+            <p style="grid-column: span 3; text-align: center; color: #777; font-size: 24px;">Belum ada kendaraan di database.</p>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

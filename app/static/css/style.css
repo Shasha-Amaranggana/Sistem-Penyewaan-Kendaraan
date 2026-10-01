@@ -1,61 +1,159 @@
-body {
-    font-family: Arial, sans-serif;
+/* Reset and Base Styles */
+* {
     margin: 0;
     padding: 0;
-    background-color: #f4f4f9;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+body {
+    /* Background Menu Utama dari Figma */
+    background: #FFBE0C;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Navbar (Header) */
 header {
-    background-color: #333;
-    color: white;
-    padding: 1rem;
-    text-align: center;
+    background-color: #FFF3E0; /* Warna dari Figma */
+    padding: 20px 65px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    height: 131px; /* Sesuai Figma */
 }
 
-header nav a {
-    color: #4CAF50;
+.logo-container {
+    display: flex;
+    align-items: center;
+}
+
+.brand-logo {
+    height: 80px;
+    object-fit: contain;
+}
+
+.nav-links {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.nav-links a {
     text-decoration: none;
-    font-weight: bold;
+    color: #2C1A11;
+    font-weight: 500;
+    font-size: 36px; /* Sesuai Figma */
+    font-family: 'Work Sans', sans-serif;
+    padding: 10px 20px;
+    border-radius: 20px;
+    transition: 0.3s;
 }
 
-main {
-    padding: 2rem;
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-footer {
-    text-align: center;
-    padding: 1rem;
-    background-color: #ddd;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-}
-
-ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-li {
-    background: white;
-    margin: 10px 0;
-    padding: 15px;
+.nav-links a.active {
+    background-color: #D62828;
+    color: #FFF3E0;
     border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-button {
-    background-color: #4CAF50;
+.contact-info {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+    font-size: 32px;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+    color: #2C1A11;
+}
+
+.social-circles {
+    display: flex;
+    gap: 15px;
+    margin-left: 20px;
+}
+.social-circles .circle {
+    width: 35px;
+    height: 35px;
+    background-color: #cfd8dc;
+    border-radius: 50%;
+}
+
+/* Main Content Wrapper */
+main {
+    flex: 1;
+}
+
+/* Wrapper Khusus Halaman Login agar di tengah */
+.login-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 131px);
+    padding: 40px;
+}
+
+/* Login Card */
+.login-card {
+    background-color: #FFF3E0;
+    border-radius: 5px;
+    padding: 50px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.login-card h2 {
+    color: #2C1A11;
+    margin-bottom: 40px;
+    font-size: 36px;
+    font-family: 'Inter', sans-serif;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-input {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #757575;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    background-color: transparent;
+}
+
+.forgot-password {
+    display: block;
+    text-align: center;
+    color: #D62828;
+    text-decoration: none;
+    margin: 20px 0 30px 0;
+    font-size: 1.1rem;
+}
+
+.btn-primary {
+    width: 100%;
+    background-color: #D62828;
     color: white;
     border: none;
-    padding: 5px 10px;
-    border-radius: 3px;
+    padding: 15px;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    font-weight: bold;
     cursor: pointer;
-    float: right;
 }
 
-button:hover {
-    background-color: #45a049;
+.register-link {
+    display: block;
+    text-align: center;
+    margin-top: 30px;
+    color: #333;
+    font-size: 1.1rem;
+}
+
+.register-link a {
+    color: #D62828;
+    text-decoration: none;
 }
