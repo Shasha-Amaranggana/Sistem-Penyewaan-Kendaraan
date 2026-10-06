@@ -1,27 +1,333 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - KeSanaSini</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
 
-{% block content %}
-<div class="login-wrapper">
-    <div class="login-card">
-        <h2>Masuk</h2>
-        
-        <form action="{{ url_for('main.login') }}" method="POST">
-            <div class="form-group">
-                <input type="email" name="email" class="form-input" placeholder="Masukan email" required>
-            </div>
-            
-            <div class="form-group">
-                <input type="password" name="password" class="form-input" placeholder="Masukan kata sandi" required>
-            </div>
-            
-            <a href="#" class="forgot-password">Lupa kata sandi ?</a>
-            
-            <button type="submit" class="btn-primary">Login</button>
-            
-            <div class="register-link">
-                Tidak punya akun? <a href="#">Daftar disini</a>
-            </div>
-        </form>
+        body {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            /* Background utama menggunakan gambar dari Canva */
+            background-image: url("{{ url_for('static', filename='images/login_bg.jpg') }}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+        }
+
+        /* AREA KIRI: Animasi Foto Melayang */
+        .left-area {
+            width: 40%;
+            height: 100%;
+            position: relative;
+        }
+
+        .floating-circle {
+            position: absolute;
+            border-radius: 50%;
+            border: 6px solid white;
+            background-color: #f0f0f0;
+            background-size: cover;
+            background-position: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            cursor: pointer;
+            overflow: hidden;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .floating-circle img {
+            width: 85%;
+            height: 85%;
+            object-fit: contain;
+            transition: transform 0.5s ease;
+        }
+
+        .floating-circle:hover {
+            transform: scale(1.1) translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            border-color: #FFBE0C;
+            z-index: 20;
+        }
+
+        .floating-circle:hover img {
+            transform: scale(1.15) translateX(5px);
+        }
+
+        /* Lingkaran Atas (CRV) */
+        .circle-1 {
+            width: 250px;
+            height: 250px;
+            top: 20%;
+            left: 10%;
+        }
+
+        /* Lingkaran Tengah (Orang/Innova) */
+        .circle-2 {
+            width: 200px;
+            height: 200px;
+            top: 48%;
+            left: 55%;
+        }
+
+        /* Lingkaran Bawah (Motor/Rush) */
+        .circle-3 {
+            width: 180px;
+            height: 180px;
+            bottom: 10%;
+            left: 15%;
+        }
+
+        /* AREA KANAN: Form Login */
+        .right-area {
+            width: 60%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            animation: slideInRight 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateX(50px);
+        }
+
+        @keyframes slideInRight {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        h1 {
+            font-weight: 800;
+            font-size: 32px;
+            color: #111;
+            margin-bottom: 40px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Pesan Error (Flash) */
+        .flash-msg {
+            background-color: #D62828;
+            color: white;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 8px; /* Mengikuti tema membulat */
+            font-weight: 500;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 25px;
+            width: 100%;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #757575;
+            font-size: 18px;
+            transition: color 0.3s ease;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 18px 20px 18px 50px;
+            background-color: #eee4d4; /* Warna krem form */
+            border: 2px solid transparent;
+            /* Aku buat Rounded sesuai gambar Canva */
+            border-radius: 12px; 
+            font-size: 16px;
+            color: #333;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .form-input::placeholder {
+            color: #908472;
+            font-weight: 500;
+        }
+
+        .input-group:focus-within i {
+            color: #FFBE0C;
+        }
+
+        .input-group:focus-within .form-input {
+            background-color: #fff;
+            border-color: #FFBE0C;
+            box-shadow: 0 5px 15px rgba(255, 190, 12, 0.2);
+        }
+
+        .forgot-pass {
+            display: block;
+            text-align: right;
+            color: #3b82f6; /* Warna biru sesuai desain */
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            margin-top: -15px;
+            margin-bottom: 30px;
+        }
+
+        .btn-login {
+            width: 150px;
+            padding: 15px;
+            background-color: #FFBE0C;
+            color: #111;
+            border: none;
+            border-radius: 25px; /* Pill shape */
+            font-size: 18px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #d9a008, 0 8px 15px rgba(255, 190, 12, 0.4);
+            transition: all 0.3s ease;
+            margin: 0 auto 30px auto;
+            display: block;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #d9a008, 0 12px 20px rgba(255, 190, 12, 0.5);
+            background-color: #ffc933;
+        }
+
+        .btn-login:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #d9a008;
+        }
+
+        /* Garis "atau" */
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: #555;
+            font-weight: 500;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #999;
+        }
+
+        .divider:not(:empty)::before { margin-right: .5em; }
+        .divider:not(:empty)::after { margin-left: .5em; }
+
+        /* Tombol Google */
+        .btn-google {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            width: 200px;
+            margin: 0 auto;
+            padding: 12px;
+            background-color: white;
+            border: 1px solid #111;
+            border-radius: 25px; /* Pill shape */
+            font-weight: 700;
+            font-size: 14px;
+            color: #111;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-google img {
+            width: 20px;
+        }
+
+        .btn-google:hover {
+            background-color: #f5f5f5;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .register-text {
+            margin-top: 40px;
+            font-size: 14px;
+            color: #111;
+            font-weight: 500;
+        }
+
+        .register-text a {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- AREA KIRI (Kosong karena gambar sudah menyatu dengan background) -->
+    <div class="left-area">
     </div>
-</div>
-{% endblock %}
+
+    <!-- AREA KANAN (Form) -->
+    <div class="right-area">
+        <div class="login-container">
+            <h1>SELAMAT DATANG KEMBALI</h1>
+
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="flash-msg">{{ messages[0] }}</div>
+                {% endif %}
+            {% endwith %}
+
+            <form action="{{ url_for('main.login') }}" method="POST">
+                <div class="input-group">
+                    <i class="fa-regular fa-envelope"></i>
+                    <input type="email" name="email" class="form-input" placeholder="E-Mail" required>
+                </div>
+                
+                <div class="input-group">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" name="password" class="form-input" placeholder="Password" required>
+                </div>
+
+                <a href="#" class="forgot-pass">Lupa password anda?</a>
+
+                <button type="submit" class="btn-login">LOGIN</button>
+            </form>
+
+            <div class="divider">atau</div>
+
+            <button class="btn-google">
+                <!-- Ganti icon google pakai font awesome karena kita tidak punya file logo googlenya -->
+                <i class="fa-brands fa-google" style="color: #DB4437; font-size: 18px;"></i> GOOGLE
+            </button>
+
+            <div class="register-text">
+                Belum punya akun? <a href="#">Daftarkan diri anda!</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
