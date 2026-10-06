@@ -3,10 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Login - KeSanaSini</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    >
+
     <style>
+
+        /* =====================================================
+           RESET
+        ===================================================== */
+
         * {
             margin: 0;
             padding: 0;
@@ -14,319 +29,614 @@
             font-family: 'Inter', sans-serif;
         }
 
+
+        /* =====================================================
+           HTML
+        ===================================================== */
+
+        html {
+            width: 100%;
+            min-height: 100%;
+        }
+
+
+        /* =====================================================
+           BODY
+           
+           LOGIN.svg = 1920 × 1080
+           Rasio = 16 : 9
+           
+           56.25vw = tinggi background jika lebarnya 100vw
+        ===================================================== */
+
         body {
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
-            /* Background utama menggunakan gambar dari Canva */
-            background-image: url("{{ url_for('static', filename='images/login_bg.jpg') }}");
-            background-size: cover;
-            background-position: center;
+            width: 100%;
+
+            /*
+             * Tinggi minimal mengikuti:
+             * - tinggi viewport
+             * - tinggi SVG berdasarkan rasio 1920×1080
+             *
+             * Jadi background tidak terpotong ketika viewport
+             * browser lebih pendek.
+             */
+            min-height: max(100vh, 56.25vw);
+
+            overflow-x: hidden;
+            overflow-y: auto;
+
+            background-image: url("{{ url_for('static', filename='images/LOGIN.svg') }}");
+
+            /*
+             * Lebar background mengikuti lebar browser.
+             * Tinggi mengikuti rasio asli SVG.
+             */
+            background-size: 100% auto;
+
+            background-position: top center;
             background-repeat: no-repeat;
+
             display: flex;
         }
 
-        /* AREA KIRI: Animasi Foto Melayang */
+
+        /* =====================================================
+           AREA KIRI
+        ===================================================== */
+
         .left-area {
             width: 40%;
-            height: 100%;
+            min-height: max(100vh, 56.25vw);
+
             position: relative;
+            flex-shrink: 0;
         }
 
-        .floating-circle {
-            position: absolute;
-            border-radius: 50%;
-            border: 6px solid white;
-            background-color: #f0f0f0;
-            background-size: cover;
-            background-position: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-            cursor: pointer;
-            overflow: hidden;
-            z-index: 10;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
 
-        .floating-circle img {
-            width: 85%;
-            height: 85%;
-            object-fit: contain;
-            transition: transform 0.5s ease;
-        }
+        /* =====================================================
+           AREA KANAN
+        ===================================================== */
 
-        .floating-circle:hover {
-            transform: scale(1.1) translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-            border-color: #FFBE0C;
-            z-index: 20;
-        }
-
-        .floating-circle:hover img {
-            transform: scale(1.15) translateX(5px);
-        }
-
-        /* Lingkaran Atas (CRV) */
-        .circle-1 {
-            width: 250px;
-            height: 250px;
-            top: 20%;
-            left: 10%;
-        }
-
-        /* Lingkaran Tengah (Orang/Innova) */
-        .circle-2 {
-            width: 200px;
-            height: 200px;
-            top: 48%;
-            left: 55%;
-        }
-
-        /* Lingkaran Bawah (Motor/Rush) */
-        .circle-3 {
-            width: 180px;
-            height: 180px;
-            bottom: 10%;
-            left: 15%;
-        }
-
-        /* AREA KANAN: Form Login */
         .right-area {
             width: 60%;
-            height: 100%;
+            min-height: max(100vh, 56.25vw);
+
+            position: relative;
+
             display: flex;
             flex-direction: column;
-            justify-content: center;
+
+            /*
+             * Jangan center secara vertikal.
+             * Posisi form mengikuti desain 1920×1080.
+             */
+            justify-content: flex-start;
             align-items: center;
-            position: relative;
+
+            /*
+             * Pada desain 1920×1080,
+             * judul mulai sekitar 180 px dari atas.
+             *
+             * 180 / 1920 = 9.375vw
+             */
+            padding-top: 9.4vw;
+
+            flex-shrink: 0;
         }
 
+
+        /* =====================================================
+           LOGIN CONTAINER
+        ===================================================== */
+
         .login-container {
-            width: 100%;
-            max-width: 450px;
+            width: 25vw;
+            max-width: 480px;
+            min-width: 350px;
+
             text-align: center;
-            animation: slideInRight 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+            position: relative;
+            left: 100px;
+
+            animation:
+                slideInRight
+                0.8s
+                cubic-bezier(0.16, 1, 0.3, 1)
+                forwards;
+
             opacity: 0;
             transform: translateX(50px);
         }
 
+
         @keyframes slideInRight {
+
             to {
                 opacity: 1;
                 transform: translateX(0);
             }
+
         }
+
+
+        /* =====================================================
+           JUDUL
+        ===================================================== */
 
         h1 {
             font-weight: 800;
-            font-size: 32px;
+
+            /*
+             * 32px pada desain 1920px
+             */
+            font-size: 1.667vw;
+
             color: #111;
-            margin-bottom: 40px;
+
+            margin-bottom: 2.1vw;
+
             letter-spacing: 0.5px;
         }
 
-        /* Pesan Error (Flash) */
+
+        /* =====================================================
+           PESAN ERROR
+        ===================================================== */
+
         .flash-msg {
             background-color: #D62828;
+
             color: white;
+
             padding: 10px;
+
             margin-bottom: 20px;
-            border-radius: 8px; /* Mengikuti tema membulat */
+
+            border-radius: 8px;
+
             font-weight: 500;
         }
+
+
+        /* =====================================================
+           INPUT GROUP
+        ===================================================== */
 
         .input-group {
             position: relative;
-            margin-bottom: 25px;
+
             width: 100%;
+
+            margin-bottom: 25px;
         }
+
 
         .input-group i {
             position: absolute;
+
             left: 20px;
             top: 50%;
+
             transform: translateY(-50%);
+
             color: #757575;
+
             font-size: 18px;
+
             transition: color 0.3s ease;
+
+            z-index: 2;
         }
+
+
+        /* =====================================================
+           INPUT
+        ===================================================== */
 
         .form-input {
             width: 100%;
+
             padding: 18px 20px 18px 50px;
-            background-color: #eee4d4; /* Warna krem form */
+
+            background-color: #eee4d4;
+
             border: 2px solid transparent;
-            /* Aku buat Rounded sesuai gambar Canva */
-            border-radius: 12px; 
+
+            border-radius: 12px;
+
             font-size: 16px;
+
             color: #333;
+
             outline: none;
+
             transition: all 0.3s ease;
         }
 
+
         .form-input::placeholder {
             color: #908472;
+
             font-weight: 500;
         }
+
 
         .input-group:focus-within i {
             color: #FFBE0C;
         }
 
+
         .input-group:focus-within .form-input {
             background-color: #fff;
+
             border-color: #FFBE0C;
-            box-shadow: 0 5px 15px rgba(255, 190, 12, 0.2);
+
+            box-shadow:
+                0 5px 15px
+                rgba(255, 190, 12, 0.2);
         }
+
+
+        /* =====================================================
+           LUPA PASSWORD
+        ===================================================== */
 
         .forgot-pass {
             display: block;
+
             text-align: right;
-            color: #3b82f6; /* Warna biru sesuai desain */
+
+            color: #3b82f6;
+
             text-decoration: none;
+
             font-size: 14px;
+
             font-weight: 500;
+
             margin-top: -15px;
+
             margin-bottom: 30px;
         }
+
+
+        /* =====================================================
+           BUTTON LOGIN
+        ===================================================== */
 
         .btn-login {
             width: 150px;
+
             padding: 15px;
+
             background-color: #FFBE0C;
+
             color: #111;
+
             border: none;
-            border-radius: 25px; /* Pill shape */
+
+            border-radius: 25px;
+
             font-size: 18px;
+
             font-weight: 800;
+
             cursor: pointer;
-            box-shadow: 0 4px 0 #d9a008, 0 8px 15px rgba(255, 190, 12, 0.4);
+
+            box-shadow:
+                0 4px 0 #d9a008,
+                0 8px 15px
+                rgba(255, 190, 12, 0.4);
+
             transition: all 0.3s ease;
+
             margin: 0 auto 30px auto;
+
             display: block;
         }
 
+
         .btn-login:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 0 #d9a008, 0 12px 20px rgba(255, 190, 12, 0.5);
+
+            box-shadow:
+                0 6px 0 #d9a008,
+                0 12px 20px
+                rgba(255, 190, 12, 0.5);
+
             background-color: #ffc933;
         }
 
+
         .btn-login:active {
             transform: translateY(4px);
-            box-shadow: 0 0 0 #d9a008;
+
+            box-shadow:
+                0 0 0 #d9a008;
         }
 
-        /* Garis "atau" */
+
+        /* =====================================================
+           DIVIDER
+        ===================================================== */
+
         .divider {
             display: flex;
+
             align-items: center;
+
             text-align: center;
+
             color: #555;
+
             font-weight: 500;
+
             font-size: 14px;
+
             margin-bottom: 30px;
         }
+
 
         .divider::before,
         .divider::after {
             content: '';
+
             flex: 1;
+
             border-bottom: 1px solid #999;
         }
 
-        .divider:not(:empty)::before { margin-right: .5em; }
-        .divider:not(:empty)::after { margin-left: .5em; }
 
-        /* Tombol Google */
+        .divider:not(:empty)::before {
+            margin-right: .5em;
+        }
+
+
+        .divider:not(:empty)::after {
+            margin-left: .5em;
+        }
+
+
+        /* =====================================================
+           GOOGLE BUTTON
+        ===================================================== */
+
         .btn-google {
             display: flex;
+
             align-items: center;
+
             justify-content: center;
+
             gap: 15px;
+
             width: 200px;
+
             margin: 0 auto;
+
             padding: 12px;
+
             background-color: white;
+
             border: 1px solid #111;
-            border-radius: 25px; /* Pill shape */
+
+            border-radius: 25px;
+
             font-weight: 700;
+
             font-size: 14px;
+
             color: #111;
+
             cursor: pointer;
+
             transition: all 0.3s ease;
         }
 
-        .btn-google img {
-            width: 20px;
-        }
 
         .btn-google:hover {
             background-color: #f5f5f5;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+
+            box-shadow:
+                0 5px 15px
+                rgba(0, 0, 0, 0.1);
         }
+
+
+        /* =====================================================
+           REGISTER
+        ===================================================== */
 
         .register-text {
             margin-top: 40px;
+
             font-size: 14px;
+
             color: #111;
+
             font-weight: 500;
         }
 
+
         .register-text a {
             color: #3b82f6;
+
             text-decoration: none;
+
             font-weight: 600;
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+           
+           Kalau layar sangat kecil, jangan sampai form
+           keluar dari layar secara horizontal.
+        ===================================================== */
+
+        @media (max-width: 900px) {
+
+            .login-container {
+                width: 80%;
+                min-width: 0;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
         }
 
     </style>
 </head>
+
+
 <body>
 
-    <!-- AREA KIRI (Kosong karena gambar sudah menyatu dengan background) -->
+    <!-- =====================================================
+         AREA KIRI
+         Background LOGIN.svg sudah menangani desain kiri.
+    ====================================================== -->
+
     <div class="left-area">
     </div>
 
-    <!-- AREA KANAN (Form) -->
+
+    <!-- =====================================================
+         AREA KANAN
+    ====================================================== -->
+
     <div class="right-area">
+
         <div class="login-container">
-            <h1>SELAMAT DATANG KEMBALI</h1>
+
+            <h1>
+                SELAMAT DATANG KEMBALI
+            </h1>
+
+
+            <!-- FLASH MESSAGE -->
 
             {% with messages = get_flashed_messages() %}
+
                 {% if messages %}
-                    <div class="flash-msg">{{ messages[0] }}</div>
+
+                    <div class="flash-msg">
+                        {{ messages[0] }}
+                    </div>
+
                 {% endif %}
+
             {% endwith %}
 
-            <form action="{{ url_for('main.login') }}" method="POST">
+
+            <!-- =================================================
+                 FORM LOGIN
+            ================================================== -->
+
+            <form
+                action="{{ url_for('main.login') }}"
+                method="POST"
+            >
+
+                <!-- EMAIL -->
+
                 <div class="input-group">
+
                     <i class="fa-regular fa-envelope"></i>
-                    <input type="email" name="email" class="form-input" placeholder="E-Mail" required>
+
+                    <input
+                        type="email"
+                        name="email"
+                        class="form-input"
+                        placeholder="E-Mail"
+                        required
+                    >
+
                 </div>
-                
+
+
+                <!-- PASSWORD -->
+
                 <div class="input-group">
+
                     <i class="fa-solid fa-lock"></i>
-                    <input type="password" name="password" class="form-input" placeholder="Password" required>
+
+                    <input
+                        type="password"
+                        name="password"
+                        class="form-input"
+                        placeholder="Password"
+                        required
+                    >
+
                 </div>
 
-                <a href="#" class="forgot-pass">Lupa password anda?</a>
 
-                <button type="submit" class="btn-login">LOGIN</button>
+                <!-- LUPA PASSWORD -->
+
+                <a
+                    href="#"
+                    class="forgot-pass"
+                >
+                    Lupa password anda?
+                </a>
+
+
+                <!-- LOGIN -->
+
+                <button
+                    type="submit"
+                    class="btn-login"
+                >
+                    LOGIN
+                </button>
+
             </form>
 
-            <div class="divider">atau</div>
+
+            <!-- =================================================
+                 DIVIDER
+            ================================================== -->
+
+            <div class="divider">
+                atau
+            </div>
+
+
+            <!-- =================================================
+                 GOOGLE
+            ================================================== -->
 
             <button class="btn-google">
-                <!-- Ganti icon google pakai font awesome karena kita tidak punya file logo googlenya -->
-                <i class="fa-brands fa-google" style="color: #DB4437; font-size: 18px;"></i> GOOGLE
+
+                <i
+                    class="fa-brands fa-google"
+                    style="color: #DB4437; font-size: 18px;"
+                ></i>
+
+                GOOGLE
+
             </button>
 
+
+            <!-- =================================================
+                 REGISTER
+            ================================================== -->
+
             <div class="register-text">
-                Belum punya akun? <a href="#">Daftarkan diri anda!</a>
+
+                Belum punya akun?
+
+                <a href="#">
+                    Daftarkan diri anda!
+                </a>
+
             </div>
+
         </div>
+
     </div>
 
 </body>
