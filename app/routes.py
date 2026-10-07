@@ -98,30 +98,49 @@ def login():
 def register():
     if request.method == 'POST':
         name = request.form.get('name')
+        birth_date_str = request.form.get('birth_date')
+        gender = request.form.get('gender')
         email = request.form.get('email')
+        phone = request.form.get('phone')
+        emergency_phone = request.form.get('emergency_phone')
         password = request.form.get('password')
         confirm_password = request.form.get('confirm_password')
 
+        # Cek password
         if password != confirm_password:
             flash('Konfirmasi password tidak cocok.')
             return redirect(url_for('main.register'))
 
+        # Cek email
         existing_user = User.query.filter_by(email=email).first()
 
         if existing_user:
             flash('Email sudah terdaftar.')
             return redirect(url_for('main.register'))
 
-        # Buat user baru
+        # Konversi string tanggal menjadi Python date
+        try:
+            birth_date = datetime.strptime(
+                birth_date_str, '%Y-%m-%d'
+            ).date()
+        except (ValueError, TypeError):
+            flash('Format tanggal lahir tidak valid.')
+            return redirect(url_for('main.register'))
+
+        # Buat user
         user = User(
             name=name,
-            email=email
+            birth_date=birth_date,
+            gender=gender,
+            email=email,
+            phone=phone,
+            emergency_phone=emergency_phone
         )
 
-        # Ubah password menjadi password hash
+        # Hash password
         user.set_password(password)
 
-        # Simpan ke database
+        # Simpan database
         from app import db
         db.session.add(user)
         db.session.commit()
