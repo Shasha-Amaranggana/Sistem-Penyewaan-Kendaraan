@@ -92,7 +92,29 @@ def login():
             flash('Email atau kata sandi salah. Silakan coba lagi.')
             return redirect(url_for('main.login'))
             
-    return render_template('login.html')
+    return render_template('loginRegister.html', mode='login')
+
+@bp.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        name = request.form.get('name')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        confirm_password = request.form.get('confirm_password')
+
+        if password != confirm_password:
+            flash('Konfirmasi password tidak cocok.')
+            return redirect(url_for('main.register'))
+
+        existing_user = User.query.filter_by(email=email).first()
+
+        if existing_user:
+            flash('Email sudah terdaftar.')
+            return redirect(url_for('main.register'))
+
+        return redirect(url_for('main.login'))
+
+    return render_template('loginRegister.html', mode='register')
 
 @bp.route('/logout')
 def logout():

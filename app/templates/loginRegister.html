@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        {% if mode == 'login' %}
+            Login - KeSanaSini
+        {% else %}
+            Register - KeSanaSini
+        {% endif %}
+    </title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    >
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/loginRegister.css') }}"
+    >
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+</head>
+
+
+<body>
+
+    <!-- =====================================================
+         AREA KIRI
+         Background LOGIN.svg sudah menangani desain kiri.
+    ====================================================== -->
+
+    <div class="left-area">
+    </div>
+
+
+    <!-- =====================================================
+         AREA KANAN
+    ====================================================== -->
+
+    <div class="right-area">
+
+        <div class="auth-container">
+            {% if mode == 'login' %}
+                <h1>
+                    SELAMAT DATANG KEMBALI
+                </h1>
+                            
+                <!-- FLASH MESSAGE -->
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        <div class="flash-msg">
+                            {{ messages[0] }}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+
+
+            <!-- =================================================
+                 FORM LOGIN
+            ================================================== -->
+
+            <form
+                action="{{ url_for('main.login') }}"
+                method="POST"
+            >
+
+                <!-- EMAIL -->
+                <div class="input-group">
+                    <i class="fa-regular fa-envelope"></i>
+
+                    <input
+                        type="email"
+                        name="email"
+                        class="form-input"
+                        placeholder="E-Mail"
+                        required>
+
+                </div>
+
+
+                <div class="input-group">
+                    <i class="fa-solid fa-lock"></i>
+
+                    <input
+                        type="password"
+                        name="password"
+                        id="password"
+                        class="form-input"
+                        placeholder="Password"
+                        required>
+
+                    <i
+                        class="fa-regular fa-eye password-toggle"
+                        id="password-toggle"
+                        title="Lihat password">
+                    </i>
+                </div>
+
+
+                <!-- LUPA PASSWORD -->
+                <a
+                    href="#"
+                    class="forgot-pass">
+                    Lupa password anda?
+                </a>
+
+
+                <!-- LOGIN -->
+                <button
+                    type="submit"
+                    class="btn-auth">
+                    LOGIN
+                </button>
+
+            </form>
+
+
+            <!-- =================================================
+                 DIVIDER
+            ================================================== -->
+
+            <div class="divider">
+                atau
+            </div>
+
+
+            <!-- =================================================
+                 GOOGLE
+            ================================================== -->
+
+            <button class="btn-google">
+                <i
+                    class="fa-brands fa-google"
+                    style="color: #DB4437; font-size: 18px;"
+                ></i>
+                GOOGLE
+            </button>
+
+
+            <!-- =================================================
+                 REGISTER
+            ================================================== -->
+            <div class="switch-text">
+                Belum punya akun?
+                <a href="{{ url_for('main.register') }}">
+                    Daftarkan diri anda!
+                </a>
+            </div>
+
+
+
+            <!-- =========================
+                 REGISTER
+            ========================== -->
+            {% else %}
+
+                <h1>DAFTARKAN DIRI ANDA</h1>
+
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        <div class="flash-msg">
+                            {{ messages[0] }}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+
+                <form action="{{ url_for('main.register') }}" method="POST" class="register-form">
+
+                    <!-- NAMA -->
+                    <div class="input-group">
+                        <i class="fa-regular fa-user"></i>
+
+                        <input
+                            type="text"
+                            name="name"
+                            class="form-input"
+                            placeholder="Nama Lengkap"
+                            required>
+                    </div>
+
+                    <!-- TANGGAL LAHIR + JENIS KELAMIN -->
+                    <div class="input-row">
+
+                        <div class="input-group">
+                            <i class="fa-regular fa-calendar-days"></i>
+
+                            <input
+                                type="date"
+                                name="birth_date"
+                                class="form-input"
+                                required>
+                        </div>
+
+                        <div class="input-group">
+                            <i class="fa-solid fa-venus-mars"></i>
+
+                            <select
+                                name="gender"
+                                class="form-input"
+                                required>
+                                <option value="" disabled selected>
+                                    Jenis Kelamin
+                                </option>
+                                <option value="Laki-laki">
+                                    Laki-laki
+                                </option>
+                                <option value="Perempuan">
+                                    Perempuan
+                                </option>
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <!-- EMAIL -->
+                    <div class="input-group">
+                        <i class="fa-regular fa-envelope"></i>
+
+                        <input
+                            type="email"
+                            name="email"
+                            class="form-input"
+                            placeholder="E-Mail"
+                            required>
+                    </div>
+
+                    <!-- NO TELEPON + NO DARURAT -->
+                    <div class="input-row">
+
+                        <div class="input-group">
+                            <i class="fa-solid fa-phone"></i>
+
+                            <input
+                                type="tel"
+                                name="phone"
+                                class="form-input"
+                                placeholder="No Telepon"
+                                pattern="08[0-9]{8,11}"
+                                required>
+                        </div>
+
+                        <div class="input-group">
+                            <i class="fa-solid fa-phone"></i>
+
+                            <input
+                                type="tel"
+                                name="emergency_phone"
+                                class="form-input"
+                                placeholder="No Darurat"
+                                pattern="08[0-9]{8,11}"
+                                required>
+                        </div>
+
+                    </div>
+
+                    <!-- PASSWORD -->
+                    <div class="input-group">
+                        <i class="fa-solid fa-lock"></i>
+
+                        <input
+                            type="password"
+                            name="password"
+                            id="password"
+                            class="form-input"
+                            placeholder="Password"
+                            minlength="8"
+                            pattern="(?=.*[A-Za-z])(?=.*[0-9]).{8,}"
+                            title="Password minimal 8 karakter dan harus mengandung huruf dan angka."
+                            required>
+
+                        <i
+                            class="fa-regular fa-eye password-toggle"
+                            id="password-toggle"
+                            title="Lihat password">
+                        </i>
+                    </div>
+
+
+                    <!-- KONFIRMASI PASSWORD -->
+                    <div class="input-group">
+                        <i class="fa-solid fa-lock"></i>
+
+                        <input
+                            type="password"
+                            name="confirm_password"
+                            id="confirm_password"
+                            class="form-input"
+                            placeholder="Konfirmasi Password"
+                            title="Konfirmasi password harus sama dengan password."
+                            required>
+
+                        <i
+                            class="fa-regular fa-eye password-toggle"
+                            id="confirm-password-toggle"
+                            title="Lihat password">
+                        </i>
+                    </div>
+
+                    <!-- SIGN UP -->
+                    <button
+                        type="submit"
+                        class="btn-auth register-btn">
+                        SIGN UP
+                    </button>
+
+                </form>
+
+                <!-- DIVIDER -->
+                <div class="divider register-divider">
+                    atau
+                </div>
+
+                <!-- LOGIN -->
+                <div class="switch-text register-switch">
+                    Sudah punya akun?
+                    <a href="{{ url_for('main.login') }}">
+                        Login saja langsung!
+                    </a>
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+<script>
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirm_password');
+
+    function checkPassword() {
+        if (confirmPassword.value !== password.value) {
+            confirmPassword.setCustomValidity(
+                'Konfirmasi password harus sama dengan password.'
+            );
+        } else {
+            confirmPassword.setCustomValidity('');
+        }
+    }
+
+    password.addEventListener('input', checkPassword);
+    confirmPassword.addEventListener('input', checkPassword);
+</script>
+
+<script>
+    const passwordToggle = document.getElementById('password-toggle');
+    const confirmPasswordToggle = document.getElementById('confirm-password-toggle');
+
+    // PASSWORD
+    passwordToggle.addEventListener('mousedown', function () {
+        password.type = 'text';
+    });
+
+    passwordToggle.addEventListener('mouseup', function () {
+        password.type = 'password';
+    });
+
+    passwordToggle.addEventListener('mouseleave', function () {
+        password.type = 'password';
+    });
+
+
+    // KONFIRMASI PASSWORD
+    confirmPasswordToggle.addEventListener('mousedown', function () {
+        confirmPassword.type = 'text';
+    });
+
+    confirmPasswordToggle.addEventListener('mouseup', function () {
+        confirmPassword.type = 'password';
+    });
+
+    confirmPasswordToggle.addEventListener('mouseleave', function () {
+        confirmPassword.type = 'password';
+    });
+</script>
+
+</body>
+</html>

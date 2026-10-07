@@ -1,4 +1,7 @@
-/* Reset and Base Styles */
+/* =====================================================
+   RESET & BASE
+   ===================================================== */
+
 * {
     margin: 0;
     padding: 0;
@@ -6,22 +9,32 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-body {
-    /* Latar belakang 3D yang kaya (Radial Gradient + Kuning Figma) */
-    background: radial-gradient(circle at top left, #ffd54f, #FFBE0C, #f57f17);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+html {
+    width: 100%;
+    min-height: 100%;
 }
 
-/* Navbar (Header) - Melayang dengan bayangan halus */
+body {
+    width: 100%;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;
+}
+
+
+/* =====================================================
+   HEADER / NAVBAR
+   ===================================================== */
+
 header {
     background-color: #FFF3E0;
     padding: 20px 65px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
     height: 131px;
     position: relative;
     z-index: 10;
@@ -80,6 +93,7 @@ header {
     gap: 15px;
     margin-left: 20px;
 }
+
 .social-circles .circle {
     width: 35px;
     height: 35px;
@@ -88,22 +102,24 @@ header {
     transition: all 0.3s ease;
     cursor: pointer;
 }
+
 .social-circles .circle:hover {
     background-color: #D62828;
     box-shadow: 0 4px 10px rgba(214, 40, 40, 0.3);
     transform: translateY(-3px);
 }
 
-main {
-    flex: 1;
-}
 
-/* ANIMASI HALAMAN UTAMA */
+/* =====================================================
+   ANIMASI GLOBAL
+   ===================================================== */
+
 @keyframes fadeInSlideUp {
     0% {
         opacity: 0;
         transform: translateY(40px);
     }
+
     100% {
         opacity: 1;
         transform: translateY(0);
@@ -114,182 +130,134 @@ main {
     animation: fadeInSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* ANIMASI STAGGERED UNTUK MOBIL (Muncul berurutan) */
+
+/* =====================================================
+   ANIMASI KARTU
+   ===================================================== */
+
 @keyframes popIn3D {
     0% {
         opacity: 0;
         transform: translateY(30px) scale(0.95);
-        box-shadow: 0 0 0 rgba(0,0,0,0);
+        box-shadow: 0 0 0 rgba(0, 0, 0, 0);
     }
+
     100% {
         opacity: 1;
         transform: translateY(0) scale(1);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.06);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.06);
     }
 }
 
-/* Wrapper Halaman Login */
-.login-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: calc(100vh - 131px);
-    padding: 40px;
-}
 
-/* Login Card 3D */
-.login-card {
-    background-color: #FFF3E0;
-    border-radius: 0;
-    padding: 50px;
-    width: 100%;
-    max-width: 500px;
-    /* Efek 3D Shadow Berlapis */
-    box-shadow: 
-        0 15px 35px rgba(0,0,0,0.1),
-        0 5px 15px rgba(0,0,0,0.05);
-    border: 1px solid rgba(255,255,255,0.6);
-}
+/* =====================================================
+   KARTU KENDARAAN
+   ===================================================== */
 
-.login-card h2 {
-    color: #2C1A11;
-    margin-bottom: 40px;
-    font-size: 36px;
-    font-family: 'Inter', sans-serif;
-}
-
-.form-group {
-    margin-bottom: 25px;
-}
-
-.form-input {
-    width: 100%;
-    padding: 15px;
-    border: 2px solid transparent;
-    background-color: rgba(0,0,0,0.03);
-    border-radius: 0;
-    font-size: 1.1rem;
-    transition: all 0.3s ease;
-}
-
-/* Efek Input 3D Timbul ke Dalam saat di-klik */
-.form-input:focus {
-    border-color: #D62828;
-    background-color: white;
-    outline: none;
-    box-shadow: 0 5px 15px rgba(214, 40, 40, 0.15);
-    transform: translateY(-2px);
-}
-
-.forgot-password {
-    display: block;
-    text-align: center;
-    color: #D62828;
-    text-decoration: none;
-    margin: 20px 0 30px 0;
-    font-size: 1.1rem;
-    transition: color 0.3s ease;
-}
-
-.btn-primary {
-    width: 100%;
-    background-color: #D62828;
-    color: white;
-    border: none;
-    padding: 15px;
-    border-radius: 0;
-    font-size: 1.2rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    /* Shadow ala tombol mekanik (3D) */
-    box-shadow: 0 6px 0 #9e1c1c, 0 10px 20px rgba(214, 40, 40, 0.3);
-}
-
-.btn-primary:hover {
-    background-color: #e53935;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 0 #9e1c1c, 0 15px 25px rgba(214, 40, 40, 0.4);
-}
-
-.btn-primary:active {
-    transform: translateY(4px);
-    box-shadow: 0 2px 0 #9e1c1c, 0 5px 10px rgba(214, 40, 40, 0.3);
-}
-
-/* Interaktivitas Kartu Mobil (3D Kualitas Tinggi) */
 .car-card {
     display: flex;
     flex-direction: column;
     background-color: #FFF3E0;
     opacity: 0;
-    /* Animasi dipanggil dari inline HTML agar berurutan */
+
     animation: popIn3D 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     cursor: pointer;
-    border: 1px solid rgba(255,255,255,0.7);
-    /* Basic 3D state */
-    box-shadow: 
-        0 8px 15px rgba(0,0,0,0.06),
-        0 2px 4px rgba(0,0,0,0.04);
+
+    border: 1px solid rgba(255, 255, 255, 0.7);
+
+    box-shadow:
+        0 8px 15px rgba(0, 0, 0, 0.06),
+        0 2px 4px rgba(0, 0, 0, 0.04);
 }
 
-/* 3D Hover State */
 .car-card:hover {
     transform: translateY(-12px) scale(1.02);
-    box-shadow: 
-        0 25px 45px rgba(0,0,0,0.15),
-        0 10px 15px rgba(0,0,0,0.08);
-    border-color: rgba(255,255,255,1);
+
+    box-shadow:
+        0 25px 45px rgba(0, 0, 0, 0.15),
+        0 10px 15px rgba(0, 0, 0, 0.08);
+
+    border-color: rgba(255, 255, 255, 1);
     z-index: 2;
 }
 
 .car-image-area {
-    background: linear-gradient(145deg, rgba(255, 190, 12, 0.15), rgba(255, 190, 12, 0.35));
+    background: linear-gradient(
+        145deg,
+        rgba(255, 190, 12, 0.15),
+        rgba(255, 190, 12, 0.35)
+    );
+
     height: 217px;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     overflow: hidden;
     padding: 10px;
+
     transition: all 0.5s ease;
-    border-top: 1px solid rgba(0,0,0,0.05);
-    border-bottom: 1px solid rgba(0,0,0,0.05);
+
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .car-card:hover .car-image-area {
-    background: linear-gradient(145deg, rgba(255, 190, 12, 0.25), rgba(255, 190, 12, 0.5));
+    background: linear-gradient(
+        145deg,
+        rgba(255, 190, 12, 0.25),
+        rgba(255, 190, 12, 0.5)
+    );
 }
 
 .car-image-area img {
     transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    /* Filter shadow pada gambar mobil transparan (Drop shadow untuk PNG) */
-    filter: drop-shadow(0 15px 10px rgba(0,0,0,0.25));
+
+    filter: drop-shadow(
+        0 15px 10px rgba(0, 0, 0, 0.25)
+    );
 }
 
 .car-card:hover .car-image-area img {
     transform: scale(1.1) translateX(10px);
 }
 
+
+/* =====================================================
+   TOMBOL SEWA
+   ===================================================== */
+
 .btn-sewa {
     background: #D62828;
     border: none;
     border-radius: 0;
+
     width: 75px;
     height: 38px;
+
     color: #FFF3E0;
+
     font-family: 'Work Sans', sans-serif;
     font-weight: 500;
     font-size: 20px;
+
     cursor: pointer;
+
     transition: all 0.3s ease;
+
     box-shadow: 0 4px 0 #9e1c1c;
 }
 
 .btn-sewa:hover {
     background: #e53935;
     transform: translateY(-2px);
-    box-shadow: 0 6px 0 #9e1c1c, 0 8px 15px rgba(214, 40, 40, 0.3);
+
+    box-shadow:
+        0 6px 0 #9e1c1c,
+        0 8px 15px rgba(214, 40, 40, 0.3);
 }
 
 .btn-sewa:active {
@@ -297,9 +265,11 @@ main {
     box-shadow: 0 2px 0 #9e1c1c;
 }
 
-/* ============================
-   NOTIFIKASI (LONCENG)
-   ============================ */
+
+/* =====================================================
+   NOTIFIKASI
+   ===================================================== */
+
 .notif-wrapper {
     position: relative;
     cursor: pointer;
@@ -307,24 +277,30 @@ main {
 
 .notif-bell {
     position: relative;
+
     width: 50px;
     height: 50px;
-    background: rgba(0,0,0,0.04);
+
+    background: rgba(0, 0, 0, 0.04);
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     transition: all 0.3s ease;
 }
 
 .notif-bell:hover {
     background: rgba(214, 40, 40, 0.1);
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
 }
 
 .notif-bell i {
     font-size: 22px;
     color: #2C1A11;
+
     transition: color 0.3s ease;
 }
 
@@ -332,44 +308,63 @@ main {
     color: #D62828;
 }
 
-/* Badge Angka Merah */
 .notif-badge {
     position: absolute;
+
     top: 5px;
     right: 5px;
+
     background: #D62828;
     color: white;
+
     font-size: 12px;
     font-weight: 700;
     font-family: 'Inter', sans-serif;
+
     width: 22px;
     height: 22px;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     box-shadow: 0 2px 8px rgba(214, 40, 40, 0.4);
-    /* Animasi bounce saat muncul */
+
     animation: badgePulse 2s ease-in-out infinite;
 }
 
 @keyframes badgePulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.15); }
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.15);
+    }
 }
 
-/* Dropdown Notifikasi */
 .notif-dropdown {
     position: absolute;
+
     top: 65px;
     right: 0;
+
     width: 380px;
+
     background: #FFF3E0;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.2), 0 5px 15px rgba(0,0,0,0.1);
+
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.2),
+        0 5px 15px rgba(0, 0, 0, 0.1);
+
     z-index: 100;
-    /* Hidden state */
+
     opacity: 0;
     visibility: hidden;
+
     transform: translateY(-10px);
+
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -383,16 +378,21 @@ main {
     display: flex;
     justify-content: space-between;
     align-items: center;
+
     padding: 18px 20px;
-    border-bottom: 1px solid rgba(0,0,0,0.08);
+
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .notif-mark-read {
     font-size: 14px;
     color: #D62828;
+
     font-family: 'Inter', sans-serif;
     font-weight: 600;
+
     cursor: pointer;
+
     transition: color 0.3s ease;
 }
 
@@ -403,10 +403,14 @@ main {
 .notif-item {
     display: flex;
     align-items: flex-start;
+
     gap: 15px;
     padding: 16px 20px;
-    border-bottom: 1px solid rgba(0,0,0,0.04);
+
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+
     cursor: pointer;
+
     transition: background 0.3s ease;
 }
 
@@ -414,7 +418,6 @@ main {
     background: rgba(255, 190, 12, 0.15);
 }
 
-/* Strip biru/kuning di sisi kiri jika belum dibaca */
 .notif-item.unread {
     background: rgba(255, 190, 12, 0.08);
     border-left: 3px solid #D62828;
@@ -424,9 +427,11 @@ main {
     width: 40px;
     height: 40px;
     min-width: 40px;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     color: white;
     font-size: 16px;
 }
@@ -439,6 +444,7 @@ main {
     font-family: 'Inter', sans-serif;
     font-size: 14px;
     color: #2C1A11;
+
     line-height: 1.5;
     margin: 0;
 }
@@ -447,13 +453,16 @@ main {
     font-family: 'Inter', sans-serif;
     font-size: 12px;
     color: #757575;
+
     margin-top: 4px;
     display: block;
 }
 
-/* ============================
+
+/* =====================================================
    PROFIL DROPDOWN
-   ============================ */
+   ===================================================== */
+
 .profile-wrapper {
     position: relative;
     cursor: pointer;
@@ -462,31 +471,40 @@ main {
 .profile-trigger {
     display: flex;
     align-items: center;
+
     gap: 12px;
     padding: 8px 15px;
-    background: rgba(0,0,0,0.04);
+
+    background: rgba(0, 0, 0, 0.04);
+
     transition: all 0.3s ease;
 }
 
 .profile-trigger:hover {
     background: rgba(214, 40, 40, 0.08);
     transform: translateY(-1px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.06);
+
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.06);
 }
 
-/* Lingkaran Avatar (Huruf Inisial) */
 .profile-avatar {
     width: 45px;
     height: 45px;
+
     background: linear-gradient(135deg, #D62828, #e53935);
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     color: white;
+
     font-size: 22px;
     font-family: 'Inter', sans-serif;
     font-weight: 700;
+
     box-shadow: 0 4px 12px rgba(214, 40, 40, 0.3);
+
     user-select: none;
 }
 
@@ -512,7 +530,9 @@ main {
 .profile-chevron {
     font-size: 14px;
     color: #757575;
+
     transition: transform 0.3s ease;
+
     margin-left: 5px;
 }
 
@@ -520,20 +540,29 @@ main {
     transform: rotate(180deg);
 }
 
-/* Dropdown Profil */
 .profile-dropdown {
     position: absolute;
+
     top: 75px;
     right: 0;
+
     width: 260px;
+
     background: #FFF3E0;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.2), 0 5px 15px rgba(0,0,0,0.1);
+
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.2),
+        0 5px 15px rgba(0, 0, 0, 0.1);
+
     z-index: 100;
+
     padding: 8px 0;
-    /* Hidden state */
+
     opacity: 0;
     visibility: hidden;
+
     transform: translateY(-10px);
+
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -546,13 +575,17 @@ main {
 .profile-menu-item {
     display: flex;
     align-items: center;
+
     gap: 15px;
     padding: 14px 22px;
+
     text-decoration: none;
     color: #2C1A11;
+
     font-family: 'Inter', sans-serif;
     font-size: 15px;
     font-weight: 500;
+
     transition: all 0.3s ease;
 }
 
@@ -564,8 +597,10 @@ main {
 .profile-menu-item i {
     width: 20px;
     text-align: center;
+
     font-size: 16px;
     color: #5a3c2a;
+
     transition: color 0.3s ease;
 }
 
@@ -575,11 +610,11 @@ main {
 
 .profile-divider {
     height: 1px;
-    background: rgba(0,0,0,0.08);
+    background: rgba(0, 0, 0, 0.08);
+
     margin: 5px 15px;
 }
 
-/* Tombol Keluar (Merah Tegas) */
 .logout-item {
     color: #D62828 !important;
     font-weight: 600 !important;
@@ -593,50 +628,41 @@ main {
     color: #D62828 !important;
 }
 
-.register-link {
-    display: block;
-    text-align: center;
-    margin-top: 30px;
-    color: #333;
-    font-size: 1.1rem;
-}
 
-.register-link a {
-    color: #D62828;
-    text-decoration: none;
-    font-weight: bold;
-    transition: color 0.3s ease;
-}
-.register-link a:hover {
-    color: #b71c1c;
-    text-decoration: underline;
-}
+/* =====================================================
+   SEARCH BAR
+   ===================================================== */
 
-/* ============================
-   SEARCH BAR (HIGH-END)
-   ============================ */
-
-/* Wrapper Input Pencarian Utama */
 .search-input-wrapper {
     position: relative;
+
     display: flex;
     align-items: center;
+
     background: #FFF3E0;
-    box-shadow: inset 0 2px 6px rgba(0,0,0,0.08);
+
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.08);
+
     padding: 0 20px;
     height: 55px;
+
     transition: all 0.3s ease;
 }
 
 .search-input-wrapper:focus-within {
-    box-shadow: inset 0 2px 6px rgba(0,0,0,0.08), 0 0 0 3px rgba(214, 40, 40, 0.25);
+    box-shadow:
+        inset 0 2px 6px rgba(0, 0, 0, 0.08),
+        0 0 0 3px rgba(214, 40, 40, 0.25);
+
     background: white;
 }
 
 .search-icon {
     color: #757575;
     font-size: 18px;
+
     margin-right: 12px;
+
     transition: color 0.3s ease;
 }
 
@@ -647,10 +673,13 @@ main {
 .search-input-field {
     border: none;
     background: transparent;
+
     font-family: 'Inter', sans-serif;
     font-weight: 500;
     font-size: 17px;
+
     color: #2C1A11;
+
     width: 100%;
     outline: none;
 }
@@ -659,7 +688,6 @@ main {
     color: #a1887f;
 }
 
-/* Field Wrapper (Tanggal, Jam, Durasi, Urutkan) */
 .search-field {
     display: flex;
     flex-direction: column;
@@ -668,9 +696,12 @@ main {
 
 .search-label {
     font-family: 'Inter', sans-serif;
+
     font-size: 12px;
     font-weight: 600;
+
     color: #5a3c2a;
+
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -681,98 +712,153 @@ main {
 
 .search-field-input {
     border: none;
+
     background: #FFF3E0;
-    box-shadow: inset 0 2px 5px rgba(0,0,0,0.06);
+
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.06);
+
     padding: 10px 14px;
+
     font-family: 'Inter', sans-serif;
     font-weight: 500;
     font-size: 15px;
+
     color: #2C1A11;
+
     outline: none;
     cursor: pointer;
+
     transition: all 0.3s ease;
+
     height: 42px;
 }
 
 .search-field-input:focus {
     background: white;
-    box-shadow: inset 0 2px 5px rgba(0,0,0,0.06), 0 0 0 3px rgba(214, 40, 40, 0.2);
+
+    box-shadow:
+        inset 0 2px 5px rgba(0, 0, 0, 0.06),
+        0 0 0 3px rgba(214, 40, 40, 0.2);
 }
 
-/* SLIDER HARGA (Custom Styling) */
+
+/* =====================================================
+   PRICE SLIDER
+   ===================================================== */
+
 .price-slider {
     -webkit-appearance: none;
     appearance: none;
+
     width: 100%;
     height: 8px;
-    background: linear-gradient(90deg, #FFF3E0, #D62828);
+
+    background: linear-gradient(
+        90deg,
+        #FFF3E0,
+        #D62828
+    );
+
     outline: none;
     cursor: pointer;
+
     transition: all 0.3s ease;
 }
 
-/* Thumb (Tombol Geser) - Chrome/Edge */
 .price-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
+
     width: 26px;
     height: 26px;
+
     background: #FFF3E0;
     border: 3px solid #D62828;
+
     cursor: grab;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+
     transition: all 0.2s ease;
 }
 
 .price-slider::-webkit-slider-thumb:hover {
     transform: scale(1.2);
-    box-shadow: 0 5px 15px rgba(214, 40, 40, 0.4);
+
+    box-shadow:
+        0 5px 15px rgba(214, 40, 40, 0.4);
 }
 
 .price-slider::-webkit-slider-thumb:active {
     cursor: grabbing;
+
     background: #D62828;
     border-color: #FFF3E0;
 }
 
-/* Thumb - Firefox */
 .price-slider::-moz-range-thumb {
     width: 26px;
     height: 26px;
+
     background: #FFF3E0;
     border: 3px solid #D62828;
+
     cursor: grab;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
 }
 
-/* TOMBOL CARI (3D Mekanik) */
+
+/* =====================================================
+   TOMBOL CARI
+   ===================================================== */
+
 .btn-search {
     background: #2C1A11;
     color: #FFF3E0;
+
     border: none;
+
     padding: 14px 35px;
+
     font-family: 'Inter', sans-serif;
     font-weight: 600;
     font-size: 18px;
+
     cursor: pointer;
+
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 6px 0 #120905, 0 10px 20px rgba(0,0,0,0.3);
+
+    box-shadow:
+        0 6px 0 #120905,
+        0 10px 20px rgba(0, 0, 0, 0.3);
+
     display: flex;
     align-items: center;
+
     gap: 10px;
+
     white-space: nowrap;
+
     height: 55px;
 }
 
 .btn-search:hover {
     background: #3e2c1e;
+
     transform: translateY(-2px);
-    box-shadow: 0 8px 0 #120905, 0 15px 25px rgba(0,0,0,0.4);
+
+    box-shadow:
+        0 8px 0 #120905,
+        0 15px 25px rgba(0, 0, 0, 0.4);
 }
 
 .btn-search:active {
     transform: translateY(4px);
-    box-shadow: 0 2px 0 #120905, 0 5px 10px rgba(0,0,0,0.3);
+
+    box-shadow:
+        0 2px 0 #120905,
+        0 5px 10px rgba(0, 0, 0, 0.3);
 }
 
 .btn-search i {
