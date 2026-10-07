@@ -2,10 +2,22 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from app.models import User, Vehicle
 from sqlalchemy import or_
 from datetime import datetime
+from app import db
 
 bp = Blueprint('main', __name__)
 
+# =========================================================
+# HALAMAN OPENING
+# =========================================================
 @bp.route('/')
+def welcome():
+    return render_template('welcome.html')
+
+
+# =========================================================
+# HALAMAN UTAMA
+# =========================================================
+@bp.route('/home')
 def index():
     # Cek apakah user sudah login
     if 'user_id' not in session:
@@ -75,6 +87,10 @@ def index():
                            search_query=search_query,
                            sort_by=sort_by)
 
+
+# =========================================================
+# HALAMAN LOGIN | REGISTER | LOGOUT
+# =========================================================
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -98,7 +114,7 @@ def login():
 def register():
     if request.method == 'POST':
         name = request.form.get('name')
-        birth_date_str = request.form.get('birth_date')
+        birth_date = request.form.get('birth_date')
         gender = request.form.get('gender')
         email = request.form.get('email')
         phone = request.form.get('phone')
@@ -106,42 +122,27 @@ def register():
         password = request.form.get('password')
         confirm_password = request.form.get('confirm_password')
 
-        # Cek password
         if password != confirm_password:
             flash('Konfirmasi password tidak cocok.')
             return redirect(url_for('main.register'))
 
-        # Cek email
         existing_user = User.query.filter_by(email=email).first()
 
         if existing_user:
             flash('Email sudah terdaftar.')
             return redirect(url_for('main.register'))
 
-        # Konversi string tanggal menjadi Python date
-        try:
-            birth_date = datetime.strptime(
-                birth_date_str, '%Y-%m-%d'
-            ).date()
-        except (ValueError, TypeError):
-            flash('Format tanggal lahir tidak valid.')
-            return redirect(url_for('main.register'))
-
-        # Buat user
         user = User(
             name=name,
-            birth_date=birth_date,
+            birth_date=datetime.strptime(birth_date, '%Y-%m-%d').date(),
             gender=gender,
             email=email,
             phone=phone,
             emergency_phone=emergency_phone
         )
 
-        # Hash password
         user.set_password(password)
 
-        # Simpan database
-        from app import db
         db.session.add(user)
         db.session.commit()
 
