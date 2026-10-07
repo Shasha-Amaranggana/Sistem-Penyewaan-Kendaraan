@@ -19,73 +19,26 @@ def welcome():
 # =========================================================
 @bp.route('/home')
 def index():
-    # Cek apakah user sudah login
+
     if 'user_id' not in session:
         return redirect(url_for('main.login'))
-    
-    # Ambil data user yang sedang login
+
     user = User.query.get(session['user_id'])
-    
-    # Dapatkan waktu sekarang
+
+    vehicles = Vehicle.query.all()
+
     now = datetime.now()
+
     current_date = now.strftime('%Y-%m-%d')
     current_time = now.strftime('%H:%M')
-        
-    query = Vehicle.query
-    
-    # ========== FILTER DARI SIDEBAR ==========
-    transmissions = request.args.getlist('transmission')
-    capacities = request.args.getlist('capacity')
-    
-    if transmissions:
-        query = query.filter(Vehicle.transmission.in_(transmissions))
-        
-    if capacities:
-        capacity_filters = []
-        if '4' in capacities:
-            capacity_filters.append(Vehicle.seats <= 5)
-        if '6' in capacities:
-            capacity_filters.append(Vehicle.seats >= 6)
-        if capacity_filters:
-            query = query.filter(or_(*capacity_filters))
-    
-    # ========== FILTER DARI SEARCH BAR ==========
-    # 1. Filter Harga Maksimum (Slider)
-    max_price = request.args.get('max_price', type=int)
-    if max_price:
-        query = query.filter(Vehicle.price_per_day <= max_price)
-    
-    # 2. Filter Pencarian Nama Mobil (Keyword)
-    search_query = request.args.get('q', '').strip()
-    if search_query:
-        search_pattern = f'%{search_query}%'
-        query = query.filter(
-            or_(
-                Vehicle.brand.ilike(search_pattern),
-                Vehicle.model.ilike(search_pattern)
-            )
-        )
-    
-    # 3. Sorting (Urutkan berdasarkan)
-    sort_by = request.args.get('sort', 'default')
-    if sort_by == 'price_asc':
-        query = query.order_by(Vehicle.price_per_day.asc())
-    elif sort_by == 'price_desc':
-        query = query.order_by(Vehicle.price_per_day.desc())
-    elif sort_by == 'name_asc':
-        query = query.order_by(Vehicle.brand.asc(), Vehicle.model.asc())
-            
-    # Eksekusi query
-    vehicles = query.all()
-    
-    return render_template('index.html', vehicles=vehicles, user=user,
-                           selected_transmissions=transmissions, 
-                           selected_capacities=capacities,
-                           current_date=current_date,
-                           current_time=current_time,
-                           max_price=max_price or 1000000,
-                           search_query=search_query,
-                           sort_by=sort_by)
+
+    return render_template(
+        'halUtamaUser.html',
+        vehicles=vehicles,
+        user=user,
+        current_date=current_date,
+        current_time=current_time
+    )
 
 
 # =========================================================

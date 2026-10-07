@@ -1,0 +1,553 @@
+
+
+{% extends "base.html" %}
+
+{% block title %}
+KeSanaSini - Menu Utama
+{% endblock %}
+
+
+{% block css %}
+
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/halUtamaUser.css') }}">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+{% endblock %}
+
+
+
+{% block content %}
+
+
+<!-- =====================================================
+     HERO
+===================================================== -->
+
+<section class="hero-section">
+
+    <div class="hero-content">
+
+
+        <!-- =================================================
+             HERO TEXT
+        ================================================== -->
+
+        <div class="hero-text">
+
+            <h1>
+                DARI SINI,
+                <span>PERJALANAN DIMULAI.</span>
+            </h1>
+
+            <p>
+                Temukan kendaraan yang tepat untuk menemani
+                setiap perjalanan, dari langkah kecil hingga
+                petualangan yang lebih jauh.
+            </p>
+
+        </div>
+
+
+
+        <!-- =================================================
+             SEARCH BOX
+        ================================================== -->
+
+        <div class="search-box">
+
+            <h2>
+                Halo, kamu. Siap jalan? Sewa langsung
+            </h2>
+
+
+            <!-- JENIS KENDARAAN -->
+
+            <div class="vehicle-tabs">
+
+                <button
+                    class="vehicle-tab active"
+                    type="button">
+
+                    <i class="fa-solid fa-car"></i>
+
+                    Mobil
+
+                </button>
+
+
+                <button
+                    class="vehicle-tab"
+                    type="button">
+
+                    <i class="fa-solid fa-motorcycle"></i>
+
+                    Motor
+
+                </button>
+
+            </div>
+
+
+
+            <!-- FORM PENCARIAN -->
+
+            <form
+                method="GET"
+                action="{{ url_for('main.index') }}"
+                class="search-form">
+
+
+                <!-- WAKTU -->
+
+                <div class="search-label">
+                    Waktu Pengambilan
+                </div>
+
+
+                <div class="search-fields">
+
+
+                    <!-- TANGGAL -->
+
+                    <div class="search-input">
+
+                        <i class="fa-regular fa-calendar"></i>
+
+                        <input
+                            type="date"
+                            name="date"
+                            value="{{ current_date }}"
+                        >
+
+                    </div>
+
+
+
+                    <!-- JAM -->
+
+                    <div class="search-input time-input">
+
+                        <i class="fa-regular fa-clock"></i>
+
+                        <input
+                            type="time"
+                            name="time"
+                            value="{{ current_time }}"
+                        >
+
+                    </div>
+
+
+
+                    <!-- DURASI -->
+
+                    <div class="search-input duration-input">
+
+                        <i class="fa-regular fa-hourglass-half"></i>
+
+                        <select name="duration">
+
+                            <option value="1">
+                                1 Hari
+                            </option>
+
+                            <option value="2" selected>
+                                2 Hari
+                            </option>
+
+                            <option value="3">
+                                3 Hari
+                            </option>
+
+                            <option value="4">
+                                4 Hari
+                            </option>
+
+                            <option value="5">
+                                5 Hari
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- FILTER HARGA -->
+
+                <div class="search-label price-label">
+                    Filter Harga
+                </div>
+
+
+                <div class="price-search">
+
+
+                    <!-- HARGA MINIMUM -->
+
+                    <div class="price-input">
+
+                        <i class="fa-solid fa-dollar-sign"></i>
+
+                        <input
+                            type="number"
+                            name="min_price"
+                            placeholder="Rp300.000,00"
+                            min="0"
+                        >
+
+                    </div>
+
+
+                    <span class="price-separator">
+                        -
+                    </span>
+
+
+                    <!-- HARGA MAKSIMUM -->
+
+                    <div class="price-input">
+
+                        <i class="fa-solid fa-dollar-sign"></i>
+
+                        <input
+                            type="number"
+                            name="max_price"
+                            placeholder="Rp500.000,00"
+                            min="0"
+                            value="{{ max_price }}"
+                        >
+
+                    </div>
+
+
+                    <!-- BUTTON -->
+
+                    <button
+                        type="submit"
+                        class="search-button">
+
+                        CARI
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         BENEFIT BAR
+    ====================================================== -->
+
+    <div class="benefit-bar">
+
+
+        <!-- BENEFIT 1 -->
+
+        <div class="benefit-item">
+
+            <div class="benefit-icon">
+                <i class="fa-solid fa-car"></i>
+            </div>
+
+            <div>
+
+                <strong>
+                    Pilihan Kendaraan Beragam
+                </strong>
+
+                <span>
+                    Mobil dan motor sesuai kebutuhanmu
+                </span>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- BENEFIT 2 -->
+
+        <div class="benefit-item">
+
+            <div class="benefit-icon">
+                <i class="fa-solid fa-screwdriver-wrench"></i>
+            </div>
+
+            <div>
+
+                <strong>
+                    Kendaraan Terawat
+                </strong>
+
+                <span>
+                    Selalu bersih dan siap digunakan
+                </span>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- BENEFIT 3 -->
+
+        <div class="benefit-item">
+
+            <div class="benefit-icon">
+                <i class="fa-solid fa-tag"></i>
+            </div>
+
+            <div>
+
+                <strong>
+                    Harga Transparan
+                </strong>
+
+                <span>
+                    Tanpa biaya tersembunyi
+                </span>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- BENEFIT 4 -->
+
+        <div class="benefit-item">
+
+            <div class="benefit-icon">
+                <i class="fa-solid fa-arrows-up-down-left-right"></i>
+            </div>
+
+            <div>
+
+                <strong>
+                    Praktis & Fleksibel
+                </strong>
+
+                <span>
+                    Pilih kendaraan dan waktu sewa sesuai kebutuhan
+                </span>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     VEHICLE SECTION
+===================================================== -->
+
+<section class="vehicle-section">
+
+
+    <!-- JUDUL -->
+
+    <div class="section-title">
+
+        <h2>
+            KENDARAAN
+            <span>KAMI</span>
+        </h2>
+
+        <p>
+            Mulailah dengan kendaraan favorit dari kami
+        </p>
+
+    </div>
+
+
+
+    <!-- =================================================
+         VEHICLE LIST
+    ================================================== -->
+
+    <div class="vehicle-list">
+
+
+        {% if vehicles %}
+
+
+            {% for vehicle in vehicles %}
+
+            <div class="vehicle-card">
+
+
+                <!-- NAMA -->
+
+                <div class="vehicle-name">
+
+                    {{ vehicle.brand }}
+                    {{ vehicle.model }}
+
+                </div>
+
+
+
+                <!-- FOTO -->
+
+                <div class="vehicle-image">
+
+                    {% if vehicle.photo %}
+
+                    <img
+                        src="{{ url_for(
+                            'static',
+                            filename='images/' + vehicle.photo
+                        ) }}"
+                        alt="{{ vehicle.brand }} {{ vehicle.model }}"
+                    >
+
+                    {% else %}
+
+                    <i class="fa-solid fa-car vehicle-no-image"></i>
+
+                    {% endif %}
+
+                </div>
+
+
+
+                <!-- INFO -->
+
+                <div class="vehicle-info">
+
+
+                    <div class="vehicle-detail">
+
+
+                        <!-- KURSI -->
+
+                        <span>
+
+                            <i class="fa-solid fa-chair"></i>
+
+                            {{ vehicle.seats }}
+                            Penumpang
+
+                        </span>
+
+
+
+                        <!-- BAGASI -->
+
+                        <span>
+
+                            <i class="fa-solid fa-suitcase"></i>
+
+                            {{ vehicle.luggage }}
+                            Bagasi
+
+                        </span>
+
+
+                    </div>
+
+
+
+                    <!-- HARGA -->
+
+                    <div class="vehicle-price">
+
+                        Rp{{ "{:,.0f}".format(
+                            vehicle.price_per_day
+                        ).replace(',', '.') }},00/hari
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+            {% endfor %}
+
+
+        {% else %}
+
+
+            <!-- TIDAK ADA KENDARAAN -->
+
+            <div class="empty-vehicle">
+
+                <i class="fa-solid fa-car"></i>
+
+                <p>
+                    Belum ada kendaraan tersedia.
+                </p>
+
+            </div>
+
+
+        {% endif %}
+
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
+<script>
+
+
+/* =====================================================
+   USER DROPDOWN
+   Sudah ditangani oleh base.html
+===================================================== */
+
+
+/* =====================================================
+   VEHICLE TAB
+===================================================== */
+
+const vehicleTabs =
+    document.querySelectorAll('.vehicle-tab');
+
+
+vehicleTabs.forEach(function (tab) {
+
+    tab.addEventListener('click', function () {
+
+
+        vehicleTabs.forEach(function (item) {
+
+            item.classList.remove('active');
+
+        });
+
+
+        this.classList.add('active');
+
+    });
+
+});
+
+
+</script>
+
+
+{% endblock %}
