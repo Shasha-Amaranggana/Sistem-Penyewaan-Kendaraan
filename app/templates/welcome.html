@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>KeSanaSini</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/welcome.css') }}"
+    >
+</head>
+
+<body>
+
+    <main class="welcome-page">
+
+        <!-- Background gelap transparan agar logo lebih menonjol -->
+        <div class="welcome-overlay"></div>
+
+        <!-- Logo yang bisa diklik -->
+        <button
+            class="welcome-logo"
+            id="welcomeLogo"
+            type="button"
+            aria-label="Masuk ke KeSanaSini"
+        >
+            <img
+                src="{{ url_for('static', filename='images/logo1.png') }}"
+                alt="Logo KeSanaSini"
+            >
+        </button>
+
+        <!-- Teks kecil -->
+        <p class="welcome-text">
+            Klik logo untuk melanjutkan
+        </p>
+
+    </main>
+
+
+    <script>
+        const welcomePage = document.querySelector('.welcome-page');
+        const welcomeLogo = document.getElementById('welcomeLogo');
+
+        welcomeLogo.addEventListener('click', function () {
+
+            // Tambahkan animasi keluar
+            welcomePage.classList.add('exit');
+
+            // Tunggu animasi selesai sebelum pindah halaman
+            setTimeout(function () {
+                window.location.href = "{{ url_for('main.login') }}";
+            }, 550);
+
+        });
+    </script>
+
+</body>
+
+</html>
