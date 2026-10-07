@@ -1,0 +1,451 @@
+
+/* =====================================================
+        RESET
+===================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+
+/* =====================================================
+    HTML
+===================================================== */
+html {
+    width: 100%;
+    min-height: 100%;
+}
+
+
+/* =====================================================
+    BODY
+    
+    LOGIN.svg = 1920 × 1080
+    Rasio = 16 : 9
+    
+    56.25vw = tinggi background jika lebarnya 100vw
+===================================================== */
+
+body {
+    width: 100%;
+    min-height: max(100vh, 56.25vw);
+
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    background-image: url("../images/LOGIN.svg");
+    background-size: 100% auto;
+
+    background-position: top center;
+    background-repeat: no-repeat;
+
+    display: flex;
+}
+
+
+/* =====================================================
+    AREA KIRI
+===================================================== */
+.left-area {
+    width: 40%;
+    min-height: max(100vh, 56.25vw);
+
+    position: relative;
+    flex-shrink: 0;
+}
+
+
+/* =====================================================
+    AREA KANAN
+===================================================== */
+.right-area {
+    width: 60%;
+    min-height: max(100vh, 56.25vw);
+
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    /*
+        * Pada desain 1920×1080,
+        * judul mulai sekitar 180 px dari atas.
+        *
+        * 180 / 1920 = 9.375vw
+        */
+    padding-top: 9.4vw;
+    flex-shrink: 0;
+}
+
+
+/* =====================================================
+    LOGIN CONTAINER
+===================================================== */
+.auth-container {
+    width: 15vw;
+    max-width: 450px;
+    min-width: 350px;
+
+    text-align: center;
+
+    position: relative;
+    left: 100px;
+
+    animation:
+        slideInRight
+        0.8s
+        cubic-bezier(0.16, 1, 0.3, 1)
+        forwards;
+
+    opacity: 0;
+    transform: translateX(50px);
+}
+
+@keyframes slideInRight {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+
+/* =====================================================
+    JUDUL
+===================================================== */
+h1 {
+    font-weight: 800;
+    font-size: 2vw;
+    color: #111;
+    margin-bottom: 4vw;
+    letter-spacing: 0.5px;
+
+    white-space: nowrap;
+    width: 600px;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+
+/* =====================================================
+    PESAN ERROR
+===================================================== */
+.flash-msg {
+    background-color: #D62828;
+    color: white;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+
+/* =====================================================
+    INPUT GROUP
+===================================================== */
+.input-group {
+    position: relative;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+
+.input-group i {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #757575;
+    font-size: 18px;
+    transition: color 0.3s ease;
+    z-index: 2;
+}
+
+
+/* =====================================================
+    INPUT
+===================================================== */
+.form-input {
+    width: 100%;
+    padding: 10px 20px 10px 50px;
+
+    background-color: #eee4d4;
+    border: 2px solid transparent;
+    border-radius: 5px;
+    font-size: 16px;
+
+    color: #333;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+
+.form-input::placeholder {
+    color: #908472;
+    font-weight: 500;
+}
+
+
+.input-group:focus-within i {
+    color: #FFBE0C;
+}
+
+
+.input-group:focus-within .form-input {
+    background-color: #fff;
+    border-color: #FFBE0C;
+
+    box-shadow:
+        0 5px 15px
+        rgba(255, 190, 12, 0.2);
+}
+
+
+/* =====================================================
+    PASSWORD TOGGLE
+===================================================== */
+
+.password-group .form-input {
+    padding-right: 50px;
+}
+
+.password-toggle {
+    position: absolute;
+    left: auto !important;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #757575;
+    font-size: 17px;
+    cursor: pointer;
+    z-index: 3;
+}
+
+.password-toggle:hover {
+    color: #333;
+}
+
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+    display: none;
+}
+
+
+/* =====================================================
+    LUPA PASSWORD
+===================================================== */
+.forgot-pass {
+    display: block;
+    text-align: right;
+    color: #51b7ff;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: 10px;
+    margin-bottom: 30px;
+}
+
+
+/* =====================================================
+    BUTTON LOGIN
+===================================================== */
+.btn-auth {
+    width: 110px;
+    padding: 10px;
+    background-color: #FFBE0C;
+    color: #111;
+    border: none;
+    border-radius: 15px;
+    font-size: 18px;
+    font-weight: 800;
+    cursor: pointer;
+
+    box-shadow:
+        0 2px 0 #d9a008,
+        0 2px 15px
+        rgba(255, 190, 12, 0.4);
+
+    transition: all 0.3s ease;
+    margin: 0 auto 45px auto;
+    display: block;
+}
+
+
+.btn-auth:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 6px 0 #d9a008,
+        0 12px 20px
+        rgba(255, 190, 12, 0.5);
+
+    background-color: #ffc933;
+}
+
+
+.btn-auth:active {
+    transform: translateY(4px);
+
+    box-shadow:
+        0 0 0 #d9a008;
+}
+
+
+/* =====================================================
+    DIVIDER
+===================================================== */
+
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #555;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    margin-bottom: 40px;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #999;
+}
+
+.divider:not(:empty)::before {
+    margin-right: .5em;
+}
+
+.divider:not(:empty)::after {
+    margin-left: .5em;
+}
+
+
+/* =====================================================
+    GOOGLE BUTTON
+===================================================== */
+.btn-google {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 150px;
+    margin: 0 auto;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0);
+    border: 1px solid #111;
+    border-radius: 25px;
+    font-weight: 700;
+    font-size: 14px;
+    color: #111;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-google:hover {
+    background-color: #f5f5f5;
+
+    box-shadow:
+        0 5px 15px
+        rgba(0, 0, 0, 0.1);
+}
+
+
+/* =====================================================
+    REGISTER FORM
+===================================================== */
+
+.register-form {
+    width: 100%;
+}
+
+
+/* =====================================================
+    REGISTER - DUA KOLOM
+===================================================== */
+
+.input-row {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+.input-row .input-group {
+    flex: 1;
+    min-width: 0;
+}
+
+
+/* =====================================================
+    REGISTER - SELECT
+===================================================== */
+
+.input-row select.form-input {
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    color: #908472;
+}
+
+
+/* =====================================================
+    REGISTER - BUTTON
+===================================================== */
+
+.register-btn {
+    margin-top: 30px;
+    margin-bottom: 45px;
+}
+
+
+/* =====================================================
+    REGISTER - DIVIDER
+===================================================== */
+
+.register-divider {
+    margin-bottom: 40px;
+}
+
+/* =====================================================
+    REGISTER
+===================================================== */
+.switch-text {
+    margin-top: 40px;
+
+    font-size: 14px;
+
+    color: #111;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+}
+
+.switch-text a {
+    color: #51b7ff;
+
+    text-decoration: none;
+
+    font-weight: 500;
+}
+
+
+/* =====================================================
+    RESPONSIVE
+    
+    Kalau layar sangat kecil, jangan sampai form
+    keluar dari layar secara horizontal.
+===================================================== */
+@media (max-width: 900px) {
+    .auth-container {
+        width: 80%;
+        min-width: 0;
+    }
+
+    h1 {
+        font-size: 28px;
+    }
+
+}
