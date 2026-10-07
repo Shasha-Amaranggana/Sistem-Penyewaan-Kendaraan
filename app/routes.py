@@ -112,6 +112,21 @@ def register():
             flash('Email sudah terdaftar.')
             return redirect(url_for('main.register'))
 
+        # Buat user baru
+        user = User(
+            name=name,
+            email=email
+        )
+
+        # Ubah password menjadi password hash
+        user.set_password(password)
+
+        # Simpan ke database
+        from app import db
+        db.session.add(user)
+        db.session.commit()
+
+        flash('Registrasi berhasil. Silakan login.')
         return redirect(url_for('main.login'))
 
     return render_template('loginRegister.html', mode='register')
