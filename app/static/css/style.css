@@ -1,866 +1,420 @@
 /* =====================================================
-   RESET & BASE
-   ===================================================== */
+   RESET
+===================================================== */
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+
+/* =====================================================
+   HTML
+===================================================== */
+
 html {
-    width: 100%;
-    min-height: 100%;
+    scroll-behavior: smooth;
 }
+
+
+/* =====================================================
+   BODY
+===================================================== */
 
 body {
     width: 100%;
     min-height: 100vh;
-}
 
-main {
-    flex: 1;
+    font-family: 'Inter', Arial, sans-serif;
+
+    color: #111;
+
+    background-color: #ffedcf;
+
+    overflow-x: hidden;
 }
 
 
 /* =====================================================
-   HEADER / NAVBAR
-   ===================================================== */
+   BACKGROUND UMUM HALAMAN USER
+===================================================== */
 
-header {
-    background-color: #FFF3E0;
-    padding: 20px 65px;
+/*
+   Background ini dipakai oleh beberapa halaman user.
+
+   Kalau hanya halaman tertentu yang memakai background,
+   gunakan class="user-page" pada body.
+*/
+
+body.user-page {
+    background-image:
+        url("../images/home-bg.png");
+
+    background-size: 100% auto;
+
+    background-position: center top;
+
+    background-repeat: no-repeat;
+
+    background-attachment: fixed;
+}
+
+
+/* =====================================================
+   NAVBAR
+===================================================== */
+
+.navbar {
+
+    width: 100%;
+    height: 78px;
+
+    background: white;
+
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    height: 131px;
+
+    padding: 0 38px;
+
     position: relative;
-    z-index: 10;
+
+    z-index: 100;
+
+    box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.12);
 }
 
-.logo-container {
+
+/* =====================================================
+   LOGO
+===================================================== */
+
+.navbar-logo {
+
+    width: 240px;
+
     display: flex;
     align-items: center;
+
+    text-decoration: none;
 }
 
-.brand-logo {
-    height: 80px;
+
+.navbar-logo img {
+
+    width: 290px;
+    height: auto;
+
     object-fit: contain;
 }
 
-.nav-links {
+
+/* =====================================================
+   MENU NAVBAR
+===================================================== */
+
+.nav-menu {
+
     display: flex;
-    gap: 15px;
     align-items: center;
+
+    gap: 80px;
+
+    margin-left: 200px;
 }
 
-.nav-links a {
+
+.nav-link {
+
+    position: relative;
+
+    padding: 28px 0 22px;
+
     text-decoration: none;
-    color: #2C1A11;
-    font-weight: 500;
-    font-size: 36px;
-    font-family: 'Work Sans', sans-serif;
-    padding: 10px 20px;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    border-radius: 0;
-}
 
-.nav-links a.active {
-    background-color: #D62828;
-    color: #FFF3E0;
-    box-shadow: 0 4px 15px rgba(214, 40, 40, 0.4);
-}
+    color: #3d3d3d;
 
-.nav-links a:not(.active):hover {
-    background-color: rgba(214, 40, 40, 0.1);
-    transform: translateY(-2px);
-}
+    font-size: 18px;
 
-.contact-info {
-    display: flex;
-    gap: 30px;
-    align-items: center;
-    font-size: 32px;
-    font-weight: 500;
-    font-family: 'Inter', sans-serif;
-    color: #2C1A11;
-}
+    font-weight: 700;
 
-.social-circles {
-    display: flex;
-    gap: 15px;
-    margin-left: 20px;
-}
+    white-space: nowrap;
 
-.social-circles .circle {
-    width: 35px;
-    height: 35px;
-    background-color: #cfd8dc;
-    border-radius: 0;
-    transition: all 0.3s ease;
-    cursor: pointer;
-}
-
-.social-circles .circle:hover {
-    background-color: #D62828;
-    box-shadow: 0 4px 10px rgba(214, 40, 40, 0.3);
-    transform: translateY(-3px);
+    transition:
+        color 0.25s ease;
 }
 
 
-/* =====================================================
-   ANIMASI GLOBAL
-   ===================================================== */
+.nav-link:hover {
 
-@keyframes fadeInSlideUp {
-    0% {
-        opacity: 0;
-        transform: translateY(40px);
-    }
-
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.page-transition {
-    animation: fadeInSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    color: #ef7518;
 }
 
 
-/* =====================================================
-   ANIMASI KARTU
-   ===================================================== */
+.nav-link.active {
 
-@keyframes popIn3D {
-    0% {
-        opacity: 0;
-        transform: translateY(30px) scale(0.95);
-        box-shadow: 0 0 0 rgba(0, 0, 0, 0);
-    }
-
-    100% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.06);
-    }
+    color: #3d3d3d;
 }
 
 
-/* =====================================================
-   KARTU KENDARAAN
-   ===================================================== */
+.nav-link.active::after {
 
-.car-card {
-    display: flex;
-    flex-direction: column;
-    background-color: #FFF3E0;
-    opacity: 0;
+    content: '';
 
-    animation: popIn3D 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    cursor: pointer;
-
-    border: 1px solid rgba(255, 255, 255, 0.7);
-
-    box-shadow:
-        0 8px 15px rgba(0, 0, 0, 0.06),
-        0 2px 4px rgba(0, 0, 0, 0.04);
-}
-
-.car-card:hover {
-    transform: translateY(-12px) scale(1.02);
-
-    box-shadow:
-        0 25px 45px rgba(0, 0, 0, 0.15),
-        0 10px 15px rgba(0, 0, 0, 0.08);
-
-    border-color: rgba(255, 255, 255, 1);
-    z-index: 2;
-}
-
-.car-image-area {
-    background: linear-gradient(
-        145deg,
-        rgba(255, 190, 12, 0.15),
-        rgba(255, 190, 12, 0.35)
-    );
-
-    height: 217px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    overflow: hidden;
-    padding: 10px;
-
-    transition: all 0.5s ease;
-
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-.car-card:hover .car-image-area {
-    background: linear-gradient(
-        145deg,
-        rgba(255, 190, 12, 0.25),
-        rgba(255, 190, 12, 0.5)
-    );
-}
-
-.car-image-area img {
-    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-
-    filter: drop-shadow(
-        0 15px 10px rgba(0, 0, 0, 0.25)
-    );
-}
-
-.car-card:hover .car-image-area img {
-    transform: scale(1.1) translateX(10px);
-}
-
-
-/* =====================================================
-   TOMBOL SEWA
-   ===================================================== */
-
-.btn-sewa {
-    background: #D62828;
-    border: none;
-    border-radius: 0;
-
-    width: 75px;
-    height: 38px;
-
-    color: #FFF3E0;
-
-    font-family: 'Work Sans', sans-serif;
-    font-weight: 500;
-    font-size: 20px;
-
-    cursor: pointer;
-
-    transition: all 0.3s ease;
-
-    box-shadow: 0 4px 0 #9e1c1c;
-}
-
-.btn-sewa:hover {
-    background: #e53935;
-    transform: translateY(-2px);
-
-    box-shadow:
-        0 6px 0 #9e1c1c,
-        0 8px 15px rgba(214, 40, 40, 0.3);
-}
-
-.btn-sewa:active {
-    transform: translateY(2px);
-    box-shadow: 0 2px 0 #9e1c1c;
-}
-
-
-/* =====================================================
-   NOTIFIKASI
-   ===================================================== */
-
-.notif-wrapper {
-    position: relative;
-    cursor: pointer;
-}
-
-.notif-bell {
-    position: relative;
-
-    width: 50px;
-    height: 50px;
-
-    background: rgba(0, 0, 0, 0.04);
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    transition: all 0.3s ease;
-}
-
-.notif-bell:hover {
-    background: rgba(214, 40, 40, 0.1);
-    transform: translateY(-2px);
-
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-}
-
-.notif-bell i {
-    font-size: 22px;
-    color: #2C1A11;
-
-    transition: color 0.3s ease;
-}
-
-.notif-bell:hover i {
-    color: #D62828;
-}
-
-.notif-badge {
     position: absolute;
 
-    top: 5px;
-    right: 5px;
+    left: 0;
+    right: 0;
 
-    background: #D62828;
-    color: white;
+    bottom: 13px;
 
-    font-size: 12px;
-    font-weight: 700;
-    font-family: 'Inter', sans-serif;
+    height: 3px;
 
-    width: 22px;
-    height: 22px;
+    background: #ef7518;
+
+    border-radius: 5px;
+}
+
+
+/* =====================================================
+   USER MENU
+===================================================== */
+
+.user-menu {
+
+    margin-left: auto;
+
+    height: 100%;
 
     display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    position: relative;
+
+    cursor: pointer;
+}
+
+
+/* =====================================================
+   USER ICON
+===================================================== */
+
+.user-icon {
+
+    width: 36px;
+    height: 36px;
+
+    border: 2px solid #32a5ef;
+
+    border-radius: 50%;
+
+    display: flex;
+
     align-items: center;
     justify-content: center;
 
-    box-shadow: 0 2px 8px rgba(214, 40, 40, 0.4);
+    color: #32a5ef;
 
-    animation: badgePulse 2s ease-in-out infinite;
+    font-size: 20px;
 }
 
-@keyframes badgePulse {
-    0%,
-    100% {
-        transform: scale(1);
-    }
 
-    50% {
-        transform: scale(1.15);
-    }
+/* =====================================================
+   USER EMAIL
+===================================================== */
+
+.user-email {
+
+    font-size: 17px;
+
+    font-weight: 700;
+
+    color: #333;
 }
 
-.notif-dropdown {
+
+/* =====================================================
+   USER ARROW
+===================================================== */
+
+.user-arrow {
+
+    margin-left: 18px;
+
+    color: #32a5ef;
+
+    font-size: 12px;
+
+    transition:
+        transform 0.25s ease;
+}
+
+
+/* =====================================================
+   USER DROPDOWN
+===================================================== */
+
+.user-dropdown {
+
     position: absolute;
 
     top: 65px;
     right: 0;
 
-    width: 380px;
-
-    background: #FFF3E0;
-
-    box-shadow:
-        0 20px 50px rgba(0, 0, 0, 0.2),
-        0 5px 15px rgba(0, 0, 0, 0.1);
-
-    z-index: 100;
-
-    opacity: 0;
-    visibility: hidden;
-
-    transform: translateY(-10px);
-
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.notif-dropdown.show {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-}
-
-.notif-dropdown-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    padding: 18px 20px;
-
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-}
-
-.notif-mark-read {
-    font-size: 14px;
-    color: #D62828;
-
-    font-family: 'Inter', sans-serif;
-    font-weight: 600;
-
-    cursor: pointer;
-
-    transition: color 0.3s ease;
-}
-
-.notif-mark-read:hover {
-    color: #b71c1c;
-}
-
-.notif-item {
-    display: flex;
-    align-items: flex-start;
-
-    gap: 15px;
-    padding: 16px 20px;
-
-    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-
-    cursor: pointer;
-
-    transition: background 0.3s ease;
-}
-
-.notif-item:hover {
-    background: rgba(255, 190, 12, 0.15);
-}
-
-.notif-item.unread {
-    background: rgba(255, 190, 12, 0.08);
-    border-left: 3px solid #D62828;
-}
-
-.notif-icon {
-    width: 40px;
-    height: 40px;
-    min-width: 40px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    color: white;
-    font-size: 16px;
-}
-
-.notif-content {
-    flex: 1;
-}
-
-.notif-text {
-    font-family: 'Inter', sans-serif;
-    font-size: 14px;
-    color: #2C1A11;
-
-    line-height: 1.5;
-    margin: 0;
-}
-
-.notif-time {
-    font-family: 'Inter', sans-serif;
-    font-size: 12px;
-    color: #757575;
-
-    margin-top: 4px;
-    display: block;
-}
-
-
-/* =====================================================
-   PROFIL DROPDOWN
-   ===================================================== */
-
-.profile-wrapper {
-    position: relative;
-    cursor: pointer;
-}
-
-.profile-trigger {
-    display: flex;
-    align-items: center;
-
-    gap: 12px;
-    padding: 8px 15px;
-
-    background: rgba(0, 0, 0, 0.04);
-
-    transition: all 0.3s ease;
-}
-
-.profile-trigger:hover {
-    background: rgba(214, 40, 40, 0.08);
-    transform: translateY(-1px);
-
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.06);
-}
-
-.profile-avatar {
-    width: 45px;
-    height: 45px;
-
-    background: linear-gradient(135deg, #D62828, #e53935);
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    color: white;
-
-    font-size: 22px;
-    font-family: 'Inter', sans-serif;
-    font-weight: 700;
-
-    box-shadow: 0 4px 12px rgba(214, 40, 40, 0.3);
-
-    user-select: none;
-}
-
-.profile-info {
-    display: flex;
-    flex-direction: column;
-}
-
-.profile-name {
-    font-family: 'Inter', sans-serif;
-    font-weight: 700;
-    font-size: 16px;
-    color: #2C1A11;
-}
-
-.profile-email {
-    font-family: 'Inter', sans-serif;
-    font-weight: 400;
-    font-size: 13px;
-    color: #757575;
-}
-
-.profile-chevron {
-    font-size: 14px;
-    color: #757575;
-
-    transition: transform 0.3s ease;
-
-    margin-left: 5px;
-}
-
-.profile-chevron.rotated {
-    transform: rotate(180deg);
-}
-
-.profile-dropdown {
-    position: absolute;
-
-    top: 75px;
-    right: 0;
-
-    width: 260px;
-
-    background: #FFF3E0;
-
-    box-shadow:
-        0 20px 50px rgba(0, 0, 0, 0.2),
-        0 5px 15px rgba(0, 0, 0, 0.1);
-
-    z-index: 100;
-
-    padding: 8px 0;
-
-    opacity: 0;
-    visibility: hidden;
-
-    transform: translateY(-10px);
-
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.profile-dropdown.show {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-}
-
-.profile-menu-item {
-    display: flex;
-    align-items: center;
-
-    gap: 15px;
-    padding: 14px 22px;
-
-    text-decoration: none;
-    color: #2C1A11;
-
-    font-family: 'Inter', sans-serif;
-    font-size: 15px;
-    font-weight: 500;
-
-    transition: all 0.3s ease;
-}
-
-.profile-menu-item:hover {
-    background: rgba(255, 190, 12, 0.2);
-    padding-left: 28px;
-}
-
-.profile-menu-item i {
-    width: 20px;
-    text-align: center;
-
-    font-size: 16px;
-    color: #5a3c2a;
-
-    transition: color 0.3s ease;
-}
-
-.profile-menu-item:hover i {
-    color: #D62828;
-}
-
-.profile-divider {
-    height: 1px;
-    background: rgba(0, 0, 0, 0.08);
-
-    margin: 5px 15px;
-}
-
-.logout-item {
-    color: #D62828 !important;
-    font-weight: 600 !important;
-}
-
-.logout-item:hover {
-    background: rgba(214, 40, 40, 0.1) !important;
-}
-
-.logout-item i {
-    color: #D62828 !important;
-}
-
-
-/* =====================================================
-   SEARCH BAR
-   ===================================================== */
-
-.search-input-wrapper {
-    position: relative;
-
-    display: flex;
-    align-items: center;
-
-    background: #FFF3E0;
-
-    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.08);
-
-    padding: 0 20px;
-    height: 55px;
-
-    transition: all 0.3s ease;
-}
-
-.search-input-wrapper:focus-within {
-    box-shadow:
-        inset 0 2px 6px rgba(0, 0, 0, 0.08),
-        0 0 0 3px rgba(214, 40, 40, 0.25);
+    width: 180px;
 
     background: white;
-}
 
-.search-icon {
-    color: #757575;
-    font-size: 18px;
-
-    margin-right: 12px;
-
-    transition: color 0.3s ease;
-}
-
-.search-input-wrapper:focus-within .search-icon {
-    color: #D62828;
-}
-
-.search-input-field {
-    border: none;
-    background: transparent;
-
-    font-family: 'Inter', sans-serif;
-    font-weight: 500;
-    font-size: 17px;
-
-    color: #2C1A11;
-
-    width: 100%;
-    outline: none;
-}
-
-.search-input-field::placeholder {
-    color: #a1887f;
-}
-
-.search-field {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-.search-label {
-    font-family: 'Inter', sans-serif;
-
-    font-size: 12px;
-    font-weight: 600;
-
-    color: #5a3c2a;
-
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.search-label i {
-    margin-right: 4px;
-}
-
-.search-field-input {
-    border: none;
-
-    background: #FFF3E0;
-
-    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.06);
-
-    padding: 10px 14px;
-
-    font-family: 'Inter', sans-serif;
-    font-weight: 500;
-    font-size: 15px;
-
-    color: #2C1A11;
-
-    outline: none;
-    cursor: pointer;
-
-    transition: all 0.3s ease;
-
-    height: 42px;
-}
-
-.search-field-input:focus {
-    background: white;
+    border-radius: 10px;
 
     box-shadow:
-        inset 0 2px 5px rgba(0, 0, 0, 0.06),
-        0 0 0 3px rgba(214, 40, 40, 0.2);
+        0 8px 25px rgba(0, 0, 0, 0.15);
+
+    padding: 8px;
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    transform: translateY(-5px);
+
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease,
+        visibility 0.2s ease;
 }
 
 
-/* =====================================================
-   PRICE SLIDER
-   ===================================================== */
+/* DROPDOWN LINK */
 
-.price-slider {
-    -webkit-appearance: none;
-    appearance: none;
-
-    width: 100%;
-    height: 8px;
-
-    background: linear-gradient(
-        90deg,
-        #FFF3E0,
-        #D62828
-    );
-
-    outline: none;
-    cursor: pointer;
-
-    transition: all 0.3s ease;
-}
-
-.price-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-
-    width: 26px;
-    height: 26px;
-
-    background: #FFF3E0;
-    border: 3px solid #D62828;
-
-    cursor: grab;
-
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-
-    transition: all 0.2s ease;
-}
-
-.price-slider::-webkit-slider-thumb:hover {
-    transform: scale(1.2);
-
-    box-shadow:
-        0 5px 15px rgba(214, 40, 40, 0.4);
-}
-
-.price-slider::-webkit-slider-thumb:active {
-    cursor: grabbing;
-
-    background: #D62828;
-    border-color: #FFF3E0;
-}
-
-.price-slider::-moz-range-thumb {
-    width: 26px;
-    height: 26px;
-
-    background: #FFF3E0;
-    border: 3px solid #D62828;
-
-    cursor: grab;
-
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-}
-
-
-/* =====================================================
-   TOMBOL CARI
-   ===================================================== */
-
-.btn-search {
-    background: #2C1A11;
-    color: #FFF3E0;
-
-    border: none;
-
-    padding: 14px 35px;
-
-    font-family: 'Inter', sans-serif;
-    font-weight: 600;
-    font-size: 18px;
-
-    cursor: pointer;
-
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-
-    box-shadow:
-        0 6px 0 #120905,
-        0 10px 20px rgba(0, 0, 0, 0.3);
+.user-dropdown a {
 
     display: flex;
+
     align-items: center;
 
     gap: 10px;
 
-    white-space: nowrap;
+    padding: 11px 12px;
 
-    height: 55px;
+    color: #333;
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+    border-radius: 7px;
 }
 
-.btn-search:hover {
-    background: #3e2c1e;
 
-    transform: translateY(-2px);
+/* DROPDOWN HOVER */
 
-    box-shadow:
-        0 8px 0 #120905,
-        0 15px 25px rgba(0, 0, 0, 0.4);
+.user-dropdown a:hover {
+
+    background: #fff1df;
+
+    color: #ef7518;
 }
 
-.btn-search:active {
-    transform: translateY(4px);
 
-    box-shadow:
-        0 2px 0 #120905,
-        0 5px 10px rgba(0, 0, 0, 0.3);
+/* DROPDOWN TERBUKA */
+
+.user-menu.open .user-dropdown {
+
+    opacity: 1;
+
+    visibility: visible;
+
+    transform: translateY(0);
 }
 
-.btn-search i {
-    font-size: 16px;
+
+/* ARROW BERPUTAR */
+
+.user-menu.open .user-arrow {
+
+    transform: rotate(180deg);
+}
+
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+.footer {
+
+    width: 100%;
+
+    height: 95px;
+
+    background: #303847;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    color: white;
+
+    font-size: 15px;
+
+    font-weight: 700;
+}
+
+
+/* =====================================================
+   RESPONSIVE NAVBAR
+===================================================== */
+
+@media (max-width: 1200px) {
+
+    .nav-menu {
+
+        gap: 35px;
+
+        margin-left: 30px;
+    }
+
+}
+
+
+/* =====================================================
+   TABLET / MOBILE
+===================================================== */
+
+@media (max-width: 900px) {
+
+    .navbar {
+
+        padding: 0 20px;
+    }
+
+
+    .navbar-logo {
+
+        width: 170px;
+    }
+
+
+    .navbar-logo img {
+
+        width: 160px;
+    }
+
+
+    .nav-menu {
+
+        display: none;
+    }
+
+
+    .user-email {
+
+        display: none;
+    }
+
 }

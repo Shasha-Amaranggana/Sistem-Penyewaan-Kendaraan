@@ -35,6 +35,7 @@ body {
     overflow-x: hidden;
     overflow-y: auto;
 
+    background-color: #323948;
     background-image: url("../images/LOGIN.svg");
     background-size: 100% auto;
 

@@ -1,193 +1,169 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sana Sini - Penyewaan Kendaraan</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Work+Sans:wght@500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        {% block title %}
+        KeSanaSini
+        {% endblock %}
+    </title>
+
+
+    <!-- CSS GLOBAL -->
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+
+    <!-- FONT AWESOME -->
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+
+    <!-- CSS KHUSUS HALAMAN -->
+
+    {% block css %}
+    {% endblock %}
+
 </head>
-<body>
+
+
+<body class="user-page">
+
+
     <!-- NAVBAR -->
-    <header>
-        <div class="logo-container">
-            <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Sana Sini Logo" class="brand-logo">
-        </div>
-        
-        {% if session.get('user_id') %}
-        <nav class="nav-links">
-            <a href="/" class="active">Menu utama</a>
+
+    <header class="navbar">
+
+        <a href="{{ url_for('main.index') }}"
+           class="navbar-logo">
+
+            <img
+                src="{{ url_for('static', filename='images/logo-navbar.png') }}"
+                alt="KeSanaSini"
+            >
+
+        </a>
+
+
+        <nav class="nav-menu">
+
+            <a href="{{ url_for('main.index') }}"
+               class="nav-link active">
+
+                Menu Utama
+
+            </a>
+
+            <a href="#"
+               class="nav-link">
+
+                Pesanan Saya
+
+            </a>
+
+            <a href="#"
+               class="nav-link">
+
+                Riwayat Pesanan
+
+            </a>
+
         </nav>
 
-        <!-- AREA KANAN NAVBAR: Notifikasi + Profil -->
-        <div style="display: flex; align-items: center; gap: 25px;">
 
-            <!-- NOTIFIKASI (Lonceng) -->
-            <div class="notif-wrapper" onclick="toggleNotif()">
-                <div class="notif-bell">
-                    <i class="fa-solid fa-bell"></i>
-                    <span class="notif-badge" id="notifBadge">3</span>
-                </div>
+        {% if user %}
 
-                <!-- Dropdown Notifikasi -->
-                <div class="notif-dropdown" id="notifDropdown">
-                    <div class="notif-dropdown-header">
-                        <span style="font-weight: 700; font-size: 18px; color: #2C1A11;">Notifikasi</span>
-                        <span class="notif-mark-read" onclick="markAllRead(event)">Tandai dibaca</span>
-                    </div>
-                    <div class="notif-item unread" onclick="readNotif(this, event)">
-                        <div class="notif-icon" style="background: #D62828;"><i class="fa-solid fa-car"></i></div>
-                        <div class="notif-content">
-                            <p class="notif-text">Penyewaan <strong>Honda CRV</strong> Anda akan berakhir besok!</p>
-                            <span class="notif-time">2 jam yang lalu</span>
-                        </div>
-                    </div>
-                    <div class="notif-item unread" onclick="readNotif(this, event)">
-                        <div class="notif-icon" style="background: #FFBE0C;"><i class="fa-solid fa-tags"></i></div>
-                        <div class="notif-content">
-                            <p class="notif-text">Promo spesial akhir pekan! <strong>Diskon 20%</strong> untuk semua SUV.</p>
-                            <span class="notif-time">5 jam yang lalu</span>
-                        </div>
-                    </div>
-                    <div class="notif-item unread" onclick="readNotif(this, event)">
-                        <div class="notif-icon" style="background: #2e7d32;"><i class="fa-solid fa-circle-check"></i></div>
-                        <div class="notif-content">
-                            <p class="notif-text">Akun Anda telah berhasil <strong>diverifikasi</strong>.</p>
-                            <span class="notif-time">1 hari yang lalu</span>
-                        </div>
-                    </div>
-                </div>
+        <div class="user-menu">
+
+            <div class="user-icon">
+
+                <i class="fa-regular fa-user"></i>
+
             </div>
 
-            <!-- PROFIL DROPDOWN -->
-            <div class="profile-wrapper" onclick="toggleProfile()">
-                <div class="profile-trigger">
-                    <div class="profile-avatar">
-                        {{ session.get('user_name', 'U')[0] | upper }}
-                    </div>
-                    <div class="profile-info">
-                        <span class="profile-name">{{ session.get('user_name', 'Pengguna') }}</span>
-                        <span class="profile-email">{{ session.get('user_email', '') }}</span>
-                    </div>
-                    <i class="fa-solid fa-chevron-down profile-chevron" id="profileChevron"></i>
-                </div>
 
-                <!-- Dropdown Profil -->
-                <div class="profile-dropdown" id="profileDropdown">
-                    <a href="#" class="profile-menu-item">
-                        <i class="fa-solid fa-user-gear"></i>
-                        <span>Kelola Akun</span>
-                    </a>
-                    <a href="#" class="profile-menu-item">
-                        <i class="fa-solid fa-clock-rotate-left"></i>
-                        <span>Riwayat Sewa</span>
-                    </a>
-                    <a href="#" class="profile-menu-item">
-                        <i class="fa-solid fa-gear"></i>
-                        <span>Pengaturan</span>
-                    </a>
-                    <div class="profile-divider"></div>
-                    <a href="{{ url_for('main.logout') }}" class="profile-menu-item logout-item">
-                        <i class="fa-solid fa-right-from-bracket"></i>
-                        <span>Keluar</span>
-                    </a>
-                </div>
+            <span class="user-email">
+
+                {{ user.email }}
+
+            </span>
+
+
+            <i class="fa-solid fa-chevron-down user-arrow"></i>
+
+
+            <div class="user-dropdown">
+
+                <a href="#">
+
+                    <i class="fa-regular fa-user"></i>
+
+                    Profil
+
+                </a>
+
+
+                <a href="{{ url_for('main.logout') }}">
+
+                    <i class="fa-solid fa-right-from-bracket"></i>
+
+                    Keluar
+
+                </a>
+
             </div>
+
         </div>
 
-        {% else %}
-        <div class="contact-info">
-            <span>0912345678</span>
-            <span>sanasini@gmail.com</span>
-        </div>
         {% endif %}
+
     </header>
 
-    <!-- KONTEN UTAMA -->
-    <main>
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                <div style="background: #D62828; color: white; padding: 12px 20px; text-align: center; font-family: 'Inter', sans-serif; font-weight: 500;">
-                    {{ messages[0] }}
-                </div>
-            {% endif %}
-        {% endwith %}
 
-        {% block content %}{% endblock %}
-    </main>
+    <!-- ISI HALAMAN -->
 
-    <!-- JAVASCRIPT INTERAKTIF -->
+    {% block content %}
+    {% endblock %}
+
+
+    <!-- FOOTER -->
+
+    <footer class="footer">
+
+    </footer>
+
+
+    <!-- JAVASCRIPT GLOBAL -->
+
     <script>
-        // Toggle Dropdown Notifikasi
-        function toggleNotif() {
-            var dropdown = document.getElementById('notifDropdown');
-            var profileDd = document.getElementById('profileDropdown');
-            
-            if (profileDd) profileDd.classList.remove('show');
-            var chevron = document.getElementById('profileChevron');
-            if (chevron) chevron.classList.remove('rotated');
 
-            dropdown.classList.toggle('show');
+        const userMenu =
+            document.querySelector('.user-menu');
+
+
+        if (userMenu) {
+
+            userMenu.addEventListener(
+                'click',
+                function () {
+
+                    this.classList.toggle('open');
+
+                }
+            );
+
         }
 
-        // Toggle Dropdown Profil
-        function toggleProfile() {
-            var dropdown = document.getElementById('profileDropdown');
-            var notifDd = document.getElementById('notifDropdown');
-            var chevron = document.getElementById('profileChevron');
-            
-            if (notifDd) notifDd.classList.remove('show');
-
-            dropdown.classList.toggle('show');
-            chevron.classList.toggle('rotated');
-        }
-
-        // Tandai satu notifikasi sebagai dibaca
-        function readNotif(el, event) {
-            event.stopPropagation();
-            if (el.classList.contains('unread')) {
-                el.classList.remove('unread');
-                updateBadge();
-            }
-        }
-
-        // Tandai semua notifikasi dibaca
-        function markAllRead(event) {
-            event.stopPropagation();
-            var items = document.querySelectorAll('.notif-item.unread');
-            items.forEach(function(item) {
-                item.classList.remove('unread');
-            });
-            updateBadge();
-        }
-
-        // Update angka badge notifikasi
-        function updateBadge() {
-            var unread = document.querySelectorAll('.notif-item.unread').length;
-            var badge = document.getElementById('notifBadge');
-            badge.textContent = unread;
-            if (unread === 0) {
-                badge.style.display = 'none';
-            } else {
-                badge.style.display = 'flex';
-            }
-        }
-
-        // Tutup semua dropdown jika klik di luar
-        document.addEventListener('click', function(e) {
-            var notifWrapper = document.querySelector('.notif-wrapper');
-            var profileWrapper = document.querySelector('.profile-wrapper');
-            
-            if (notifWrapper && !notifWrapper.contains(e.target)) {
-                document.getElementById('notifDropdown').classList.remove('show');
-            }
-            if (profileWrapper && !profileWrapper.contains(e.target)) {
-                document.getElementById('profileDropdown').classList.remove('show');
-                var chevron = document.getElementById('profileChevron');
-                if (chevron) chevron.classList.remove('rotated');
-            }
-        });
     </script>
+
 </body>
+
 </html>
