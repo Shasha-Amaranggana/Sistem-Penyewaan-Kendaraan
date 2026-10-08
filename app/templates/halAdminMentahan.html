@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard (Mentahan)</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        .header { background-color: #333; color: white; padding: 15px; margin-bottom: 20px; }
+        .card { border: 1px solid #ccc; padding: 15px; margin-bottom: 10px; }
+        .logout-btn { color: red; text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Dashboard Admin</h1>
+        <p>Selamat datang, Bos <strong>{{ user.name }}</strong>!</p>
+        <p>Email: {{ user.email }} | Jabatan: {{ user.role }}</p>
+        <a href="{{ url_for('main.logout') }}" class="logout-btn">Log Out Keluar</a>
+    </div>
+
+    <h2>Panel Kendali (Segera Hadir)</h2>
+    
+    <div class="card">
+        <h3>Kelola Mobil</h3>
+        <p>Di sinilah nanti admin bisa menambah, mengedit, atau menghapus daftar mobil dari database.</p>
+        <button disabled>Tambah Mobil Baru</button>
+    </div>
+    
+    <div class="card">
+        <h3>Kelola Pesanan</h3>
+        <p>Di sinilah admin bisa melihat daftar pengguna yang sedang menyewa mobil.</p>
+        <button disabled>Lihat Daftar Sewa</button>
+    </div>
+
+</body>
+</html>

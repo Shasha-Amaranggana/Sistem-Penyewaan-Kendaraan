@@ -56,12 +56,31 @@ def login():
             session['user_id'] = user.id
             session['user_name'] = user.name
             session['user_email'] = user.email
-            return redirect(url_for('main.index'))
+            session['user_role'] = user.role  # Simpan jabatan di session
+            
+            # POLISI LALU LINTAS (If-Else Role)
+            if user.role == 'admin':
+                return redirect(url_for('main.admin_dashboard'))
+            else:
+                return redirect(url_for('main.index'))
         else:
             flash('Email atau kata sandi salah. Silakan coba lagi.')
             return redirect(url_for('main.login'))
             
     return render_template('loginRegister.html', mode='login')
+
+# =========================================================
+# HALAMAN ADMIN
+# =========================================================
+@bp.route('/admin-dashboard')
+def admin_dashboard():
+    # Keamanan ekstra: Cegah penyusup yang bukan admin
+    if 'user_id' not in session or session.get('user_role') != 'admin':
+        flash('Anda tidak memiliki akses ke halaman ini!')
+        return redirect(url_for('main.login'))
+        
+    user = User.query.get(session['user_id'])
+    return render_template('halAdminMentahan.html', user=user)
 
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
