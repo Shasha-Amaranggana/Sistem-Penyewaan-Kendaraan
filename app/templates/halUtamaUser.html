@@ -1,5 +1,3 @@
-
-
 {% extends "base.html" %}
 
 {% block title %}
@@ -8,11 +6,9 @@ KeSanaSini - Menu Utama
 
 
 {% block css %}
-
 <link rel="stylesheet"
       href="{{ url_for('static', filename='css/halUtamaUser.css') }}">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
 {% endblock %}
 
 
@@ -66,24 +62,19 @@ KeSanaSini - Menu Utama
             <div class="vehicle-tabs">
 
                 <button
+                    type="button"
                     class="vehicle-tab active"
-                    type="button">
-
+                    data-type="mobil">
                     <i class="fa-solid fa-car"></i>
-
                     Mobil
-
                 </button>
 
-
                 <button
+                    type="button"
                     class="vehicle-tab"
-                    type="button">
-
+                    data-type="motor">
                     <i class="fa-solid fa-motorcycle"></i>
-
                     Motor
-
                 </button>
 
             </div>
@@ -92,12 +83,11 @@ KeSanaSini - Menu Utama
 
             <!-- FORM PENCARIAN -->
 
-            <form
-                method="GET"
-                action="{{ url_for('main.index') }}"
+            <form method="GET"
+                action="{{ url_for('main.hasil_pencarian') }}"
                 class="search-form">
 
-
+                <input type="hidden" name="vehicle_type" id="vehicle-type" value="mobil">           
                 <!-- WAKTU -->
 
                 <div class="search-label">
@@ -112,12 +102,11 @@ KeSanaSini - Menu Utama
 
                     <div class="search-input">
 
-                        <i class="fa-regular fa-calendar"></i>
-
                         <input
                             type="date"
                             name="date"
                             value="{{ current_date }}"
+                            id="pickup-date"
                         >
 
                     </div>
@@ -128,12 +117,11 @@ KeSanaSini - Menu Utama
 
                     <div class="search-input time-input">
 
-                        <i class="fa-regular fa-clock"></i>
-
                         <input
                             type="time"
                             name="time"
                             value="{{ current_time }}"
+                            id="pickup-time"
                         >
 
                     </div>
@@ -144,31 +132,17 @@ KeSanaSini - Menu Utama
 
                     <div class="search-input duration-input">
 
-                        <i class="fa-regular fa-hourglass-half"></i>
-
                         <select name="duration">
-
-                            <option value="1">
-                                1 Hari
-                            </option>
-
-                            <option value="2" selected>
-                                2 Hari
-                            </option>
-
-                            <option value="3">
-                                3 Hari
-                            </option>
-
-                            <option value="4">
-                                4 Hari
-                            </option>
-
-                            <option value="5">
-                                5 Hari
-                            </option>
-
+                            <option value="1">1 Hari</option>
+                            <option value="2" selected>2 Hari</option>
+                            <option value="3">3 Hari</option>
+                            <option value="4">4 Hari</option>
+                            <option value="5">5 Hari</option>
+                            <option value="6">6 Hari</option>
+                            <option value="7">7 Hari</option>
                         </select>
+
+                        <i class="fa-regular fa-hourglass-half"></i>
 
                     </div>
 
@@ -524,28 +498,79 @@ KeSanaSini - Menu Utama
    VEHICLE TAB
 ===================================================== */
 
-const vehicleTabs =
-    document.querySelectorAll('.vehicle-tab');
+const vehicleTabs = document.querySelectorAll('.vehicle-tab');
+const vehicleTypeInput = document.getElementById('vehicle-type');
 
+vehicleTabs.forEach(function(tab) {
+    tab.addEventListener('click', function() {
 
-vehicleTabs.forEach(function (tab) {
-
-    tab.addEventListener('click', function () {
-
-
-        vehicleTabs.forEach(function (item) {
-
+        vehicleTabs.forEach(function(item) {
             item.classList.remove('active');
-
         });
-
 
         this.classList.add('active');
 
+        vehicleTypeInput.value = this.dataset.type;
     });
-
 });
 
+const pickupDate = document.getElementById('pickup-date');
+const pickupTime = document.getElementById('pickup-time');
+
+const now = new Date();
+
+// =============================
+// TANGGAL HARI INI
+// =============================
+const year = now.getFullYear();
+const month = String(now.getMonth() + 1).padStart(2, '0');
+const day = String(now.getDate()).padStart(2, '0');
+
+const today = `${year}-${month}-${day}`;
+
+pickupDate.value = today;
+pickupDate.min = today;
+
+// =============================
+// WAKTU 1 JAM DARI SEKARANG
+// =============================
+const pickupNow = new Date(now);
+pickupNow.setHours(pickupNow.getHours() + 1);
+
+const hour = String(pickupNow.getHours()).padStart(2, '0');
+const minute = String(pickupNow.getMinutes()).padStart(2, '0');
+
+const minimumTime = `${hour}:${minute}`;
+
+pickupTime.value = minimumTime;
+
+// =============================
+// VALIDASI TANGGAL & JAM
+// =============================
+pickupDate.addEventListener('change', function () {
+
+    // Kalau memilih hari ini
+    if (this.value === today) {
+        pickupTime.min = minimumTime;
+
+        // Kalau waktu yang dipilih lebih kecil dari waktu minimum
+        if (pickupTime.value < minimumTime) {
+            pickupTime.value = minimumTime;
+        }
+    } 
+    // Kalau memilih hari setelah hari ini
+    else if (this.value > today) {
+        pickupTime.min = '';
+    }
+});
+
+pickupTime.addEventListener('change', function () {
+
+    // Kalau tanggal yang dipilih hari ini
+    if (pickupDate.value === today && this.value < minimumTime) {
+        this.value = minimumTime;
+    }
+});
 
 </script>
 

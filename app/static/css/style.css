@@ -75,7 +75,7 @@ body.user-page {
     display: flex;
     align-items: center;
 
-    padding: 0 38px;
+    padding: 0 50px;
 
     position: relative;
 
@@ -92,7 +92,7 @@ body.user-page {
 
 .navbar-logo {
 
-    width: 240px;
+    width: 220px;
 
     display: flex;
     align-items: center;
@@ -103,7 +103,7 @@ body.user-page {
 
 .navbar-logo img {
 
-    width: 290px;
+    width: 260px;
     height: auto;
 
     object-fit: contain;
@@ -119,7 +119,7 @@ body.user-page {
     display: flex;
     align-items: center;
 
-    gap: 80px;
+    gap: 100px;
 
     margin-left: 200px;
 }
@@ -135,9 +135,9 @@ body.user-page {
 
     color: #3d3d3d;
 
-    font-size: 18px;
-
-    font-weight: 700;
+    font-size: 17px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 550;
 
     white-space: nowrap;
 
@@ -259,27 +259,19 @@ body.user-page {
 ===================================================== */
 
 .user-dropdown {
-
     position: absolute;
-
     top: 65px;
     right: 0;
-
-    width: 180px;
+    width: 240px;
 
     background: white;
-
     border-radius: 10px;
+    overflow: hidden;
 
-    box-shadow:
-        0 8px 25px rgba(0, 0, 0, 0.15);
-
-    padding: 8px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 
     opacity: 0;
-
     visibility: hidden;
-
     transform: translateY(-5px);
 
     transition:
@@ -288,55 +280,103 @@ body.user-page {
         visibility 0.2s ease;
 }
 
+/* DROPDOWN PROFILE */
+.dropdown-profile {
+    width: 100%;
+    min-height: 78px;
 
-/* DROPDOWN LINK */
+    padding: 14px 15px;
 
-.user-dropdown a {
+    background: #ed741d;
 
     display: flex;
-
     align-items: center;
+    gap: 12px;
 
-    gap: 10px;
-
-    padding: 11px 12px;
-
-    color: #333;
-
-    text-decoration: none;
-
-    font-size: 14px;
-
-    border-radius: 7px;
+    color: white;
 }
 
+.dropdown-profile-photo {
+    width: 45px;
+    height: 45px;
 
-/* DROPDOWN HOVER */
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: white;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #ed741d;
+    font-size: 21px;
+}
+
+.dropdown-profile-photo {
+    width: 45px;
+    height: 45px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: white;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #ed741d;
+    font-size: 21px;
+}
+
+.dropdown-menu-list {
+    padding: 7px;
+}
+
+/* DROPDOWN LINK */
+.user-dropdown a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 16px;
+    color: #333;
+    text-decoration: none;
+    font-family: 'Poppins', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    transition: background 0.2s ease;
+}
 
 .user-dropdown a:hover {
-
-    background: #fff1df;
-
-    color: #ef7518;
+    background: #f5f5f5;
 }
 
+.user-dropdown a i {
+    width: 18px;
+    text-align: center;
+    color: #e58137;
+    font-size: 17px;
+}
+
+.user-dropdown a:last-child {
+    border-top: 1px solid #e0e0e0;
+    margin-top: 5px;
+    padding-top: 12px;
+}
 
 /* DROPDOWN TERBUKA */
-
 .user-menu.open .user-dropdown {
-
     opacity: 1;
-
     visibility: visible;
-
     transform: translateY(0);
 }
 
 
 /* ARROW BERPUTAR */
-
 .user-menu.open .user-arrow {
-
     transform: rotate(180deg);
 }
 
@@ -349,7 +389,7 @@ body.user-page {
 
     width: 100%;
 
-    height: 95px;
+    height: 70px;
 
     background: #303847;
 

@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from app.models import User, Vehicle, Rental
 from sqlalchemy import or_
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from functools import wraps
 from app import db
 
@@ -27,7 +27,7 @@ def welcome():
 
 
 # =========================================================
-# HALAMAN UTAMA
+# HALAMAN UTAMA USER
 # =========================================================
 @bp.route('/home')
 def index():
@@ -50,6 +50,146 @@ def index():
         user=user,
         current_date=current_date,
         current_time=current_time
+    )
+
+
+# =========================================================
+# HALAMAN PENCARIAN USER
+# =========================================================
+@bp.route('/hasil-pencarian')
+def hasil_pencarian():
+
+    # Ambil data dari form pencarian
+    pickup_date = request.args.get('date')
+    pickup_time = request.args.get('time')
+    duration = request.args.get('duration', type=int)
+
+    min_price = request.args.get('min_price', type=float)
+    max_price = request.args.get('max_price', type=float)
+
+    vehicle_type = request.args.get('vehicle_type', 'mobil')
+
+    query = Vehicle.query
+
+    if vehicle_type:
+        query = query.filter(
+            Vehicle.vehicle_type.ilike(vehicle_type)
+        )
+
+    if min_price is not None:
+        query = query.filter(
+            Vehicle.price_per_day >= min_price
+        )
+
+    if max_price is not None:
+        query = query.filter(
+            Vehicle.price_per_day <= max_price
+        )
+
+    vehicles = query.all()
+
+    # Kalau tanggal belum dikirim
+    if not pickup_date:
+        pickup_date = datetime.now().strftime('%d %B %Y')
+
+    else:
+        try:
+            pickup_date = datetime.strptime(
+                pickup_date,
+                '%Y-%m-%d'
+            ).strftime('%d %B %Y')
+
+        except ValueError:
+            pass
+
+    # Kalau waktu belum dikirim
+    if not pickup_time:
+        pickup_time = datetime.now().strftime('%H:%M')
+
+    # Hitung tanggal pengembalian
+    if duration:
+        try:
+            start_date = datetime.strptime(
+                request.args.get('date'),
+                '%Y-%m-%d'
+            )
+
+            return_datetime = start_date + timedelta(days=duration)
+
+            return_date = return_datetime.strftime(
+                '%d %B %Y'
+            )
+
+        except (ValueError, TypeError):
+            return_date = pickup_date
+
+    else:
+        return_date = pickup_date
+
+    return_time = pickup_time
+
+    user = None
+
+    if 'user_id' in session:
+        user = User.query.get(session['user_id'])
+
+    return render_template(
+        'halPencarianUser.html',
+        vehicles=vehicles,
+        user=user,
+        pickup_date=pickup_date,
+        pickup_time=pickup_time,
+        return_date=return_date,
+        return_time=return_time,
+        duration=duration,
+        min_price=min_price,
+        max_price=max_price,
+        vehicle_type=vehicle_type
+    )
+
+
+
+@bp.route('/pesanan')
+def pesanan():
+    vehicle_id = request.args.get('vehicle_id', type=int)
+
+    if not vehicle_id:
+        flash('Kendaraan belum dipilih.')
+        return redirect(url_for('main.index'))
+
+    vehicle = Vehicle.query.get_or_404(vehicle_id)
+
+    user = None
+    if 'user_id' in session:
+        user = User.query.get(session['user_id'])
+
+    if not user:
+        return redirect(url_for('main.login'))
+
+    # Ambil data pencarian sebelumnya
+    pickup_date = request.args.get('date')
+    duration = request.args.get('duration', type=int)
+
+    if not pickup_date:
+        pickup_date = datetime.now().date()
+    else:
+        pickup_date = datetime.strptime(
+            pickup_date,
+            '%Y-%m-%d'
+        ).date()
+
+    if not duration:
+        duration = 1
+
+    end_date = pickup_date + timedelta(days=duration)
+
+    return render_template(
+        'pesananUser.html',
+        user=user,
+        vehicle=vehicle,
+        pickup_date=pickup_date,
+        end_date=end_date,
+        duration=duration
     )
 
 
@@ -80,6 +220,7 @@ def login():
             return redirect(url_for('main.login'))
             
     return render_template('loginRegister.html', mode='login')
+
 
 # =========================================================
 # HALAMAN ADMIN
