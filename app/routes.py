@@ -1,10 +1,22 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
-from app.models import User, Vehicle
+from app.models import User, Vehicle, Rental
 from sqlalchemy import or_
-from datetime import datetime
+from datetime import datetime, date
+from functools import wraps
 from app import db
 
 bp = Blueprint('main', __name__)
+
+BULAN_ID = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
+            'Agustus', 'September', 'Oktober', 'November', 'Desember']
+
+
+@bp.app_template_filter('tanggal_id')
+def tanggal_id(value):
+    """Format tanggal ke Bahasa Indonesia, contoh: 01 Oktober 2026"""
+    if not value:
+        return '-'
+    return f"{value.day:02d} {BULAN_ID[value.month - 1]} {value.year}"
 
 # =========================================================
 # HALAMAN OPENING
@@ -72,15 +84,124 @@ def login():
 # =========================================================
 # HALAMAN ADMIN
 # =========================================================
-@bp.route('/admin-dashboard')
+def admin_required(view_func):
+    """Decorator: hanya user dengan role 'admin' yang boleh masuk."""
+    @wraps(view_func)
+    def wrapper(*args, **kwargs):
+        if 'user_id' not in session or session.get('user_role') != 'admin':
+            flash('Anda tidak memiliki akses ke halaman ini!')
+            return redirect(url_for('main.login'))
+        return view_func(*args, **kwargs)
+    return wrapper
+
+
+def admin_context():
+    """Data yang dipakai bersama oleh semua halaman admin (navbar & notifikasi)."""
+    pending = (Rental.query
+               .filter_by(status=Rental.STATUS_MENUNGGU)
+               .order_by(Rental.created_at.desc())
+               .all())
+    return {
+        'admin': User.query.get(session['user_id']),
+        'pending_rentals': pending,
+    }
+
+
+@bp.route('/admin/dashboard')
+@admin_required
 def admin_dashboard():
-    # Keamanan ekstra: Cegah penyusup yang bukan admin
-    if 'user_id' not in session or session.get('user_role') != 'admin':
-        flash('Anda tidak memiliki akses ke halaman ini!')
-        return redirect(url_for('main.login'))
-        
-    user = User.query.get(session['user_id'])
-    return render_template('halAdminMentahan.html', user=user)
+    today = date.today()
+
+    # ---------- KARTU STATISTIK ----------
+    total_vehicles = Vehicle.query.count()
+    rented_vehicle_ids = {r.vehicle_id for r in
+                          Rental.query.filter_by(status=Rental.STATUS_BERJALAN).all()}
+    available_vehicles = total_vehicles - len(rented_vehicle_ids)
+
+    running = Rental.query.filter_by(status=Rental.STATUS_BERJALAN).count()
+    waiting = Rental.query.filter_by(status=Rental.STATUS_MENUNGGU).count()
+    active_total = running + waiting
+
+    new_today = (Rental.query
+                 .filter(Rental.status == Rental.STATUS_MENUNGGU,
+                         db.func.date(Rental.created_at) == today.isoformat())
+                 .count())
+
+    # ---------- TABEL PENYEWAAN TERBARU (search + pagination) ----------
+    q = request.args.get('q', '').strip()
+    page = request.args.get('page', 1, type=int)
+
+    query = Rental.query.join(User).join(Vehicle)
+    if q:
+        pattern = f'%{q}%'
+        query = query.filter(or_(
+            Rental.booking_code.ilike(pattern),
+            User.name.ilike(pattern),
+            Vehicle.brand.ilike(pattern),
+            Vehicle.model.ilike(pattern),
+        ))
+
+    pagination = query.order_by(Rental.created_at.desc()).paginate(
+        page=page, per_page=5, error_out=False)
+
+    return render_template(
+        'admin/dashboard.html',
+        active_menu='dashboard',
+        total_vehicles=total_vehicles,
+        available_vehicles=available_vehicles,
+        active_total=active_total,
+        running=running,
+        waiting=waiting,
+        new_today=new_today,
+        pagination=pagination,
+        q=q,
+        statuses=Rental.ALL_STATUS,
+        **admin_context()
+    )
+
+
+@bp.route('/admin/penyewaan/<int:rental_id>/status', methods=['POST'])
+@admin_required
+def admin_update_rental_status(rental_id):
+    rental = Rental.query.get_or_404(rental_id)
+    new_status = request.form.get('status')
+
+    if new_status not in Rental.ALL_STATUS:
+        flash('Status tidak valid.')
+    else:
+        rental.status = new_status
+        db.session.commit()
+        flash(f'Status {rental.booking_code} diubah menjadi "{new_status}".')
+
+    return redirect(request.referrer or url_for('main.admin_dashboard'))
+
+
+@bp.route('/admin/kendaraan')
+@admin_required
+def admin_kendaraan():
+    return render_template('admin/placeholder.html', active_menu='kendaraan',
+                           title='Kendaraan', icon='fa-car', **admin_context())
+
+
+@bp.route('/admin/penyewaan')
+@admin_required
+def admin_penyewaan():
+    return render_template('admin/placeholder.html', active_menu='penyewaan',
+                           title='Penyewaan', icon='fa-file-signature', **admin_context())
+
+
+@bp.route('/admin/pelanggan')
+@admin_required
+def admin_pelanggan():
+    return render_template('admin/placeholder.html', active_menu='pelanggan',
+                           title='Pelanggan', icon='fa-users', **admin_context())
+
+
+@bp.route('/admin/sopir')
+@admin_required
+def admin_sopir():
+    return render_template('admin/placeholder.html', active_menu='sopir',
+                           title='Sopir', icon='fa-id-card', **admin_context())
 
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
@@ -128,4 +249,5 @@ def logout():
     session.pop('user_id', None)
     session.pop('user_name', None)
     session.pop('user_email', None)
+    session.pop('user_role', None)
     return redirect(url_for('main.login'))

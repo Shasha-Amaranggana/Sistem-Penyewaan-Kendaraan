@@ -3,35 +3,188 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard (Mentahan)</title>
+    <title>Dashboard Admin - KeSanaSini</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: sans-serif; padding: 20px; }
-        .header { background-color: #333; color: white; padding: 15px; margin-bottom: 20px; }
-        .card { border: 1px solid #ccc; padding: 15px; margin-bottom: 10px; }
-        .logout-btn { color: red; text-decoration: none; font-weight: bold; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            width: 100vw;
+            min-height: 100vh;
+            /* Pasang background langit senja dari Canva */
+            background-image: url("{{ url_for('static', filename='images/admin_bg.jpg') }}");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        /* Karena background sangat terang (senja), kita buat kotak kaca agak gelap (Glassmorphism) */
+        .dashboard-container {
+            width: 100%;
+            max-width: 1000px;
+            background: rgba(20, 20, 20, 0.7); /* Transparan gelap */
+            backdrop-filter: blur(10px); /* Efek kaca buram */
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 40px;
+            color: #fff;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .header-left h1 {
+            font-size: 32px;
+            font-weight: 800;
+            color: #FFBE0C; /* Kuning tema web */
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .header-left p {
+            color: #ddd;
+            font-size: 16px;
+        }
+
+        .btn-logout {
+            background-color: #D62828;
+            color: white;
+            padding: 10px 25px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 2px solid transparent;
+        }
+
+        .btn-logout:hover {
+            background-color: transparent;
+            border-color: #D62828;
+            color: #D62828;
+        }
+
+        .grid-menu {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-5px);
+            border-color: #FFBE0C;
+        }
+
+        .card-icon {
+            font-size: 40px;
+            color: #FFBE0C;
+        }
+
+        .card h3 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .card p {
+            color: #ccc;
+            line-height: 1.5;
+            font-size: 15px;
+            flex-grow: 1;
+        }
+
+        .btn-action {
+            background-color: #FFBE0C;
+            color: #111;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-action:hover {
+            background-color: #ffc933;
+            transform: scale(1.02);
+        }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>Dashboard Admin</h1>
-        <p>Selamat datang, Bos <strong>{{ user.name }}</strong>!</p>
-        <p>Email: {{ user.email }} | Jabatan: {{ user.role }}</p>
-        <a href="{{ url_for('main.logout') }}" class="logout-btn">Log Out Keluar</a>
-    </div>
+    <div class="dashboard-container">
+        
+        <!-- HEADER -->
+        <div class="header">
+            <div class="header-left">
+                <h1>PANEL ADMIN</h1>
+                <p>Selamat datang kembali, Bos <strong>{{ user.name }}</strong></p>
+            </div>
+            <a href="{{ url_for('main.logout') }}" class="btn-logout">
+                <i class="fa-solid fa-right-from-bracket"></i> Keluar
+            </a>
+        </div>
 
-    <h2>Panel Kendali (Segera Hadir)</h2>
-    
-    <div class="card">
-        <h3>Kelola Mobil</h3>
-        <p>Di sinilah nanti admin bisa menambah, mengedit, atau menghapus daftar mobil dari database.</p>
-        <button disabled>Tambah Mobil Baru</button>
-    </div>
-    
-    <div class="card">
-        <h3>Kelola Pesanan</h3>
-        <p>Di sinilah admin bisa melihat daftar pengguna yang sedang menyewa mobil.</p>
-        <button disabled>Lihat Daftar Sewa</button>
+        <!-- MENU CARDS -->
+        <div class="grid-menu">
+            
+            <div class="card">
+                <i class="fa-solid fa-car card-icon"></i>
+                <h3>Kelola Kendaraan</h3>
+                <p>Tambah mobil baru, edit harga sewa harian, atau hapus mobil yang sedang turun mesin dari database.</p>
+                <button class="btn-action">Masuk ke Garasi</button>
+            </div>
+
+            <div class="card">
+                <i class="fa-solid fa-file-invoice-dollar card-icon"></i>
+                <h3>Data Pesanan</h3>
+                <p>Pantau siapa saja yang sedang menyewa mobil, cek status pembayaran, dan tandai mobil yang sudah kembali.</p>
+                <button class="btn-action">Lihat Transaksi</button>
+            </div>
+
+        </div>
+
     </div>
 
 </body>

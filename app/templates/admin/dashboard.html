@@ -1,0 +1,188 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<!-- ================= KARTU STATISTIK ================= -->
+<section class="stats">
+    <div class="stat-card">
+        <div class="stat-top">
+            <div>
+                <div class="stat-title">Kendaraan Tersedia</div>
+                <div class="stat-total">Total: {{ total_vehicles }}</div>
+            </div>
+            <div class="stat-icon"><i class="fa-solid fa-car-side"></i></div>
+        </div>
+        <div class="stat-sub">{{ available_vehicles }} unit di garasi</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-top">
+            <div>
+                <div class="stat-title">Penyewaan Aktif</div>
+                <div class="stat-total">Total: {{ active_total }}</div>
+            </div>
+            <div class="stat-icon"><i class="fa-solid fa-file-contract"></i></div>
+        </div>
+        <div class="stat-sub">{{ running }} sedang berjalan</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-top">
+            <div>
+                <div class="stat-title">Tunggu Konfirmasi</div>
+                <div class="stat-total">Total: {{ waiting }}</div>
+            </div>
+            <div class="stat-icon"><i class="fa-regular fa-circle-check"></i></div>
+        </div>
+        <div class="stat-sub">{{ new_today }} reservasi baru hari ini</div>
+    </div>
+</section>
+
+<!-- ================= TABEL PENYEWAAN TERBARU ================= -->
+<section class="panel">
+    <div class="panel-head">
+        <div class="panel-title">Penyewaan Terbaru</div>
+        {% if q %}
+            <div class="search-info">
+                Hasil pencarian "<b>{{ q }}</b>" ({{ pagination.total }}) ·
+                <a href="{{ url_for('main.admin_dashboard') }}">Reset</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID Booking</th>
+                <th>Pelanggan</th>
+                <th>Mobil</th>
+                <th>Tanggal Sewa</th>
+                <th>Tanggal Kembali</th>
+                <th class="center">Status</th>
+                <th class="center">Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in pagination.items %}
+            <tr>
+                <td>#{{ r.booking_code }}</td>
+                <td>{{ r.user.name }}</td>
+                <td>{{ r.vehicle.full_name }}</td>
+                <td>{{ r.start_date|tanggal_id }}</td>
+                <td>{{ r.end_date|tanggal_id }}</td>
+                <td class="center"><span class="badge badge-{{ r.status }}">{{ r.status }}</span></td>
+                <td class="center">
+                    <button class="btn-sm" type="button"
+                        onclick="openView(this)"
+                        data-code="{{ r.booking_code }}"
+                        data-user="{{ r.user.name }}"
+                        data-phone="{{ r.user.phone }}"
+                        data-vehicle="{{ r.vehicle.full_name }}"
+                        data-plate="{{ r.vehicle.vehicle_number }}"
+                        data-start="{{ r.start_date|tanggal_id }}"
+                        data-end="{{ r.end_date|tanggal_id }}"
+                        data-days="{{ r.duration_days }}"
+                        data-total="Rp {{ '{:,.0f}'.format(r.total_price).replace(',', '.') }}"
+                        data-status="{{ r.status }}">View</button>
+                    <button class="btn-sm" type="button"
+                        onclick="openEdit(this)"
+                        data-code="{{ r.booking_code }}"
+                        data-status="{{ r.status }}"
+                        data-action="{{ url_for('main.admin_update_rental_status', rental_id=r.id) }}">Edit</button>
+                </td>
+            </tr>
+            {% else %}
+            <tr class="empty-row"><td colspan="7">Tidak ada data penyewaan.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Pagination -->
+    {% if pagination.pages > 0 %}
+    <div class="pagination">
+        <a class="page-btn {{ 'disabled' if pagination.page == 1 }}"
+           href="{{ url_for('main.admin_dashboard', page=1, q=q or None) }}">|&lsaquo;</a>
+        <a class="page-btn {{ 'disabled' if not pagination.has_prev }}"
+           href="{{ url_for('main.admin_dashboard', page=pagination.prev_num or 1, q=q or None) }}">&lsaquo;</a>
+
+        {% for p in pagination.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=1) %}
+            {% if p %}
+                <a class="page-btn {{ 'active' if p == pagination.page }}"
+                   href="{{ url_for('main.admin_dashboard', page=p, q=q or None) }}">{{ p }}</a>
+            {% else %}
+                <span class="page-btn disabled">…</span>
+            {% endif %}
+        {% endfor %}
+
+        <a class="page-btn {{ 'disabled' if not pagination.has_next }}"
+           href="{{ url_for('main.admin_dashboard', page=pagination.next_num or pagination.pages, q=q or None) }}">&rsaquo;</a>
+        <a class="page-btn {{ 'disabled' if pagination.page == pagination.pages }}"
+           href="{{ url_for('main.admin_dashboard', page=pagination.pages, q=q or None) }}">&rsaquo;|</a>
+    </div>
+    {% endif %}
+</section>
+
+<!-- ================= MODAL VIEW ================= -->
+<div class="modal-overlay" id="viewModal" onclick="closeModal(event, 'viewModal')">
+    <div class="modal">
+        <h3>Detail Penyewaan <button class="modal-close" onclick="hideModal('viewModal')">&times;</button></h3>
+        <div id="viewBody"></div>
+    </div>
+</div>
+
+<!-- ================= MODAL EDIT STATUS ================= -->
+<div class="modal-overlay" id="editModal" onclick="closeModal(event, 'editModal')">
+    <div class="modal">
+        <h3>Ubah Status <span id="editCode" style="color:#F07F2A;margin-left:6px"></span>
+            <button class="modal-close" type="button" onclick="hideModal('editModal')">&times;</button></h3>
+        <form method="POST" id="editForm">
+            <label for="editStatus">Status penyewaan</label>
+            <select name="status" id="editStatus">
+                {% for s in statuses %}
+                    <option value="{{ s }}">{{ s }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn-primary">Simpan Perubahan</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function showModal(id) { document.getElementById(id).classList.add('show'); }
+    function hideModal(id) { document.getElementById(id).classList.remove('show'); }
+    function closeModal(e, id) { if (e.target.id === id) hideModal(id); }
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') { hideModal('viewModal'); hideModal('editModal'); }
+    });
+
+    function openView(btn) {
+        var d = btn.dataset;
+        var rows = [
+            ['ID Booking', '#' + d.code],
+            ['Pelanggan', d.user],
+            ['No. HP', d.phone],
+            ['Kendaraan', d.vehicle],
+            ['Plat Nomor', d.plate],
+            ['Tanggal Sewa', d.start],
+            ['Tanggal Kembali', d.end],
+            ['Durasi', d.days + ' hari'],
+            ['Total Biaya', d.total],
+            ['Status', '<span class="badge badge-' + d.status + '">' + d.status + '</span>']
+        ];
+        document.getElementById('viewBody').innerHTML = rows.map(function (r) {
+            return '<div class="detail-row"><span>' + r[0] + '</span><span>' + r[1] + '</span></div>';
+        }).join('');
+        showModal('viewModal');
+    }
+
+    function openEdit(btn) {
+        document.getElementById('editCode').textContent = '#' + btn.dataset.code;
+        document.getElementById('editStatus').value = btn.dataset.status;
+        document.getElementById('editForm').action = btn.dataset.action;
+        showModal('editModal');
+    }
+</script>
+{% endblock %}

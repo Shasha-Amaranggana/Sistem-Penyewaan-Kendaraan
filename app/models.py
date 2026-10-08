@@ -1,5 +1,6 @@
 from app import db
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
 # user model
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -59,3 +60,42 @@ class Vehicle(db.Model):
         db.String(30),
         nullable=False
     )
+
+    @property
+    def full_name(self):
+        return f"{self.brand} {self.model}"
+
+
+# =========================================================
+# RENTAL MODEL (Data Penyewaan)
+# =========================================================
+class Rental(db.Model):
+    # Daftar status yang valid
+    STATUS_MENUNGGU = 'Menunggu'
+    STATUS_BERJALAN = 'Berjalan'
+    STATUS_SELESAI = 'Selesai'
+    STATUS_BATAL = 'Batal'
+    ALL_STATUS = [STATUS_MENUNGGU, STATUS_BERJALAN, STATUS_SELESAI, STATUS_BATAL]
+
+    id = db.Column(db.Integer, primary_key=True)
+    booking_code = db.Column(db.String(20), unique=True, nullable=False)
+
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    vehicle_id = db.Column(db.Integer, db.ForeignKey('vehicle.id'), nullable=False)
+
+    start_date = db.Column(db.Date, nullable=False)
+    end_date = db.Column(db.Date, nullable=False)
+    status = db.Column(db.String(20), nullable=False, default=STATUS_MENUNGGU)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
+
+    # Relasi antar objek (OOP): rental.user dan rental.vehicle
+    user = db.relationship('User', backref=db.backref('rentals', lazy=True))
+    vehicle = db.relationship('Vehicle', backref=db.backref('rentals', lazy=True))
+
+    @property
+    def duration_days(self):
+        return (self.end_date - self.start_date).days
+
+    @property
+    def total_price(self):
+        return self.duration_days * self.vehicle.price_per_day
