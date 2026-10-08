@@ -1,7 +1,11 @@
 from app import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
-# user model
+
+
+# =========================================================
+# USER MODEL (Class User)
+# =========================================================
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
@@ -21,41 +25,35 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+
+# =========================================================
+# KENDARAAN MODEL (Class Vehicle)
+# =========================================================
 class Vehicle(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-
     photo = db.Column(db.String(255), nullable=False)
-
     brand = db.Column(db.String(50), nullable=False)
-
     model = db.Column(db.String(100), nullable=False)
-
     vehicle_number = db.Column(
         db.String(20),
         unique=True,
         nullable=False
     )
-
     year = db.Column(db.Integer, nullable=False)
-
     vehicle_type = db.Column(
         db.String(20),
         nullable=False
     )
-
     seats = db.Column(db.Integer, nullable=False)
-
     luggage = db.Column(
         db.Integer,
         nullable=False,
         default=0
     )
-
     price_per_day = db.Column(
         db.Integer,
         nullable=False
     )
-
     rental_type = db.Column(
         db.String(30),
         nullable=False
