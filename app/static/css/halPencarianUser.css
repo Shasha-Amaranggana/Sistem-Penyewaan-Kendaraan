@@ -1,0 +1,334 @@
+/* =====================================================
+        RESET
+===================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* =====================================================
+   HERO
+===================================================== */
+.result-hero {
+    width: 100%;
+    min-height: 515px;
+    overflow: hidden;
+
+    position: relative;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+/* =====================================================
+   SEARCH BOX
+===================================================== */
+.result-search-box {
+    width: 60%;
+    max-width: 1050px;
+    min-height: 60px;
+    border-radius: 6px;
+    background: white;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+
+    margin-bottom: 0;
+}
+
+.result-search-info {
+    padding: 15px 22px;
+    flex: 1;
+}
+
+.result-search-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #555;
+
+    margin-bottom: 8px;
+}
+
+.result-search-detail {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    font-size: 13px;
+    color: #666;
+}
+
+.arrow {
+    font-size: 18px;
+    color: #777;
+}
+
+.change-search-button {
+    width: 145px;
+    height: 85px;
+
+    border: none;
+
+    background: #f5b800;
+    color: #111;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+
+/* =====================================================
+   FILTER
+===================================================== */
+
+/* =====================================================
+   FILTER BAR
+===================================================== */
+
+.filter-bar {
+    width: 100%;
+    min-height: 76px;
+
+    background: #303847;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 50px;
+
+    padding: 10px 40px 10px 660px;
+
+    box-sizing: border-box;
+}
+
+.filter-title {
+    color: white;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.sort-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sort-label {
+    display: none;
+}
+
+.sort-select {
+    width: 110px;
+    height: 30px;
+
+    border: none;
+    border-radius: 20px;
+
+    padding: 0 12px;
+
+    background: white;
+    color: #333;
+
+    font-size: 10px;
+    font-weight: 700;
+}
+
+
+/* =====================================================
+   VEHICLE SECTION
+===================================================== */
+
+.result-vehicle-section {
+    width: 100%;
+    min-height: 400px;
+
+    padding: 25px 0 60px;
+
+    background-color: #ffedcf;
+
+    background-image:
+        url("../images/vehicle-pattern.png"),
+        linear-gradient(
+            to bottom,
+            #ffe2b5 0%,
+            #ffedcf 100%
+        );
+
+    background-repeat:
+        repeat,
+        no-repeat;
+
+    background-position:
+        center bottom,
+        center;
+
+    background-size:
+        500px auto,
+        100% 100%;
+}
+
+
+/* =====================================================
+   VEHICLE LIST
+===================================================== */
+
+.result-vehicle-list {
+    width: 70%;
+    max-width: 1050px;
+
+    margin: auto;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 15px;
+}
+
+
+/* =====================================================
+   VEHICLE CARD
+===================================================== */
+
+.result-vehicle-card {
+    width: 100%;
+    min-height: 120px;
+
+    background: white;
+
+    border-radius: 6px;
+
+    padding: 12px 20px;
+
+    display: flex;
+    align-items: center;
+
+    box-shadow: 0 2px 7px rgba(0, 0, 0, 0.13);
+
+    box-sizing: border-box;
+}
+
+
+/* =====================================================
+   VEHICLE IMAGE
+===================================================== */
+
+.result-vehicle-image {
+    width: 190px;
+    height: 95px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+}
+
+.result-vehicle-image img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+}
+
+
+/* =====================================================
+   VEHICLE INFO
+===================================================== */
+
+.result-vehicle-info {
+    flex: 1;
+
+    padding-left: 25px;
+
+    min-width: 0;
+}
+
+.result-vehicle-info h3 {
+    margin: 0 0 12px;
+
+    font-size: 18px;
+    font-weight: 700;
+
+    color: #555;
+}
+
+.result-vehicle-spec {
+    display: flex;
+    align-items: center;
+
+    gap: 20px;
+
+    font-size: 12px;
+
+    color: #777;
+}
+
+.result-vehicle-spec span {
+    display: flex;
+    align-items: center;
+
+    gap: 6px;
+}
+
+.result-vehicle-spec i {
+    font-size: 13px;
+    color: #777;
+}
+
+
+/* =====================================================
+   PRICE + BUTTON
+===================================================== */
+
+.result-vehicle-action {
+    width: 180px;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: flex-end;
+
+    gap: 10px;
+
+    flex-shrink: 0;
+}
+
+.result-vehicle-price {
+    font-size: 16px;
+    font-weight: 700;
+
+    color: #ed741d;
+
+    white-space: nowrap;
+}
+
+.rent-button {
+    width: 105px;
+    height: 34px;
+
+    border: none;
+    border-radius: 5px;
+
+    background: #ff9145;
+
+    color: white;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.rent-button:hover {
+    background: #ed741d;
+}

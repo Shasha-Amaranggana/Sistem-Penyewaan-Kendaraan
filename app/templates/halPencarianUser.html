@@ -1,0 +1,280 @@
+{% extends "base.html" %}
+
+{% block title %}
+KeSanaSini - Hasil Pencarian
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/halPencarianUser.css') }}">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+<section class="search-result-page">
+
+    <!-- =====================================================
+         HERO / BACKGROUND MOBIL
+    ====================================================== -->
+    <section class="result-hero">
+
+        <div class="result-search-box">
+
+            <div class="result-search-info">
+
+                <div class="result-search-title">
+                    Sewa Mobil
+                </div>
+
+                <div class="result-search-detail">
+
+                    <span>
+                        {{ pickup_date }}
+                    </span>
+
+                    <span class="separator">•</span>
+
+                    <span>
+                        {{ pickup_time }}
+                    </span>
+
+                    <span class="arrow">→</span>
+
+                    <span>
+                        {{ return_date }}
+                    </span>
+
+                    <span class="separator">•</span>
+
+                    <span>
+                        {{ return_time }}
+                    </span>
+
+                </div>
+
+            </div>
+
+            <button
+                type="button"
+                class="change-search-button"
+                onclick="window.location.href='{{ url_for('main.index') }}'">
+                GANTI PENCARIAN
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         FILTER BAR
+    ====================================================== -->
+
+    <section class="filter-bar">
+
+        <div class="filter-title">
+            Filter:
+        </div>
+
+        <div class="sort-wrapper">
+            <span class="sort-label">URUTKAN</span>
+
+            <select id="sortVehicle" class="sort-select">
+                <option value="default">URUTKAN</option>
+                <option value="price-low">Harga Terendah</option>
+                <option value="price-high">Harga Tertinggi</option>
+                <option value="name">Nama Kendaraan</option>
+            </select>
+
+            <i class="fa-solid fa-chevron-down"></i>
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         HASIL KENDARAAN
+    ====================================================== -->
+
+    <section class="result-vehicle-section">
+
+        <div class="result-vehicle-list" id="vehicleList">
+
+            {% if vehicles %}
+
+                {% for vehicle in vehicles %}
+
+                <div
+                    class="result-vehicle-card"
+                    data-price="{{ vehicle.price_per_day }}"
+                    data-name="{{ vehicle.brand }} {{ vehicle.model }}"
+                >
+
+                    <!-- GAMBAR -->
+                    <div class="result-vehicle-image">
+
+                        {% if vehicle.photo %}
+
+                        <img
+                            src="{{ url_for('static', filename='images/' + vehicle.photo) }}"
+                            alt="{{ vehicle.brand }} {{ vehicle.model }}">
+
+                        {% else %}
+
+                        <i class="fa-solid fa-car"></i>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- INFO -->
+                    <div class="result-vehicle-info">
+
+                        <h3>
+                            {{ vehicle.brand }} {{ vehicle.model }}
+                        </h3>
+
+                        <div class="result-vehicle-spec">
+
+                            <span>
+                                <i class="fa-solid fa-user-group"></i>
+                                {{ vehicle.seats }} Penumpang
+                            </span>
+
+                            <span>
+                                <i class="fa-solid fa-suitcase"></i>
+                                {{ vehicle.luggage }} Bagasi
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- HARGA + BUTTON -->
+                    <div class="result-vehicle-action">
+
+                        <div class="result-vehicle-price">
+                            Rp{{ "{:,.0f}".format(vehicle.price_per_day).replace(',', '.') }},00/hari
+                        </div>
+
+                        <button
+                            type="button"
+                            class="rent-button"
+                            onclick="rentVehicle({{ vehicle.id }})">
+                            SEWA
+                        </button>
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="no-result">
+
+                    <i class="fa-solid fa-car"></i>
+
+                    <h3>
+                        Kendaraan tidak ditemukan
+                    </h3>
+
+                    <p>
+                        Coba ubah tanggal, harga, atau pilihan kendaraan.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </section>
+
+</section>
+
+
+<script>
+
+    // =====================================================
+    // SORT KENDARAAN
+    // =====================================================
+
+    const sortVehicle = document.getElementById('sortVehicle');
+    const vehicleList = document.getElementById('vehicleList');
+
+    if (sortVehicle && vehicleList) {
+
+        sortVehicle.addEventListener('change', function () {
+
+            const cards = Array.from(
+                vehicleList.querySelectorAll('.result-vehicle-card')
+            );
+
+            const sortType = this.value;
+
+            if (sortType === 'price-low') {
+
+                cards.sort(function (a, b) {
+
+                    return Number(a.dataset.price)
+                         - Number(b.dataset.price);
+
+                });
+
+            }
+
+            else if (sortType === 'price-high') {
+
+                cards.sort(function (a, b) {
+
+                    return Number(b.dataset.price)
+                         - Number(a.dataset.price);
+
+                });
+
+            }
+
+            else if (sortType === 'name') {
+
+                cards.sort(function (a, b) {
+
+                    return a.dataset.name.localeCompare(
+                        b.dataset.name
+                    );
+
+                });
+
+            }
+
+            cards.forEach(function (card) {
+
+                vehicleList.appendChild(card);
+
+            });
+
+        });
+
+    }
+
+
+    // =====================================================
+    // TOMBOL SEWA
+    // =====================================================
+
+    function rentVehicle(vehicleId) {
+        window.location.href =
+            "{{ url_for('main.pesanan') }}" +
+            "?vehicle_id=" +
+            vehicleId +
+            "&date={{ request.args.get('date', '') }}" +
+            "&duration={{ request.args.get('duration', 1) }}";
+    }
+
+</script>
+
+{% endblock %}

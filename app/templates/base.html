@@ -102,22 +102,45 @@
 
             <div class="user-dropdown">
 
-                <a href="#">
+                <div class="dropdown-profile">
+                    <div class="dropdown-profile-photo">
+                        <i class="fa-regular fa-user"></i>
+                    </div>
 
-                    <i class="fa-regular fa-user"></i>
+                    <div class="dropdown-profile-info">
+                        <strong>{{ user.name }}</strong>
+                        <span>{{ user.email }}</span>
+                    </div>
+                </div>
 
-                    Profil
+                <div class="dropdown-menu-list">
 
-                </a>
+                    <a href="#">
+                        <i class="fa-regular fa-user"></i>
+                        <span>Data Diri</span>
+                    </a>
 
+                    <a href="#">
+                        <i class="fa-solid fa-receipt"></i>
+                        <span>Pesanan Terkini</span>
+                    </a>
 
-                <a href="{{ url_for('main.logout') }}">
+                    <a href="#">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                        <span>Riwayat Pesanan</span>
+                    </a>
 
-                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <a href="#">
+                        <i class="fa-regular fa-bell"></i>
+                        <span>Notifikasi</span>
+                    </a>
 
-                    Keluar
+                    <a href="{{ url_for('main.logout') }}">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <span>Logout</span>
+                    </a>
 
-                </a>
+                </div>
 
             </div>
 
