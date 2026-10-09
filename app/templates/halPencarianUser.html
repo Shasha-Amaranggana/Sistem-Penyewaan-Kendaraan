@@ -24,7 +24,7 @@ KeSanaSini - Hasil Pencarian
             <div class="result-search-info">
 
                 <div class="result-search-title">
-                    Sewa Mobil
+                    Sewa {{ 'Motor' if vehicle_type == 'motor' else 'Mobil' }}
                 </div>
 
                 <div class="result-search-detail">
@@ -55,13 +55,131 @@ KeSanaSini - Hasil Pencarian
 
             </div>
 
-            <button
-                type="button"
-                class="change-search-button"
-                onclick="window.location.href='{{ url_for('main.index') }}'">
-                GANTI PENCARIAN
-            </button>
+            <div class="change-search-area">
+                <button
+                    type="button"
+                    class="change-search-button"
+                    id="changeSearchButton">
+                    GANTI PENCARIAN
+                </button>
+            </div>
 
+        </div>
+
+
+        <div class="search-form-container" id="searchFormContainer" hidden>
+            <h3>Ubah Pencarian</h3>
+
+            <form
+                action="{{ url_for('main.hasil_pencarian') }}"
+                method="GET"
+                class="search-form"
+            >
+                <!-- Pilihan kendaraan -->
+                <div class="vehicle-type-options">
+                    <label class="vehicle-type-option">
+                        <input
+                            type="radio"
+                            name="vehicle_type"
+                            value="mobil"
+                            {% if vehicle_type != 'motor' %}checked{% endif %}
+                        >
+                        <i class="fa-solid fa-car"></i>
+                        <span>Mobil</span>
+                    </label>
+
+                    <label class="vehicle-type-option">
+                        <input
+                            type="radio"
+                            name="vehicle_type"
+                            value="motor"
+                            {% if vehicle_type == 'motor' %}checked{% endif %}
+                        >
+                        <i class="fa-solid fa-motorcycle"></i>
+                        <span>Motor</span>
+                    </label>
+                </div>
+
+                <!-- Tanggal, waktu, durasi, dan harga -->
+                <div class="search-form-fields">
+
+                    <label class="search-field">
+                        <span>Tanggal Pengambilan</span>
+                        <div class="field-input">
+                            <i class="fa-regular fa-calendar"></i>
+                            <input
+                                type="date"
+                                name="date"
+                                value="{{ request.args.get('date', '') }}"
+                                required
+                            >
+                        </div>
+                    </label>
+
+                    <label class="search-field">
+                        <span>Waktu Pengambilan</span>
+                        <div class="field-input">
+                            <i class="fa-regular fa-clock"></i>
+                            <input
+                                type="time"
+                                name="time"
+                                value="{{ request.args.get('time', '') }}"
+                                required
+                            >
+                        </div>
+                    </label>
+
+                    <label class="search-field">
+                        <span>Durasi Sewa</span>
+                        <div class="field-input">
+                            <i class="fa-regular fa-hourglass-half"></i>
+                            <input
+                                type="number"
+                                name="duration"
+                                min="1"
+                                value="{{ request.args.get('duration', 1) }}"
+                                required
+                            >
+                            <small>hari</small>
+                        </div>
+                    </label>
+
+                    <div class="search-price-filter">
+                        <span>Filter Harga</span>
+
+                        <div class="price-inputs">
+                            <label>
+                                <span>Rp</span>
+                                <input
+                                    type="number"
+                                    name="min_price"
+                                    min="0"
+                                    placeholder="300.000"
+                                    value="{{ request.args.get('min_price', '') }}"
+                                >
+                            </label>
+
+                            <span class="price-separator">-</span>
+
+                            <label>
+                                <span>Rp</span>
+                                <input
+                                    type="number"
+                                    name="max_price"
+                                    min="0"
+                                    placeholder="500.000"
+                                    value="{{ request.args.get('max_price', '') }}"
+                                >
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="search-submit-button">
+                        CARI
+                    </button>
+
+                </div>
+            </form>
         </div>
 
     </section>
@@ -86,8 +204,6 @@ KeSanaSini - Hasil Pencarian
                 <option value="price-high">Harga Tertinggi</option>
                 <option value="name">Nama Kendaraan</option>
             </select>
-
-            <i class="fa-solid fa-chevron-down"></i>
         </div>
 
     </section>
@@ -288,6 +404,16 @@ KeSanaSini - Hasil Pencarian
 
         window.location.href = base + vehicleId + "?" + query.toString();
     }
+
+    // BUKA / TUTUP FORM GANTI PENCARIAN
+
+    const changeSearchButton = document.getElementById('changeSearchButton');
+    const searchFormContainer = document.getElementById('searchFormContainer');
+
+    changeSearchButton.addEventListener('click', function () {
+        searchFormContainer.hidden = !searchFormContainer.hidden;
+    });
+    
 </script>
 
 {% endblock %}

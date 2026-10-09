@@ -14,8 +14,7 @@
 .result-hero {
     width: 100%;
     min-height: 515px;
-    overflow: hidden;
-
+    overflow: visible;
     position: relative;
 
     display: flex;
@@ -30,11 +29,11 @@
     width: 60%;
     max-width: 1050px;
     min-height: 60px;
-    border-radius: 6px;
+    border-radius: 5px;
     background: white;
 
     display: flex;
-    align-items: center;
+    align-items: stretch;
     justify-content: space-between;
 
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
@@ -43,25 +42,28 @@
 }
 
 .result-search-info {
-    padding: 15px 22px;
+    padding: 15px 20px;
     flex: 1;
+    min-width: 0;
+    background: white;
+
 }
 
 .result-search-title {
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 700;
     color: #555;
 
-    margin-bottom: 8px;
+    margin-bottom: 5px;
 }
 
 .result-search-detail {
     display: flex;
     align-items: center;
     gap: 8px;
-
-    font-size: 13px;
-    color: #666;
+    font-weight: 500;
+    font-size: 16px;
+    color: #777;
 }
 
 .arrow {
@@ -69,22 +71,327 @@
     color: #777;
 }
 
+.change-search-area {
+    width: 230px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 8px;
+
+    background: #e5e5e5;
+}
+
 .change-search-button {
-    width: 145px;
-    height: 85px;
-
+    width: 170px;
+    height: 38px;
     border: none;
-
-    background: #f5b800;
+    border-radius: 13px;
+    background: #ffbd27;
     color: #111;
 
-    font-size: 11px;
-    font-weight: 700;
+    font-size: 16px;
+    font-weight: 800;
 
     cursor: pointer;
+    white-space: nowrap;
+    transition:
+        all 0.25s ease;
+}
+
+.change-search-button:hover {
+    background: #ffca45;
+    transform: translateY(-2px);
+    box-shadow:
+        0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 
+/* FORM GANTI PENCARIAN */
+
+.search-form-container[hidden] {
+    display: none;
+}
+
+.search-form-container {
+    position: absolute;
+    top: calc(100% - 12px);
+    left: 50%;
+    transform: translateX(-50%);
+
+    width: 60%;
+    max-width: 1050px;
+    padding: 18px;
+
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.2);
+    z-index: 20;
+}
+
+
+/* JUDUL FORM */
+.search-form-container h3 {
+    margin: 0 0 14px;
+    color: #111;
+    font-size: 20px;
+    font-weight: 800;
+}
+
+/* FORM UTAMA */
+.search-form {
+    display: flex;
+    align-items: stretch;
+    gap: 12px;
+}
+
+/* LABEL INPUT */
+.search-field > span,
+.search-price-filter > span {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 10px;
+    font-weight: 600;
+    color: #555;
+}
+
+/* KOTAK INPUT */
+.field-input {
+    height: 34px;
+    padding: 0 8px;
+}
+
+.field-input input,
+.price-inputs input {
+    font-size: 11px;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* FILTER HARGA */
+.price-inputs {
+    height: 34px;
+}
+
+.price-inputs label {
+    height: 34px;
+}
+
+.price-separator {
+    color: #777;
+    font-size: 12px;
+}
+
+/* TOMBOL CARI */
+.search-submit-button {
+    height: 34px;
+    border-radius: 18px;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+    .search-form-container {
+        width: 90%;
+    }
+
+    .search-form {
+        flex-direction: column;
+    }
+
+    .vehicle-type-options {
+        width: 100%;
+        flex-direction: row;
+    }
+
+    .search-form-fields {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .search-price-filter,
+    .search-submit-button {
+        grid-column: 1 / -1;
+    }
+}
+
+
+
+
+
+/* Pilihan Mobil / Motor */
+
+.vehicle-type-options {
+    width: 145px;
+    flex-shrink: 0;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+
+    background: #f0f0f0;
+    border-radius: 5px;
+    padding: 6px;
+}
+
+.vehicle-type-option {
+    min-height: 35px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 0 8px;
+    border-radius: 4px;
+    cursor: pointer;
+
+    font-size: 12px;
+    color: #666;
+}
+
+.vehicle-type-option:has(input:checked) {
+    background: white;
+    color: #222;
+    font-weight: 700;
+    box-shadow: 0 1px 4px #00000020;
+}
+
+.vehicle-type-option input {
+    display: none;
+}
+
+.vehicle-type-option i {
+    width: 16px;
+}
+
+/* Bagian kanan */
+
+.search-form-fields {
+    flex: 1;
+    min-width: 0;
+
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    align-items: end;
+}
+
+.search-field,
+.search-price-filter {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    font-size: 10px;
+    color: #555;
+}
+
+.field-input,
+.price-inputs label {
+    min-width: 0;
+    height: 30px;
+
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    padding: 0 7px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background: white;
+}
+
+.field-input i {
+    color: #777;
+    flex-shrink: 0;
+}
+
+.field-input input,
+.price-inputs input {
+    width: 100%;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    font: 10px 'Poppins', sans-serif;
+}
+
+.field-input small {
+    white-space: nowrap;
+    color: #777;
+}
+
+.search-price-filter {
+    grid-column: 1 / 3;
+}
+
+.price-inputs {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.price-inputs label {
+    flex: 1;
+}
+
+.price-inputs label span {
+    color: #777;
+}
+
+.search-submit-button {
+    grid-column: 3;
+    justify-self: end;
+
+    width: 100%;
+    height: 32px;
+    align-self: end;
+
+    border: none;
+    border-radius: 15px;
+    background: #ffbd27;
+    color: #111;
+
+    font: 800 11px 'Poppins', sans-serif;
+    cursor: pointer;
+}
+
+.search-submit-button:hover {
+    background: #ffca45;
+}
+
+@media (max-width: 900px) {
+    .search-form-container {
+        width: 90%;
+    }
+
+    .search-form {
+        flex-direction: column;
+    }
+
+    .vehicle-type-options {
+        width: 100%;
+        flex-direction: row;
+    }
+
+    .vehicle-type-option {
+        flex: 1;
+    }
+
+    .search-form-fields {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .search-price-filter {
+        grid-column: 1 / -1;
+    }
+
+    .search-submit-button {
+        grid-column: 1 / -1;
+    }
+}
 /* =====================================================
    FILTER
 ===================================================== */
@@ -103,9 +410,9 @@
     align-items: center;
     justify-content: center;
 
-    gap: 50px;
+    gap: 700px;
 
-    padding: 10px 40px 10px 660px;
+    padding: 10px 40px 10px 40px;
 
     box-sizing: border-box;
 }
@@ -113,8 +420,8 @@
 .filter-title {
     color: white;
 
-    font-size: 14px;
-    font-weight: 600;
+    font-size: 20px;
+    font-weight: 700;
 }
 
 .sort-wrapper {
@@ -128,10 +435,10 @@
 }
 
 .sort-select {
-    width: 110px;
+    width: 150px;
     height: 30px;
 
-    border: none;
+    border: 2px solid #ff9145;
     border-radius: 20px;
 
     padding: 0 12px;
@@ -139,8 +446,11 @@
     background: white;
     color: #333;
 
-    font-size: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
     font-weight: 700;
+
+    cursor: pointer;
 }
 
 
@@ -149,32 +459,24 @@
 ===================================================== */
 
 .result-vehicle-section {
+    position: relative;
     width: 100%;
-    min-height: 400px;
-
-    padding: 25px 0 60px;
+    min-height: 380px;
+    padding: 35px 5% 50px;
 
     background-color: #ffedcf;
-
     background-image:
         url("../images/vehicle-pattern.png"),
         linear-gradient(
             to bottom,
-            #ffe2b5 0%,
+            #ffd8a2 0%,
+            #ffe8c4 40%,
             #ffedcf 100%
         );
 
-    background-repeat:
-        repeat,
-        no-repeat;
-
-    background-position:
-        center bottom,
-        center;
-
-    background-size:
-        500px auto,
-        100% 100%;
+    background-repeat: repeat, no-repeat;
+    background-position: center bottom, center;
+    background-size: 500px auto, 100% 100%;
 }
 
 
@@ -183,7 +485,7 @@
 ===================================================== */
 
 .result-vehicle-list {
-    width: 70%;
+    width: 67%;
     max-width: 1050px;
 
     margin: auto;

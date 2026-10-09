@@ -228,11 +228,8 @@ body.user-page {
 ===================================================== */
 
 .user-email {
-
     font-size: 17px;
-
-    font-weight: 700;
-
+    font-weight: 600;
     color: #333;
 }
 
@@ -296,6 +293,7 @@ body.user-page {
     color: white;
 }
 
+
 .dropdown-profile-photo {
     width: 45px;
     height: 45px;
@@ -314,22 +312,26 @@ body.user-page {
     font-size: 21px;
 }
 
-.dropdown-profile-photo {
-    width: 45px;
-    height: 45px;
+/* DROPDOWN PROFILE INFO */
 
-    flex-shrink: 0;
+.dropdown-profile-info {
+    flex: 1;
+    min-width: 0;
+}
 
-    border-radius: 50%;
+.dropdown-profile-info h3 {
+    font-size: 17px;
+    font-weight: 700;
+    white-space: nowrap;
+}
 
-    background: white;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    color: #ed741d;
-    font-size: 21px;
+.dropdown-profile-email {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 15px;
 }
 
 .dropdown-menu-list {

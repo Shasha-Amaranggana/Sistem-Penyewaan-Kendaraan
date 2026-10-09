@@ -109,7 +109,10 @@
 
                     <div class="dropdown-profile-info">
                         <strong>{{ user.name }}</strong>
-                        <span>{{ user.email }}</span>
+                        <span class="dropdown-profile-email"
+                            title="{{ user.email }}">
+                            {{ user.email }}
+                        </span>
                     </div>
                 </div>
 
