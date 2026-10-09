@@ -1,15 +1,22 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session, current_app
 from app.models import User, Vehicle, Rental, Review
 from sqlalchemy import or_
 from datetime import datetime, date, timedelta
+from werkzeug.utils import secure_filename
+from werkzeug.datastructures import MultiDict
 from functools import wraps
 from app import db
+import os
 
 bp = Blueprint('main', __name__)
 
 BULAN_ID = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
             'Agustus', 'September', 'Oktober', 'November', 'Desember']
 
+@bp.app_template_filter('rupiah')
+def rupiah(value):
+    """15000 -> 15.000"""
+    return f"{int(value or 0):,}".replace(',', '.')
 
 @bp.app_template_filter('tanggal_id')
 def tanggal_id(value):
@@ -233,8 +240,31 @@ def semua_ulasan(vehicle_id):
         star=star
     )
 
+PURPOSES = ['Liburan', 'Dinas / Bisnis', 'Acara keluarga', 'Pernikahan', 'Lainnya']
+REGIONS = ['Dalam kota', 'Luar kota']
+LOCATIONS = ['Kantor rental', 'Bandara SAMS Sepinggan']
+ALLOWED_DOC_EXT = {'jpg', 'jpeg', 'png', 'pdf'}
+
+def _save_document(file_storage, booking_code, kind):
+    """Simpan KTP/SIM ke static/uploads/dokumen. Return nama file, atau None."""
+    if not file_storage or not file_storage.filename:
+        return None
+    ext = file_storage.filename.rsplit('.', 1)[-1].lower()
+    if ext not in ALLOWED_DOC_EXT:
+        return None
+
+    folder = os.path.join(current_app.root_path, 'static', 'uploads', 'dokumen')
+    os.makedirs(folder, exist_ok=True)
+
+    filename = secure_filename(f"{booking_code}_{kind}.{ext}")
+    file_storage.save(os.path.join(folder, filename))
+    return filename
+
 @bp.route('/pesanan')
 def pesanan():
+    if 'user_id' not in session:
+        return redirect(url_for('main.login'))
+
     vehicle_id = request.args.get('vehicle_id', type=int)
 
     if not vehicle_id:
@@ -242,6 +272,7 @@ def pesanan():
         return redirect(url_for('main.index'))
 
     vehicle = Vehicle.query.get_or_404(vehicle_id)
+    can_driver = vehicle.rental_type.startswith('Sopir')
 
     user = None
     if 'user_id' in session:
@@ -267,14 +298,93 @@ def pesanan():
 
     end_date = pickup_date + timedelta(days=duration)
 
-    return render_template(
-        'pesananUser.html',
-        user=user,
-        vehicle=vehicle,
-        pickup_date=pickup_date,
+    def render_form(form):
+        return render_template(
+            'formsewaUser.html',
+            user=user,
+            vehicle=vehicle,
+            pickup_date=pickup_date,
+            end_date=end_date,
+            duration=duration,
+            can_driver=can_driver,
+            driver_fee=Rental.DRIVER_FEE,
+            accessories=Rental.ACCESSORIES,
+            insurances=Rental.INSURANCES,
+            purposes=PURPOSES,
+            regions=REGIONS,
+            locations=LOCATIONS,
+            form=form,
+        )
+
+    if request.method == 'GET':
+        return render_form(MultiDict())
+
+    # ---------- POST: validasi lalu simpan ----------
+    f = request.form
+    with_driver = can_driver and f.get('rental_type') == 'sopir'
+    accessories = [a for a in f.getlist('accessories') if a in Rental.ACCESSORIES]
+    insurance = f.get('insurance') if f.get('insurance') in Rental.INSURANCES else 'dasar'
+    destination = (f.get('destination_city') or '').strip()
+
+    errors = []
+    if not f.get('agree'):
+        errors.append('Anda harus menyetujui syarat dan ketentuan.')
+    if not destination:
+        errors.append('Kota tujuan wajib diisi.')
+    if not with_driver:
+        for field, label in (('ktp', 'KTP'), ('sim', 'SIM')):
+            up = request.files.get(field)
+            if not up or not up.filename:
+                errors.append(f'{label} wajib diunggah untuk sewa lepas kunci.')
+            elif up.filename.rsplit('.', 1)[-1].lower() not in ALLOWED_DOC_EXT:
+                errors.append(f'Format {label} harus JPG, PNG, atau PDF.')
+
+    # Cek ulang ketersediaan (bisa saja sudah dipesan orang lain)
+    bentrok = Rental.query.filter(
+        Rental.vehicle_id == vehicle.id,
+        Rental.status.in_([Rental.STATUS_MENUNGGU, Rental.STATUS_BERJALAN]),
+        Rental.start_date <= end_date,
+        Rental.end_date >= pickup_date
+    ).first()
+    if bentrok:
+        errors.append('Maaf, kendaraan sudah dipesan pada tanggal tersebut.')
+
+    if errors:
+        for e in errors:
+            flash(e)
+        return render_form(f)
+
+    # Kode booking: RMB + (1000 + nomor urut)
+    last = Rental.query.order_by(Rental.id.desc()).first()
+    booking_code = f"RMB{1000 + (last.id if last else 0) + 1}"
+
+    rental = Rental(
+        booking_code=booking_code,
+        user_id=user.id,
+        vehicle_id=vehicle.id,
+        start_date=pickup_date,
         end_date=end_date,
-        duration=duration
+        status=Rental.STATUS_MENUNGGU,
+        with_driver=with_driver,
+        accessories=','.join(accessories),
+        insurance=insurance,
+        purpose=f.get('purpose'),
+        region=f.get('region'),
+        destination_city=destination,
+        pickup_location=f.get('pickup_location'),
+        return_location=f.get('return_location'),
+        special_request=(f.get('special_request') or '').strip() or None,
     )
+
+    if not with_driver:
+        rental.ktp_file = _save_document(request.files.get('ktp'), booking_code, 'ktp')
+        rental.sim_file = _save_document(request.files.get('sim'), booking_code, 'sim')
+
+    db.session.add(rental)
+    db.session.commit()
+
+    flash(f'Pesanan {booking_code} berhasil dibuat. Menunggu konfirmasi admin.')
+    return redirect(url_for('main.index'))   
 
 
 # =========================================================
