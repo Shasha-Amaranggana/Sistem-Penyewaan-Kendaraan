@@ -275,6 +275,19 @@ KeSanaSini - Hasil Pencarian
             "&duration={{ request.args.get('duration', 1) }}";
     }
 
+    function rentVehicle(vehicleId) {
+        const params = new URLSearchParams(window.location.search);
+
+        const query = new URLSearchParams({
+            date: params.get('date') || '',
+            time: params.get('time') || '',
+            duration: params.get('duration') || 1
+        });
+
+        const base = "{{ url_for('main.detail_kendaraan', vehicle_id=0) }}".slice(0, -1);
+
+        window.location.href = base + vehicleId + "?" + query.toString();
+    }
 </script>
 
 {% endblock %}
