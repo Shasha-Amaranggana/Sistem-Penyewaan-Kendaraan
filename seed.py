@@ -1,5 +1,5 @@
 from app import create_app, db
-from app.models import Vehicle, User, Rental
+from app.models import Vehicle, User, Rental, Review
 from datetime import date, datetime, timedelta
 
 app = create_app()
@@ -45,6 +45,7 @@ with app.app_context():
     vehicles = [
         Vehicle(
             photo="rush1.png",
+            gallery="rush2.png, rush3.png",
             brand="Toyota",
             model="Rush",
             vehicle_number="KT 1234 XX",
@@ -53,10 +54,16 @@ with app.app_context():
             seats=7,
             luggage=2,
             price_per_day=500000,
-            rental_type="Sopir & Tanpa Sopir"
+            rental_type="Sopir & Tanpa Sopir",
+            fuel="Bensin",
+            transmission="Manual",
+            engine_cc=1500,
+            facilities="AC dingin, Airbag, Kamera belakang, Audio bluetooth, Ban serep",
+            notes="Servis terakhir 15 September 2026, Goresan kecil di bumper belakang kanan, Dilarang merokok di dalam mobil"
         ),
         Vehicle(
             photo="avanza1.png",
+            gallery="avanza2.png, avanza3.png",
             brand="Toyota",
             model="Grand New Avanza",
             vehicle_number="KT 2345 XX",
@@ -65,10 +72,16 @@ with app.app_context():
             seats=7,
             luggage=2,
             price_per_day=450000,
-            rental_type="Sopir & Tanpa Sopir"
+            rental_type="Sopir & Tanpa Sopir",
+            fuel="Bensin",
+            transmission="Manual",
+            engine_cc=1500,
+            facilities="AC dingin, Airbag, Kamera belakang, Ban serep",
+            notes="Servis terakhir 9 September 2026, Dilarang merokok di dalam mobil"
         ),
         Vehicle(
             photo="xenia1.png",
+            gallery="xenia2.png, xenia3.png",
             brand="Daihatsu",
             model="Xenia",
             vehicle_number="KT 3456 XX",
@@ -77,10 +90,16 @@ with app.app_context():
             seats=7,
             luggage=2,
             price_per_day=400000,
-            rental_type="Sopir & Tanpa Sopir"
+            rental_type="Sopir & Tanpa Sopir",
+            fuel="Bensin",
+            transmission="Manual",
+            engine_cc=1300,
+            facilities="AC dingin, Airbag, Kamera belakang, Ban serep",
+            notes="Servis terakhir 9 September 2026, Dilarang merokok di dalam mobil"
         ),
         Vehicle(
             photo="nmax1.png",
+            gallery="nmax2.png, nmax3.png",
             brand="Yamaha",
             model="NMAX",
             vehicle_number="KT 4567 XX",
@@ -89,10 +108,16 @@ with app.app_context():
             seats=2,
             luggage=1,
             price_per_day=120000,
-            rental_type="Tanpa Sopir"
+            rental_type="Tanpa Sopir",
+            fuel="Bensin",
+            transmission="Automatic",
+            engine_cc=155,
+            facilities="Ban tubeless, Lampu LED, Bagasi luas, pajak hidup",
+            notes="Servis terakhir 15 Agustus 2026"
         ),
         Vehicle(
             photo="vario1.png",
+            gallery="vario2.png, vario3.png",
             brand="Honda",
             model="Vario 110",
             vehicle_number="KT 5678 XX",
@@ -101,7 +126,12 @@ with app.app_context():
             seats=2,
             luggage=1,
             price_per_day=100000,
-            rental_type="Tanpa Sopir"
+            rental_type="Tanpa Sopir",
+            fuel="Bensin",
+            transmission="Automatic",
+            engine_cc=110,
+            facilities="Ban tubeless, Lampu LED, pajak hidup",
+            notes="Servis terakhir 25 September 2026, Goresan kecil di body kanan"
         )
     ]
 
@@ -161,6 +191,29 @@ with app.app_context():
             created_at=now - timedelta(days=days_ago, minutes=idx)
         ))
     db.session.add_all(rentals)
+
+        # 5b. BUAT ULASAN CONTOH
+    print("Membuat ulasan contoh...")
+    review_data = [
+        # (pelanggan, kendaraan, rating, komentar)
+        (budi,       rush,   5, "Proses seruh terima satset, bensin awal juga penuh. Mantappp"),
+        (udin,       rush,   5, "Mobil bersih, AC dingin"),
+        (yanto,      rush,   4, "Mobil nyaman dipakai keluarga, adminnya ramah"),
+        (adit,       rush,   4, "Kondisi mobil bagus, sesuai foto"),
+        (user_biasa, rush,   5, "Sewa gampang, mobil terawat"),
+        (budi,       rush,   3, "Mobil oke, tapi pengembalian sempat antre"),
+        (udin,       avanza, 4, "Luas dan nyaman untuk perjalanan jauh"),
+        (yanto,      xenia,  5, "Harga terjangkau, mobil bersih"),
+        (budi,       nmax,   5, "Motor enak dipakai keliling kota"),
+    ]
+    for i, (cust, veh, rating, komentar) in enumerate(review_data):
+        db.session.add(Review(
+            user_id=cust.id,
+            vehicle_id=veh.id,
+            rating=rating,
+            comment=komentar,
+            created_at=now - timedelta(days=i + 1)
+        ))
     
     # 6. SIMPAN SEMUA
     db.session.commit()

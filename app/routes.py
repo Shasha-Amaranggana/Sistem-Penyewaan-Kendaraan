@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
-from app.models import User, Vehicle, Rental
+from app.models import User, Vehicle, Rental, Review
 from sqlalchemy import or_
 from datetime import datetime, date, timedelta
 from functools import wraps
@@ -147,7 +147,91 @@ def hasil_pencarian():
         vehicle_type=vehicle_type
     )
 
+@bp.route('/detail-kendaraan/<int:vehicle_id>')
+def detail_kendaraan(vehicle_id):
+    if 'user_id' not in session:
+        return redirect(url_for('main.login'))
 
+    user = User.query.get(session['user_id'])
+    vehicle = Vehicle.query.get_or_404(vehicle_id)
+
+    # Data pencarian dibawa dari halaman sebelumnya lewat URL
+    date_str = request.args.get('date')
+    duration = request.args.get('duration', type=int) or 1
+    pickup_time = request.args.get('time') or '10:00'
+
+    try:
+        pickup_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+    except (ValueError, TypeError):
+        pickup_date = date.today()
+
+    end_date = pickup_date + timedelta(days=duration)
+    total = vehicle.price_per_day * duration
+
+    # Cek ketersediaan di tanggal tsb
+    bentrok = Rental.query.filter(
+        Rental.vehicle_id == vehicle.id,
+        Rental.status.in_([Rental.STATUS_MENUNGGU, Rental.STATUS_BERJALAN]),
+        Rental.start_date <= end_date,
+        Rental.end_date >= pickup_date
+    ).first()
+
+    foto = request.args.get('foto', 0, type=int)
+    photos = vehicle.photo_list
+    if foto < 0 or foto >= len(photos):
+        foto = 0
+
+    show_reviews = request.args.get('ulasan') == '1'
+    star = request.args.get('star', type=int)
+
+    reviews = sorted(vehicle.reviews, key=lambda r: r.created_at, reverse=True)
+    if star in (1, 2, 3, 4, 5):
+        reviews = [r for r in reviews if r.rating == star]
+    else:
+        star = None
+
+    return render_template(
+        'haldetailkendaraanUser.html',
+        user=user,
+        vehicle=vehicle,
+        pickup_date=pickup_date,
+        pickup_time=pickup_time,
+        end_date=end_date,
+        duration=duration,
+        total=total,
+        tersedia=(bentrok is None),
+        foto=foto,
+        show_reviews=show_reviews,
+        star=star,
+        reviews=reviews
+    )
+
+@bp.route('/kendaraan/<int:vehicle_id>/ulasan')
+def semua_ulasan(vehicle_id):
+    if 'user_id' not in session:
+        return redirect(url_for('main.login'))
+
+    user = User.query.get(session['user_id'])
+    vehicle = Vehicle.query.get_or_404(vehicle_id)
+
+    # Filter bintang: ?star=5 (kosong = semua)
+    star = request.args.get('star', type=int)
+
+    query = Review.query.filter_by(vehicle_id=vehicle.id)
+    if star in (1, 2, 3, 4, 5):
+        query = query.filter_by(rating=star)
+    else:
+        star = None
+
+    reviews = query.order_by(Review.created_at.desc()).all()
+
+    return render_template(
+        'ulasanKendaraanUser.html',
+        user=user,
+        vehicle=vehicle,
+        reviews=reviews,
+        star=star
+    )
 
 @bp.route('/pesanan')
 def pesanan():

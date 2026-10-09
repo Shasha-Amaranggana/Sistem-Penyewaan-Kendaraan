@@ -34,6 +34,7 @@ class Vehicle(db.Model):
     photo = db.Column(db.String(255), nullable=False)
     brand = db.Column(db.String(50), nullable=False)
     model = db.Column(db.String(100), nullable=False)
+    gallery = db.Column(db.Text, nullable=True)  
     vehicle_number = db.Column(
         db.String(20),
         unique=True,
@@ -59,10 +60,50 @@ class Vehicle(db.Model):
         nullable=False
     )
 
+    fuel = db.Column(db.String(20), nullable=True, default='Bensin')
+    transmission = db.Column(db.String(20), nullable=True, default='Manual')
+    engine_cc = db.Column(db.Integer, nullable=True)
+    facilities = db.Column(db.Text, nullable=True)   
+    notes = db.Column(db.Text, nullable=True)
+
     @property
     def full_name(self):
         return f"{self.brand} {self.model}"
 
+    @property
+    def facility_list(self):
+        if not self.facilities:
+            return []
+        return [f.strip() for f in self.facilities.split(',')]
+
+    @property
+    def photo_list(self):
+        photos = [self.photo]
+        if self.gallery:
+            photos += [p.strip() for p in self.gallery.split(',')]
+        return photos
+
+    @property
+    def review_count(self):
+        return len(self.reviews)
+
+    @property
+    def avg_rating(self):
+        if not self.reviews:
+            return 0
+        return round(sum(r.rating for r in self.reviews) / len(self.reviews), 1)
+
+    def rating_count(self, star):
+        return sum(1 for r in self.reviews if r.rating == star)
+
+    def rating_percent(self, star):
+        if not self.reviews:
+            return 0
+        return round(self.rating_count(star) / len(self.reviews) * 100)
+
+    @property
+    def latest_reviews(self):
+        return sorted(self.reviews, key=lambda r: r.created_at, reverse=True)[:2]
 
 # =========================================================
 # RENTAL MODEL (Data Penyewaan)
@@ -97,3 +138,17 @@ class Rental(db.Model):
     @property
     def total_price(self):
         return self.duration_days * self.vehicle.price_per_day
+
+# =========================================================
+# REVIEW MODEL (Ulasan Pengguna)
+# =========================================================
+class Review(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    vehicle_id = db.Column(db.Integer, db.ForeignKey('vehicle.id'), nullable=False)
+    rating = db.Column(db.Integer, nullable=False)   # 1 sampai 5
+    comment = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
+
+    user = db.relationship('User', backref=db.backref('reviews', lazy=True))
+    vehicle = db.relationship('Vehicle', backref=db.backref('reviews', lazy=True))
