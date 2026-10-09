@@ -111,13 +111,17 @@
 
 /* FORM GANTI PENCARIAN */
 
+
+
+
+/* FORM GANTI PENCARIAN */
 .search-form-container[hidden] {
-    display: none;
+    display: none !important;
 }
 
 .search-form-container {
     position: absolute;
-    top: calc(100% - 12px);
+    top: 100%;
     left: 50%;
     transform: translateX(-50%);
 
@@ -128,7 +132,7 @@
     background: white;
     border-radius: 6px;
     box-shadow: 0 5px 18px rgba(0, 0, 0, 0.2);
-    z-index: 20;
+    z-index: 100;
 }
 
 
