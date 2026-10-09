@@ -1,4 +1,14 @@
 /* =====================================================
+        RESET
+===================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* =====================================================
    HERO
 ===================================================== */
 .hero-section {
@@ -325,7 +335,6 @@
     padding: 35px 5% 50px;
 
     background-color: #ffedcf;
-
     background-image:
         url("../images/vehicle-pattern.png"),
         linear-gradient(
