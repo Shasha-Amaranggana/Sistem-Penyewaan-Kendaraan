@@ -116,6 +116,18 @@ class Rental(db.Model):
     STATUS_BATAL = 'Batal'
     ALL_STATUS = [STATUS_MENUNGGU, STATUS_BERJALAN, STATUS_SELESAI, STATUS_BATAL]
 
+    DRIVER_FEE = 150000                       
+    ACCESSORIES = {                           
+        'kursi_bayi':   ('Kursi Bayi (Baby Car Seat)', 15000),
+        'phone_holder': ('Phone holder', 5000),
+        'bantal':       ('Bantal', 5000),
+        'selimut':      ('Selimut', 10000),
+    }
+    INSURANCES = {                          
+        'dasar':   ('Dasar', 0),
+        'lengkap': ('Lengkap', 50000),
+    }
+
     id = db.Column(db.Integer, primary_key=True)
     booking_code = db.Column(db.String(20), unique=True, nullable=False)
 
@@ -127,6 +139,18 @@ class Rental(db.Model):
     status = db.Column(db.String(20), nullable=False, default=STATUS_MENUNGGU)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
+    with_driver = db.Column(db.Boolean, nullable=False, default=False)
+    accessories = db.Column(db.String(200), nullable=True, default='')  
+    insurance = db.Column(db.String(20), nullable=False, default='dasar')
+    purpose = db.Column(db.String(50), nullable=True)
+    region = db.Column(db.String(30), nullable=True)
+    destination_city = db.Column(db.String(100), nullable=True)
+    pickup_location = db.Column(db.String(100), nullable=True)
+    return_location = db.Column(db.String(100), nullable=True)
+    special_request = db.Column(db.Text, nullable=True)
+    ktp_file = db.Column(db.String(255), nullable=True)
+    sim_file = db.Column(db.String(255), nullable=True)
+
     # Relasi antar objek (OOP): rental.user dan rental.vehicle
     user = db.relationship('User', backref=db.backref('rentals', lazy=True))
     vehicle = db.relationship('Vehicle', backref=db.backref('rentals', lazy=True))
@@ -134,6 +158,27 @@ class Rental(db.Model):
     @property
     def duration_days(self):
         return (self.end_date - self.start_date).days
+
+    @property
+    def accessory_keys(self):
+        return [k for k in (self.accessories or '').split(',') if k in self.ACCESSORIES]
+
+    @property
+    def vehicle_cost(self):
+        return self.duration_days * self.vehicle.price_per_day
+
+    @property
+    def driver_cost(self):
+        return self.duration_days * self.DRIVER_FEE if self.with_driver else 0
+
+    @property
+    def accessories_cost(self):
+        return sum(self.ACCESSORIES[k][1] for k in self.accessory_keys)
+
+    @property
+    def insurance_cost(self):
+        price = self.INSURANCES.get(self.insurance or 'dasar', ('', 0))[1]
+        return price * self.duration_days
 
     @property
     def total_price(self):
