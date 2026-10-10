@@ -260,7 +260,7 @@ def _save_document(file_storage, booking_code, kind):
     file_storage.save(os.path.join(folder, filename))
     return filename
 
-@bp.route('/pesanan')
+@bp.route('/pesanan', methods=['GET', 'POST'])
 def pesanan():
     if 'user_id' not in session:
         return redirect(url_for('main.login'))
@@ -324,20 +324,24 @@ def pesanan():
     with_driver = can_driver and f.get('rental_type') == 'sopir'
     accessories = [a for a in f.getlist('accessories') if a in Rental.ACCESSORIES]
     insurance = f.get('insurance') if f.get('insurance') in Rental.INSURANCES else 'dasar'
+    region = f.get('region')
+    luar_kota = region == 'Luar kota'
     destination = (f.get('destination_city') or '').strip()
 
     errors = []
     if not f.get('agree'):
         errors.append('Anda harus menyetujui syarat dan ketentuan.')
-    if not destination:
-        errors.append('Kota tujuan wajib diisi.')
-    if not with_driver:
-        for field, label in (('ktp', 'KTP'), ('sim', 'SIM')):
-            up = request.files.get(field)
-            if not up or not up.filename:
-                errors.append(f'{label} wajib diunggah untuk sewa lepas kunci.')
-            elif up.filename.rsplit('.', 1)[-1].lower() not in ALLOWED_DOC_EXT:
-                errors.append(f'Format {label} harus JPG, PNG, atau PDF.')
+    if luar_kota and not destination:
+        errors.append('Kota tujuan wajib diisi untuk perjalanan luar kota.')
+
+    # KTP wajib untuk semua. SIM hanya wajib kalau lepas kunci.
+    docs = [('ktp', 'KTP')] + ([] if with_driver else [('sim', 'SIM')])
+    for field, label in docs:
+        up = request.files.get(field)
+        if not up or not up.filename:
+            errors.append(f'{label} wajib diunggah.')
+        elif up.filename.rsplit('.', 1)[-1].lower() not in ALLOWED_DOC_EXT:
+            errors.append(f'Format {label} harus JPG, PNG, atau PDF.')
 
     # Cek ulang ketersediaan (bisa saja sudah dipesan orang lain)
     bentrok = Rental.query.filter(
@@ -369,15 +373,15 @@ def pesanan():
         accessories=','.join(accessories),
         insurance=insurance,
         purpose=f.get('purpose'),
-        region=f.get('region'),
-        destination_city=destination,
+        region=region,
+        destination_city=destination if luar_kota else None,
         pickup_location=f.get('pickup_location'),
         return_location=f.get('return_location'),
         special_request=(f.get('special_request') or '').strip() or None,
     )
 
+    rental.ktp_file = _save_document(request.files.get('ktp'), booking_code, 'ktp')
     if not with_driver:
-        rental.ktp_file = _save_document(request.files.get('ktp'), booking_code, 'ktp')
         rental.sim_file = _save_document(request.files.get('sim'), booking_code, 'sim')
 
     db.session.add(rental)
