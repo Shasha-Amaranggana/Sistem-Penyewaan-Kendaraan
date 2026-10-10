@@ -511,11 +511,127 @@ def admin_update_rental_status(rental_id):
     return redirect(request.referrer or url_for('main.admin_dashboard'))
 
 
+# =========================================================
+# HALAMAN ADMIN: DAFTAR KENDARAAN
+# =========================================================
 @bp.route('/admin/kendaraan')
 @admin_required
 def admin_kendaraan():
-    return render_template('admin/placeholder.html', active_menu='kendaraan',
-                           title='Kendaraan', icon='fa-car', **admin_context())
+    # ---------- KARTU STATISTIK ----------
+    total_vehicles = Vehicle.query.count()
+    rented_vehicle_ids = {r.vehicle_id for r in
+                          Rental.query.filter_by(status=Rental.STATUS_BERJALAN).all()}
+
+    q = request.args.get('q', '').strip()
+    page = request.args.get('page', 1, type=int)
+
+    query = Vehicle.query
+    if q:
+        pattern = f'%{q}%'
+        query = query.filter(or_(
+            Vehicle.brand.ilike(pattern),
+            Vehicle.model.ilike(pattern),
+        ))
+
+    pagination = query.order_by(Vehicle.id.desc()).paginate(
+        page=page, per_page=5, error_out=False)
+    
+    return render_template(
+        'admin/kendaraan_list.html',
+        active_menu='kendaraan',
+        total_vehicles=total_vehicles,
+        rented_vehicle_ids=rented_vehicle_ids,
+        pagination=pagination,
+        q=q,
+        statuses=Rental.ALL_STATUS,
+        **admin_context()
+    )
+
+# =========================================================
+# HALAMAN ADMIN: TAMBAH KENDARAAN
+# =========================================================
+@bp.route('/admin/kendaraan/tambah', methods=['GET', 'POST'])
+@admin_required
+def tambah_kendaraan():
+    if request.method == 'POST':
+        foto = request.files.get('photo')
+        filename = "default.png"
+        if foto and foto.filename != '':
+            filename = secure_filename(foto.filename)
+            foto.save(os.path.join('app', 'static', 'images', filename))
+
+        new_vehicle = Vehicle(
+            photo=filename,
+            brand=request.form.get('merek'),
+            model=request.form.get('tipe'),
+            year=request.form.get('tahun'),
+            color=request.form.get('warna'),
+            vehicle_number=request.form.get('plat_nomor'),
+            rental_type=request.form.get('jenis_penyewaan'),
+            fuel=request.form.get('bahan_bakar'),          # Menggunakan fuel sesuai models_2.py
+            transmission=request.form.get('transmisi'),
+            vehicle_type=request.form.get('kategori'),     # Menggunakan vehicle_type sesuai models_2.py
+            price_per_day=request.form.get('harga_sewa'),
+            seats=request.form.get('jumlah_penumpang'),
+            luggage=request.form.get('jumlah_bagasi'),
+            chassis_number=request.form.get('no_rangka'),
+            engine_number=request.form.get('no_mesin'),
+            is_active=True # Default aktif
+        )
+        db.session.add(new_vehicle)
+        try:
+            db.session.commit()
+            flash('Kendaraan berhasil ditambahkan.')
+            return redirect(url_for('main.admin_kendaraan'))
+        except Exception as e:
+            db.session.rollback()
+            flash('Gagal menambahkan kendaraan. Pastikan Plat/Rangka/Mesin tidak duplikat.')
+            
+    return render_template('admin/kendaraan_tambah.html', active_menu='kendaraan', **admin_context())
+
+# =========================================================
+# HALAMAN ADMIN: EDIT KENDARAAN
+# =========================================================
+@bp.route('/admin/kendaraan/edit/<int:id>', methods=['GET', 'POST'])
+@admin_required
+def edit_kendaraan(id):
+    vehicle = Vehicle.query.get_or_404(id)
+    
+    if request.method == 'POST':
+        foto = request.files.get('photo')
+        if foto and foto.filename != '':
+            filename = secure_filename(foto.filename)
+            foto.save(os.path.join('app', 'static', 'images', filename))
+            vehicle.photo = filename
+
+        vehicle.brand = request.form.get('merek')
+        vehicle.model = request.form.get('tipe')
+        vehicle.year = request.form.get('tahun')
+        vehicle.color = request.form.get('warna')
+        vehicle.vehicle_number = request.form.get('plat_nomor')
+        vehicle.rental_type = request.form.get('jenis_penyewaan')
+        vehicle.fuel = request.form.get('bahan_bakar')          # Sesuai models_2.py
+        vehicle.transmission = request.form.get('transmisi')
+        vehicle.vehicle_type = request.form.get('kategori')     # Sesuai models_2.py
+        vehicle.price_per_day = request.form.get('harga_sewa')
+        vehicle.seats = request.form.get('jumlah_penumpang')
+        vehicle.luggage = request.form.get('jumlah_bagasi')
+        vehicle.chassis_number = request.form.get('no_rangka')
+        vehicle.engine_number = request.form.get('no_mesin')
+        vehicle.notes = request.form.get('catatan_kondisi')     # Menggunakan notes sesuai models_2.py
+        
+        # Checkbox aktif
+        vehicle.is_active = True if request.form.get('is_active') else False
+
+        try:
+            db.session.commit()
+            flash('Data kendaraan berhasil diperbarui.')
+            return redirect(url_for('main.admin_kendaraan'))
+        except Exception as e:
+            db.session.rollback()
+            flash('Gagal mengedit kendaraan. Data duplikat.')
+
+    return render_template('admin/kendaraan_edit.html', active_menu='kendaraan', vehicle=vehicle, **admin_context())
 
 
 @bp.route('/admin/penyewaan')
