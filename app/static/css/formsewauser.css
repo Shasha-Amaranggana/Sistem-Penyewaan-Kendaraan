@@ -375,3 +375,12 @@
     .order-vehicle { min-width: 0; width: 100%; }
     .order-layout { grid-template-columns: 1fr; }
 }
+
+.field[hidden],
+.doc-item[hidden] { display: none; }
+
+.order-hint {
+    font-size: 10.5px;
+    color: #c0392b;
+    margin-bottom: 10px;
+}
