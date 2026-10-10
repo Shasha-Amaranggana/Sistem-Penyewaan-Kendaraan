@@ -703,12 +703,24 @@ def admin_penyewaan_edit(id):
             return redirect(url_for('main.admin_penyewaan'))
             
         # Proses Simpan
+        old_status = rental.status
         new_status = request.form.get('status')
         driver_id = request.form.get('driver_id')
         
         if new_status in Rental.ALL_STATUS:
             rental.status = new_status
             
+            # TRIGGER TRACKING: Mulai lacak jika baru saja diubah menjadi "Sedang Dipakai"
+            if new_status == Rental.STATUS_DIPAKAI and old_status != Rental.STATUS_DIPAKAI:
+                # Koordinat Default (Misal: Tengah Kota Samarinda)
+                rental.vehicle.current_lat = -0.502106
+                rental.vehicle.current_lng = 117.153709
+            
+            # Matikan tracking jika sudah selesai / batal / kembali
+            elif new_status in [Rental.STATUS_SELESAI, Rental.STATUS_BATAL, Rental.STATUS_PENGEMBALIAN]:
+                rental.vehicle.current_lat = None
+                rental.vehicle.current_lng = None
+
         if rental.with_driver and driver_id:
             if driver_id == 'none':
                 rental.driver_id = None
@@ -790,3 +802,51 @@ def logout():
     session.pop('user_email', None)
     session.pop('user_role', None)
     return redirect(url_for('main.login'))
+
+
+# =========================================================
+# HALAMAN ADMIN: LIVE TRACKING
+# =========================================================
+@bp.route('/admin/tracking')
+@admin_required
+def admin_tracking():
+    focus_vehicle = request.args.get('vehicle_id', type=int)
+    return render_template(
+        'admin/tracking.html',
+        active_menu='tracking',
+        focus_vehicle=focus_vehicle,
+        **admin_context()
+    )
+
+import random
+from flask import jsonify
+
+@bp.route('/api/live-tracking')
+@admin_required
+def api_live_tracking():
+    # Ambil semua rental yang sedang dipakai
+    active_rentals = Rental.query.filter_by(status=Rental.STATUS_DIPAKAI).all()
+    
+    data = []
+    for r in active_rentals:
+        v = r.vehicle
+        if v.current_lat is not None and v.current_lng is not None:
+            # Sihir Simulasi: Geser posisi mobil sedikit secara acak
+            # 0.0001 derajat = sekitar 11 meter di dunia nyata
+            v.current_lat += random.uniform(-0.0001, 0.0001)
+            v.current_lng += random.uniform(-0.0001, 0.0001)
+            
+            data.append({
+                'rental_id': r.id,
+                'vehicle_id': v.id,
+                'booking_code': r.booking_code,
+                'customer_name': r.user.name,
+                'vehicle_name': f"{v.brand} {v.model} ({v.vehicle_number})",
+                'driver_name': r.driver.name if r.with_driver and r.driver else "Tanpa Sopir",
+                'lat': v.current_lat,
+                'lng': v.current_lng
+            })
+            
+    # Simpan pergeseran kordinat ke database
+    db.session.commit()
+    return jsonify(data)

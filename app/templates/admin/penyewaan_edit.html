@@ -148,7 +148,14 @@
     <!-- KOLOM 3: AKSI & FORM UPDATE -->
     <div>
         <div class="card-detail">
-            <div class="card-title">Aksi</div>
+            <div class="card-title" style="display: flex; justify-content: space-between; align-items: center;">
+                Aksi
+                {% if rental.status == 'Kendaraan Sedang Dipakai' %}
+                <a href="{{ url_for('main.admin_tracking', vehicle_id=rental.vehicle.id) }}" class="btn-sm" style="background: #2563EB; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 12px; font-weight: normal;">
+                    <i class="fa-solid fa-location-dot"></i> Lacak Kendaraan
+                </a>
+                {% endif %}
+            </div>
             
             <form method="POST" action="{{ url_for('main.admin_penyewaan_edit', id=rental.id) }}">
                 <div style="margin-bottom: 20px;">

@@ -207,6 +207,12 @@ def run_seed():
 
     rentals = []
     for idx, (cust, veh, start, end, status, days_ago, p_method, p_status, sopir) in enumerate(rental_data, start=1):
+        
+        # DEMO TRACKING: Set koordinat jika mobil sedang dipakai
+        if status == Rental.STATUS_DIPAKAI:
+            veh.current_lat = -0.502106 + (idx * 0.001)  # Sebarkan titik di Samarinda
+            veh.current_lng = 117.153709 + (idx * 0.001)
+            
         rentals.append(Rental(
             booking_code=f"RMB{1000 + idx}",
             user_id=cust.id,

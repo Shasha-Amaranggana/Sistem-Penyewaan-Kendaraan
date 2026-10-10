@@ -70,6 +70,10 @@ class Vehicle(db.Model):
     notes = db.Column(db.Text, nullable=True)
     is_active = db.Column(db.Boolean, nullable=False, default=True)
 
+    # Koordinat Live Tracking
+    current_lat = db.Column(db.Float, nullable=True)
+    current_lng = db.Column(db.Float, nullable=True)
+
     @property
     def full_name(self):
         return f"{self.brand} {self.model}"

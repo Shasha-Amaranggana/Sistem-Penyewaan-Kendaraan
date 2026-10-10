@@ -1,0 +1,112 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block title %}Live Tracking Kendaraan{% endblock %}
+
+{% block content %}
+<!-- Impor Pustaka Leaflet.js -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+<style>
+    /* Agar peta mengisi layar penuh dengan sisa ruang admin */
+    #map {
+        height: calc(100vh - 120px);
+        width: 100%;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        z-index: 1; /* Pastikan di bawah topbar */
+    }
+    
+    .panel-tracking {
+        padding: 0;
+        background: transparent;
+        box-shadow: none;
+    }
+</style>
+
+<div class="panel panel-tracking">
+    <div id="map"></div>
+</div>
+
+<script>
+    // 1. Inisialisasi Peta
+    // Kordinat Default: Tengah Kota Samarinda
+    var map = L.map('map').setView([-0.502106, 117.153709], 14);
+
+    // Gunakan OpenStreetMap sebagai layer gambar
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Custom Icon Berbentuk Mobil Kecil
+    var carIcon = L.icon({
+        iconUrl: 'https://cdn-icons-png.flaticon.com/512/3201/3201824.png', // Ikon mobil gratis
+        iconSize: [38, 38], // ukuran ikon
+        iconAnchor: [19, 19], // titik tengah
+        popupAnchor: [0, -15] // titik munculnya popup
+    });
+
+    // Simpan semua marker yang sedang tampil agar bisa di-update
+    var markers = {};
+    
+    // Variabel untuk zoom otomatis ke mobil tertentu (dari tombol di detail penyewaan)
+    var focusVehicleId = {{ focus_vehicle or 'null' }};
+    var hasFocused = false;
+
+    // 2. Fungsi untuk mengambil data dari Backend secara Live
+    function fetchLiveTracking() {
+        fetch('{{ url_for("main.api_live_tracking") }}')
+            .then(response => response.json())
+            .then(data => {
+                
+                // Hapus marker yang mobilnya sudah dikembalikan (tidak ada di data baru)
+                var activeIds = data.map(v => v.vehicle_id);
+                for (var id in markers) {
+                    if (!activeIds.includes(parseInt(id))) {
+                        map.removeLayer(markers[id]);
+                        delete markers[id];
+                    }
+                }
+
+                // Update atau Tambah marker baru
+                data.forEach(v => {
+                    var latlng = [v.lat, v.lng];
+                    
+                    var popupHtml = `
+                        <div style="font-family: Poppins, sans-serif;">
+                            <strong style="font-size:14px; color:#1E1E1E;">${v.vehicle_name}</strong><br>
+                            <span style="font-size:12px; color:#5B5B5B;">Penyewa: ${v.customer_name}</span><br>
+                            <span style="font-size:12px; color:#5B5B5B;">Sopir: ${v.driver_name}</span>
+                        </div>
+                    `;
+
+                    if (markers[v.vehicle_id]) {
+                        // Jika marker sudah ada, geser posisinya (animasi mulus)
+                        markers[v.vehicle_id].setLatLng(latlng);
+                        markers[v.vehicle_id].setPopupContent(popupHtml);
+                    } else {
+                        // Jika marker baru, tambahkan ke peta
+                        markers[v.vehicle_id] = L.marker(latlng, {icon: carIcon})
+                            .addTo(map)
+                            .bindPopup(popupHtml);
+                    }
+                    
+                    // Fokus kamera hanya 1 kali saat pertama kali memuat (jika tombol dari penyewaan diklik)
+                    if (focusVehicleId === v.vehicle_id && !hasFocused) {
+                        map.flyTo(latlng, 17);
+                        markers[v.vehicle_id].openPopup();
+                        hasFocused = true;
+                    }
+                });
+            })
+            .catch(err => console.error("Tracking Error:", err));
+    }
+
+    // 3. Jalankan pemanggilan data pertama kali
+    fetchLiveTracking();
+
+    // 4. Atur agar fungsi berjalan otomatis setiap 2.5 detik (Sihir Live Demo)
+    setInterval(fetchLiveTracking, 2500);
+
+</script>
+{% endblock %}
