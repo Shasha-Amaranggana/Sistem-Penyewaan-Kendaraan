@@ -572,14 +572,16 @@ def tambah_kendaraan():
             color=request.form.get('warna'),
             vehicle_number=request.form.get('plat_nomor'),
             rental_type=request.form.get('jenis_penyewaan'),
-            fuel=request.form.get('bahan_bakar'),          # Menggunakan fuel sesuai models_2.py
+            fuel=request.form.get('bahan_bakar'),
             transmission=request.form.get('transmisi'),
-            vehicle_type=request.form.get('kategori'),     # Menggunakan vehicle_type sesuai models_2.py
+            vehicle_type=request.form.get('kategori'),
             price_per_day=request.form.get('harga_sewa'),
             seats=request.form.get('jumlah_penumpang'),
             luggage=request.form.get('jumlah_bagasi'),
             chassis_number=request.form.get('no_rangka'),
             engine_number=request.form.get('no_mesin'),
+            engine_cc=request.form.get('cc_mesin'),
+            facilities=request.form.get('fasilitas'),
             is_active=True # Default aktif
         )
         db.session.add(new_vehicle)
@@ -614,15 +616,17 @@ def edit_kendaraan(id):
         vehicle.color = request.form.get('warna')
         vehicle.vehicle_number = request.form.get('plat_nomor')
         vehicle.rental_type = request.form.get('jenis_penyewaan')
-        vehicle.fuel = request.form.get('bahan_bakar')          # Sesuai models_2.py
+        vehicle.fuel = request.form.get('bahan_bakar')
         vehicle.transmission = request.form.get('transmisi')
-        vehicle.vehicle_type = request.form.get('kategori')     # Sesuai models_2.py
+        vehicle.vehicle_type = request.form.get('kategori')
         vehicle.price_per_day = request.form.get('harga_sewa')
         vehicle.seats = request.form.get('jumlah_penumpang')
         vehicle.luggage = request.form.get('jumlah_bagasi')
         vehicle.chassis_number = request.form.get('no_rangka')
         vehicle.engine_number = request.form.get('no_mesin')
-        vehicle.notes = request.form.get('catatan_kondisi')     # Menggunakan notes sesuai models_2.py
+        vehicle.notes = request.form.get('catatan_kondisi')
+        vehicle.engine_cc = request.form.get('cc_mesin')
+        vehicle.facilities = request.form.get('fasilitas')
         
         # Checkbox aktif
         vehicle.is_active = True if request.form.get('is_active') else False

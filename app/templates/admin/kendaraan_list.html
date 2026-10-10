@@ -80,7 +80,6 @@
                 <td>{{ v.vehicle_type }}</td>
                 <td class="center"><span class="badge badge-{{ v.current_status }}">{{ v.current_status }}</span></td>
                 <td class="center">
-                    <a href="{{ url_for('main.detail_kendaraan', vehicle_id=v.id) }}" class="btn-sm" style="text-decoration: none; border: 1px solid #ccc; padding: 5px 10px; border-radius: 4px; color: #333; margin-right: 5px;">View</a>
                     <a href="{{ url_for('main.edit_kendaraan', id=v.id) }}" class="btn-sm" style="text-decoration: none; border: 1px solid #ccc; padding: 5px 10px; border-radius: 4px; color: #333;">Edit</a>
                 </td>
             </tr>
