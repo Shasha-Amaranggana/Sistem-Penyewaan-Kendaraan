@@ -273,6 +273,9 @@ def pesanan():
 
     vehicle = Vehicle.query.get_or_404(vehicle_id)
     can_driver = vehicle.rental_type.startswith('Sopir')
+    tipe = vehicle.vehicle_type.lower()
+    accessories_avail = {k: v for k, v in Rental.ACCESSORIES.items()
+                        if tipe in Rental.ACCESSORY_TYPES.get(k, [])}
 
     user = None
     if 'user_id' in session:
@@ -308,7 +311,7 @@ def pesanan():
             duration=duration,
             can_driver=can_driver,
             driver_fee=Rental.DRIVER_FEE,
-            accessories=Rental.ACCESSORIES,
+            accessories=accessories_avail,
             insurances=Rental.INSURANCES,
             purposes=PURPOSES,
             regions=REGIONS,

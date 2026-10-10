@@ -117,11 +117,23 @@ class Rental(db.Model):
     ALL_STATUS = [STATUS_MENUNGGU, STATUS_BERJALAN, STATUS_SELESAI, STATUS_BATAL]
 
     DRIVER_FEE = 150000                       
-    ACCESSORIES = {                           
+    ACCESSORIES = {                       
         'kursi_bayi':   ('Kursi Bayi (Baby Car Seat)', 15000),
         'phone_holder': ('Phone holder', 5000),
         'bantal':       ('Bantal', 5000),
         'selimut':      ('Selimut', 10000),
+        'helm_tambahan': ('Helm tambahan', 10000),
+        'jas_hujan':    ('Jas hujan', 5000),
+        'box_belakang': ('Box belakang', 15000),
+    }
+    ACCESSORY_TYPES = {
+        'kursi_bayi':    ['mobil'],
+        'phone_holder':  ['mobil', 'motor'],
+        'bantal':        ['mobil'],
+        'selimut':       ['mobil'],
+        'helm_tambahan': ['motor'],
+        'jas_hujan':     ['motor'],
+        'box_belakang':  ['motor'],
     }
     INSURANCES = {                          
         'dasar':   ('Dasar', 0),
