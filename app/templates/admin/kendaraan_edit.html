@@ -55,10 +55,18 @@
                     <input type="number" name="jumlah_bagasi" class="form-control" value="{{ vehicle.luggage }}">
                 </div>
 
-                <div class="form-group-vertikal span-2-kolom">
+                <div class="form-group-vertikal">
                     <label> Harga Sewa/Hari</label>
                     <input type="number" name="harga_sewa" class="form-control" value="{{ vehicle.price_per_day }}"
                         required>
+                </div>
+                <div class="form-group-vertikal">
+                    <label> CC Mesin</label>
+                    <input type="number" name="cc_mesin" class="form-control" value="{{ vehicle.engine_cc }}" required>
+                </div>
+                <div class="form-group-vertikal span-2-kolom">
+                    <label> Fasilitas</label>
+                    <input type="text" name="fasilitas" class="form-control" value="{{ vehicle.facilities }}">
                 </div>
             </div>
 
