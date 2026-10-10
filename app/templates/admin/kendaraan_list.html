@@ -1,0 +1,117 @@
+{% extends 'admin/base_admin.html' %} <!-- Sesuaikan nama file base Anda -->
+
+{% block title %}Daftar Kendaraan{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/adminKendaraan.css') }}">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<!-- ================= KARTU STATISTIK ================= -->
+<section class="stats">
+    <div class="stat-card">
+        <div class="stat-top">
+            <div>
+                <div class="stat-title">Total Kendaraan</div>
+                <div class="stat-total">Total: {{ total_vehicles }}</div>
+            </div>
+            <div class="stat-icon" style="color: #F07F2A;"><i class="fa-solid fa-car-side"></i></div>
+        </div>
+        <div class="stat-sub">Semua unit terdaftar di sistem</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-top">
+            <div>
+                <div class="stat-title">Sedang Disewa</div>
+                <!-- Menghitung manual via Jinja untuk keperluan visual -->
+                {% set disewa = [] %}
+                {% for v in vehicles if v.current_status == 'Disewa' %}
+                    {% set _ = disewa.append(1) %}
+                {% endfor %}
+                <div class="stat-total">Total: {{ rented_vehicle_ids|length }}</div>
+            </div>
+            <div class="stat-icon" style="color: #F07F2A;"><i class="fa-solid fa-file-contract"></i></div>
+        </div>
+        <div class="stat-sub">Kendaraan di luar garasi</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-top">
+            <div>
+                <div class="stat-title">Di Garasi (Tersedia)</div>
+                <div class="stat-total">Total: {{ total_vehicles - rented_vehicle_ids|length }}</div>
+            </div>
+            <div class="stat-icon" style="color: #F07F2A;"><i class="fa-regular fa-circle-check"></i></div>
+        </div>
+        <div class="stat-sub">Siap untuk disewakan</div>
+    </div>
+</section>
+
+<!-- ================= TABEL KENDARAAN ================= -->
+<section class="panel">
+    <div class="panel-head" style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="panel-title">Daftar Kendaraan</div>
+        <a href="{{ url_for('main.tambah_kendaraan') }}" class="btn-primary" style="width: max-content; text-decoration: none; padding: 10px 20px; border-radius: 6px; background-color: #F07F2A; color: white; font-weight: 600;">
+            <i class="fa-solid fa-plus"></i> Tambah Kendaraan
+        </a>
+    </div>
+
+    <table style="width: 100%; text-align: left; border-collapse: collapse; margin-top: 15px;">
+        <thead>
+            <tr style="background-color: #e2e8f0;">
+                <th style="padding: 12px;">Plat</th>
+                <th>Merek/Tipe</th>
+                <th>Tahun</th>
+                <th>Harga/Hari</th>
+                <th>Jenis</th>
+                <th class="center">Status</th>
+                <th class="center">Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for v in pagination.items %}
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 12px;">{{ v.vehicle_number }}</td>
+                <td>{{ v.full_name }}</td>
+                <td>{{ v.year }}</td>
+                <td>Rp {{ '{:,.0f}'.format(v.price_per_day).replace(',', '.') }}</td>
+                <td>{{ v.vehicle_type }}</td>
+                <td class="center"><span class="badge badge-{{ v.current_status }}">{{ v.current_status }}</span></td>
+                <td class="center">
+                    <a href="{{ url_for('main.detail_kendaraan', vehicle_id=v.id) }}" class="btn-sm" style="text-decoration: none; border: 1px solid #ccc; padding: 5px 10px; border-radius: 4px; color: #333; margin-right: 5px;">View</a>
+                    <a href="{{ url_for('main.edit_kendaraan', id=v.id) }}" class="btn-sm" style="text-decoration: none; border: 1px solid #ccc; padding: 5px 10px; border-radius: 4px; color: #333;">Edit</a>
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="7" class="center" style="padding: 20px;">Tidak ada data kendaraan.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Pagination -->
+    {% if pagination.pages > 0 %}
+    <div class="pagination">
+        <a class="page-btn {{ 'disabled' if pagination.page == 1 }}"
+           href="{{ url_for('main.admin_kendaraan', page=1, q=q or None) }}">|&lsaquo;</a>
+        <a class="page-btn {{ 'disabled' if not pagination.has_prev }}"
+           href="{{ url_for('main.admin_kendaraan', page=pagination.prev_num or 1, q=q or None) }}">&lsaquo;</a>
+
+        {% for p in pagination.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=1) %}
+            {% if p %}
+                <a class="page-btn {{ 'active' if p == pagination.page }}"
+                   href="{{ url_for('main.admin_kendaraan', page=p, q=q or None) }}">{{ p }}</a>
+            {% else %}
+                <span class="page-btn disabled">…</span>
+            {% endif %}
+        {% endfor %}
+
+        <a class="page-btn {{ 'disabled' if not pagination.has_next }}"
+           href="{{ url_for('main.admin_kendaraan', page=pagination.next_num or pagination.pages, q=q or None) }}">&rsaquo;</a>
+        <a class="page-btn {{ 'disabled' if pagination.page == pagination.pages }}"
+           href="{{ url_for('main.admin_kendaraan', page=pagination.pages, q=q or None) }}">&rsaquo;|</a>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

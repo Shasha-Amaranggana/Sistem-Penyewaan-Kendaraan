@@ -1,0 +1,248 @@
+/* adminKendaraan.css */
+.form-panel {
+    background: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* Varian Grid */
+.form-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.form-grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+/* Sub-Grid untuk Kolom Kanan: Foto di kiri, Teknis di kanan */
+.form-grid-sub {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+/* Layout khusus untuk Blok Kiri (Data Fisik) */
+.form-grid-kiri {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    /* Membagi ruang menjadi 2 kolom presisi */
+    gap: 15px 20px;
+    /* Jarak atas-bawah 15px, kiri-kanan 20px */
+}
+
+/* Memaksa elemen tunggal membentang selebar 2 kolom jika diperlukan */
+.span-2-kolom {
+    grid-column: span 2;
+}
+
+/* Varian Form Group: Label di Atas (Untuk form Edit & kolom kiri form Tambah) */
+.form-group-vertical {
+    margin-bottom: 15px;
+}
+
+.form-group-vertical label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+/* Varian Form Group: Label di Samping (Untuk kolom kanan form Tambah) */
+.form-group-horizontal {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.form-group-horizontal label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0;
+    color: #333;
+    flex: 0 0 150px;
+}
+
+/* Input control berlaku untuk keduanya */
+.form-control {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+.image-card {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.img-preview {
+    width: 100%;
+    height: 200px;
+    object-fit: contain;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    margin-bottom: 10px;
+}
+
+.btn-upload-new {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    color: #333;
+}
+
+.bottom-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 15px;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.btn-danger {
+    padding: 10px 20px;
+    background: #dc2626;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.right-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.btn-submit {
+    padding: 10px 20px;
+    border: none;
+    background: #F07F2A;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+/* Toggle Switch CSS */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked+.slider {
+    background-color: #3b82f6;
+}
+
+input:checked+.slider:before {
+    transform: translateX(26px);
+}
+
+/* Styles from kendaraan_tambah_2.html */
+.photo-upload-box {
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    padding: 40px;
+    text-align: center;
+    background-color: #f8fafc;
+    cursor: pointer;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.photo-upload-box:hover {
+    border-color: #F07F2A;
+}
+
+.photo-upload-box i {
+    font-size: 40px;
+    color: #a1a1aa;
+    margin-bottom: 10px;
+}
+
+.btn-action-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.btn-outline {
+    padding: 10px 20px;
+    border: 1px solid #ccc;
+    background: #f1f5f9;
+    color: #333;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.badge {
+    display: inline-block; min-width: 46px;
+    padding: 5px 7px; border-radius: 3px;
+    font-size: 9px; font-weight: 700; text-align: center;
+}
+.badge-Tersedia      { background: #7ED957; color: #1F8F2E; }
+.badge-Disewa        { background: #F7A41D; color: #5A2C00; }
+.badge-Diperbaiki    { background: #F26464; color: #8A0000; }
+.badge-Menunggu      { background: #8EC5FF; color: #0B3F7A; }

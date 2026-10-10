@@ -1,0 +1,110 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block title %}Tambah Kendaraan Baru{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/adminKendaraan.css') }}">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<section class="form-panel">
+    <h2 style="margin-bottom: 10px;">Tambah Kendaraan Baru</h2>
+    <form action="{{ url_for('main.tambah_kendaraan') }}" method="POST" enctype="multipart/form-data">
+        <div class="form-grid-2">
+            
+            <!-- KOLOM KIRI -->
+            <div>
+                <label class="photo-upload-box">
+                    <i class="fa-solid fa-arrow-up-from-bracket"></i>
+                    <p style="margin-bottom: 10px; color: #555;">Foto Kendaraan, Klik untuk unggah</p>
+                    <span style="background: #F07F2A; color: white; padding: 6px 15px; border-radius: 4px; display: inline-block;">Unggah Foto</span>
+                    <input type="file" name="photo" accept="image/*" style="display: none;" required>
+                </label>
+
+                <div class="form-group-horizontal">
+                    <label>Merek</label>
+                    <input type="text" name="merek" class="form-control" placeholder="Contoh: Toyota" required>
+                </div>
+                <div class="form-group-horizontal">
+                    <label>Tipe</label>
+                    <input type="text" name="tipe" class="form-control" placeholder="Contoh: Rush" required>
+                </div>
+                <div class="form-group-horizontal">
+                    <label>Tahun</label>
+                    <input type="number" name="tahun" class="form-control" placeholder="Contoh: 2024" required>
+                </div>
+                <div class="form-group-horizontal">
+                    <label>Warna</label>
+                    <input type="text" name="warna" class="form-control" placeholder="Contoh: Putih">
+                </div>
+                <div class="form-group-horizontal">
+                    <label>Plat Nomor</label>
+                    <input type="text" name="plat_nomor" class="form-control" placeholder="Contoh: KT 1234 AB" required>
+                </div>
+            </div>
+
+            <!-- KOLOM KANAN -->
+            <div>
+                <div class="form-group-horizontal">
+                    <label>Jenis Penyewaan</label>
+                    <select name="jenis_penyewaan" class="form-control">
+                        <option value="Sopir & Tanpa Sopir">Sopir & Tanpa Sopir</option>
+                        <option value="Tanpa Sopir">Tanpa Sopir Saja</option>
+                        <option value="Dengan Sopir">Dengan Sopir Saja</option>
+                    </select>
+                </div>
+                <div class="form-group-horizontal">
+                    <label>Bahan Bakar</label>
+                    <select name="bahan_bakar" class="form-control">
+                        <option value="Bensin">Bensin</option>
+                        <option value="Solar">Solar</option>
+                        <option value="Listrik">Listrik</option>
+                    </select>
+                </div>
+                <div class="form-group-horizontal">
+                    <label>Transmisi</label>
+                    <select name="transmisi" class="form-control">
+                        <option value="Otomatis">Otomatis</option>
+                        <option value="Manual">Manual</option>
+                    </select>
+                </div>
+                <div class="form-group-horizontal">
+                    <label>Kategori</label>
+                    <select name="kategori" class="form-control">
+                        <option value="SUV">SUV</option>
+                        <option value="MPV">MPV</option>
+                        <option value="Sedan">Sedan</option>
+                        <option value="Motor">Motor</option>
+                    </select>
+                </div>
+                <div class="form-group-horizontal">
+                    <label>Harga Sewa Per Hari (Rp)</label>
+                    <input type="number" name="harga_sewa" class="form-control" placeholder="Contoh: 500000" required>
+                </div>
+                <div class="form-group-horizontal">
+                    <label>Jumlah Penumpang</label>
+                    <input type="number" name="jumlah_penumpang" class="form-control" placeholder="Contoh: 7" required>
+                </div>
+                <div class="form-group-horizontal">
+                    <label>Kapasitas Bagasi</label>
+                    <input type="number" name="jumlah_bagasi" class="form-control" placeholder="Contoh: 2">
+                </div>
+                <div class="form-group-horizontal">
+                    <label>No Rangka</label>
+                    <input type="text" name="no_rangka" class="form-control">
+                </div>
+                <div class="form-group-horizontal">
+                    <label>No Mesin</label>
+                    <input type="text" name="no_mesin" class="form-control">
+                </div>
+            </div>
+        </div>
+        
+        <div class="btn-action-group">
+            <a href="{{ url_for('main.admin_kendaraan') }}" class="btn-outline">Batal</a>
+            <button type="submit" class="btn-submit">Simpan</button>
+        </div>
+    </form>
+</section>
+{% endblock %}

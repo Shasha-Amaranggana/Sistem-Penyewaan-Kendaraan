@@ -1,0 +1,158 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block title %}Ubah Data Kendaraan{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/adminKendaraan.css') }}">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<section class="form-panel">
+    <h2>Ubah Data Kendaraan</h2>
+    <form action="{{ url_for('main.edit_kendaraan', id=vehicle.id) }}" method="POST" enctype="multipart/form-data">
+        <div class="form-grid-3">
+            <!-- Ubah pembungkus utama menjadi 2 kolom dengan rasio 1:2 -->
+            <div class="form-grid-kiri">
+
+                <!-- ================= BLOK KIRI (Data Fisik) ================= -->
+                <div class="form-group-vertikal">
+                    <label> Merek</label>
+                    <input type="text" name="merek" class="form-control" value="{{ vehicle.brand }}" required>
+                </div>
+                <div class="form-group-vertikal">
+                    <label>Tipe</label>
+                    <input type="text" name="tipe" class="form-control" value="{{ vehicle.model }}" required>
+                </div>
+
+                <div class="form-group-vertikal">
+                    <label> Tahun</label>
+                    <input type="number" name="tahun" class="form-control" value="{{ vehicle.year }}" required>
+                </div>
+                <div class="form-group-vertikal">
+                    <label> Warna</label>
+                    <input type="text" name="warna" class="form-control" value="{{ vehicle.color }}">
+                </div>
+
+                <div class="form-group-vertikal">
+                    <label> Plat Nomor</label>
+                    <input type="text" name="plat_nomor" class="form-control" value="{{ vehicle.vehicle_number }}"
+                        required>
+                </div>
+
+                <div class="form-group-vertikal">
+                    <label>Transmisi</label>
+                    <input type="text" name="transmisi" class="form-control" value="{{ vehicle.transmission }}">
+                </div>
+
+                <div class="form-group-vertikal">
+                    <label> Kapasitas Penumpang</label>
+                    <input type="number" name="jumlah_penumpang" class="form-control" value="{{ vehicle.seats }}"
+                        required>
+                </div>
+                <div class="form-group-vertikal">
+                    <label> Jumlah Bagasi</label>
+                    <input type="number" name="jumlah_bagasi" class="form-control" value="{{ vehicle.luggage }}">
+                </div>
+
+                <div class="form-group-vertikal span-2-kolom">
+                    <label> Harga Sewa/Hari</label>
+                    <input type="number" name="harga_sewa" class="form-control" value="{{ vehicle.price_per_day }}"
+                        required>
+                </div>
+            </div>
+
+            <!-- ================= BLOK KANAN (Foto, Teknis, & Catatan) ================= -->
+            <div>
+                <!-- Buat sub-grid 2 kolom di dalam Blok Kanan untuk area atas -->
+                <div class="form-grid-sub">
+
+                    <!-- Sub-kolom Tengah (Foto & Status) -->
+                    <div>
+                        <div class="image-card">
+                            <img src="{{ url_for('static', filename='images/' + vehicle.photo) }}" alt="Foto"
+                                class="img-preview">
+                            <label class="btn-upload-new">
+                                Unggah Foto Baru
+                                <input type="file" name="photo" style="display: none;">
+                            </label>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-weight: 500;">Status Kendaraan</span>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <label class="switch">
+                                    <input type="checkbox" name="is_active" {% if vehicle.is_active %}checked{% endif
+                                        %}>
+                                    <span class="slider"></span>
+                                </label>
+                                <span style="font-weight: 600;">Aktif</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sub-kolom Kanan (Dropdown & No Mesin) -->
+                    <div>
+                        <div class="form-group-vertical">
+                            <label>Jenis Penyewaan</label>
+                            <select name="jenis_penyewaan" class="form-control">
+                                <option value="Sopir">Sopir</option>
+                                <option value="Tanpa Supir">Tanpa Supir</option>
+                            </select>
+                        </div>
+                        <div class="form-group-vertikal">
+                            <label>Bahan Bakar</label>
+                            <select name="bahan_bakar" class="form-control">
+                                <option value="Bensin" {% if vehicle.fuel=='Bensin' %}selected{% endif %}>Bensin
+                                </option>
+                                <option value="Solar" {% if vehicle.fuel=='Solar' %}selected{% endif %}>Solar</option>
+                                <option value="Listrik" {% if vehicle.fuel=='Listrik' %}selected{% endif %}>Listrik
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="form-group-vertikal">
+                            <label>Kategori</label>
+                            <select name="kategori" class="form-control">
+                                <option value="SUV" {% if vehicle.category=='SUV' %}selected{% endif %}>SUV</option>
+                                <option value="MPV" {% if vehicle.category=='MPV' %}selected{% endif %}>MPV</option>
+                                <option value="Sedan" {% if vehicle.category=='Sedan' %}selected{% endif %}>Sedan
+                                </option>
+                                <option value="Motor" {% if vehicle.category=='Motor' %}selected{% endif %}>Motor
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="form-group-vertikal">
+                            <label> No Rangka</label>
+                            <input type="text" name="no_rangka" class="form-control"
+                                value="{{ vehicle.chassis_number }}">
+                        </div>
+
+                        <div class="form-group-vertikal">
+                            <label> No Mesin</label>
+                            <input type="text" name="no_mesin" class="form-control" value="{{ vehicle.engine_number }}">
+                        </div>
+                    </div>
+
+                </div> <!-- Penutup sub-grid -->
+
+                <!-- Catatan Kondisi diletakkan di LUAR sub-grid, tetapi masih di DALAM Blok Kanan -->
+                <!-- Ini akan membuatnya membentang penuh menutupi area bawah foto dan dropdown -->
+                <div class="form-group-vertical" style="margin-top: 20px;">
+                    <label>Catatan Kondisi</label>
+                    <textarea name="catatan_kondisi" class="form-control" rows="3">{{ vehicle.notes }}</textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-actions">
+            <div class="right-actions">
+                <a href="{{ url_for('main.admin_kendaraan') }}" class="btn-outline"
+                    style="border: 1px solid #ccc; padding: 10px 15px; border-radius: 6px; text-decoration: none; color: #333; background: #eee;">Batal</a>
+                <button type="submit" class="btn-submit">Simpan Perubahan</button>
+            </div>
+        </div>
+    </form>
+</section>
+{% endblock %}

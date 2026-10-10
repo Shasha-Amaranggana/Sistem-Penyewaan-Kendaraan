@@ -60,11 +60,15 @@ class Vehicle(db.Model):
         nullable=False
     )
 
+    color = db.Column(db.String(30), nullable=True)
+    chassis_number = db.Column(db.String(50), unique=True, nullable=True)
+    engine_number = db.Column(db.String(50), unique=True, nullable=True)
     fuel = db.Column(db.String(20), nullable=True, default='Bensin')
     transmission = db.Column(db.String(20), nullable=True, default='Manual')
     engine_cc = db.Column(db.Integer, nullable=True)
     facilities = db.Column(db.Text, nullable=True)   
     notes = db.Column(db.Text, nullable=True)
+    is_active = db.Column(db.Boolean, nullable=False, default=True)
 
     @property
     def full_name(self):
@@ -104,6 +108,14 @@ class Vehicle(db.Model):
     @property
     def latest_reviews(self):
         return sorted(self.reviews, key=lambda r: r.created_at, reverse=True)[:2]
+    
+    @property
+    def current_status(self):
+        """Cek status kendaraan di tabel Rental"""
+        active_rental = Rental.query.filter_by(vehicle_id=self.id, status=Rental.STATUS_BERJALAN).first()
+        if active_rental:
+            return "Disewa"
+        return "Tersedia"
 
 # =========================================================
 # RENTAL MODEL (Data Penyewaan)
