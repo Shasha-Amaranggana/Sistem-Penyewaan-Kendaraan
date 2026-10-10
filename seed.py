@@ -2,9 +2,8 @@ from app import create_app, db
 from app.models import Vehicle, User, Rental, Review
 from datetime import date, datetime, timedelta
 
-app = create_app()
-
-with app.app_context():
+def run_seed():
+    """Fungsi pembangun isi awal database"""
     # 1. HANCURKAN DAN BANGUN ULANG DATABASE
     print("Mereset database...")
     db.drop_all()
@@ -218,3 +217,8 @@ with app.app_context():
     # 6. SIMPAN SEMUA
     db.session.commit()
     print("Berhasil! Database baru siap digunakan.")
+
+if __name__ == '__main__':
+    app = create_app()
+    with app.app_context():
+        run_seed()
