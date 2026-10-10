@@ -1,0 +1,106 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block title %}Daftar Penyewaan{% endblock %}
+
+{% block content %}
+<!-- FILTER BOX -->
+<section class="panel" style="margin-bottom: 20px; padding: 18px 24px; min-height: auto;">
+    <form method="GET" action="{{ url_for('main.admin_penyewaan') }}" style="display: flex; gap: 20px; align-items: flex-end;">
+        <div style="flex: 1;">
+            <label style="font-weight: 600; font-size: 14px; margin-bottom: 8px; display: block;">Status</label>
+            <select name="status" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                <option value="">Semua Status</option>
+                {% for s in statuses %}
+                    <option value="{{ s }}" {% if s == status_filter %}selected{% endif %}>{{ s }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div style="flex: 1.5;">
+            <label style="font-weight: 600; font-size: 14px; margin-bottom: 8px; display: block;">Tanggal</label>
+            <input type="text" name="tanggal" value="{{ date_filter }}" placeholder="DD-MM-YYYY - DD-MM-YYYY" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+        </div>
+        <div style="flex: 1;">
+            <label style="font-weight: 600; font-size: 14px; margin-bottom: 8px; display: block;">Tipe Kendaraan</label>
+            <select name="tipe_kendaraan" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                <option value="">Semua Tipe</option>
+                <option value="Mobil" {% if type_filter == 'Mobil' %}selected{% endif %}>Mobil</option>
+                <option value="Motor" {% if type_filter == 'Motor' %}selected{% endif %}>Motor</option>
+            </select>
+        </div>
+        <div>
+            <button type="submit" class="btn-primary" style="padding: 9px 20px;">Terapkan Filter</button>
+        </div>
+    </form>
+</section>
+
+<!-- TABEL PENYEWAAN -->
+<section class="panel">
+    <div class="panel-head">
+        <div class="panel-title" style="font-size: 18px;">Penyewaan Terbaru</div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID Booking</th>
+                <th>Pelanggan</th>
+                <th>Mobil</th>
+                <th>Tanggal Sewa</th>
+                <th>Tanggal Kembali</th>
+                <th class="center">Status</th>
+                <th class="center">Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in pagination.items %}
+            <tr>
+                <td style="font-weight: 600;">#{{ r.booking_code }}</td>
+                <td>{{ r.user.name }}</td>
+                <td>{{ r.vehicle.full_name }}</td>
+                <td>{{ r.start_date|tanggal_id }}</td>
+                <td>{{ r.end_date|tanggal_id }}</td>
+                <td class="center">
+                    <span class="badge 
+                        {% if 'Menunggu' in r.status %}badge-Menunggu
+                        {% elif r.status == 'Selesai' %}badge-Selesai
+                        {% elif r.status == 'Batal' %}badge-Batal
+                        {% else %}badge-Berjalan{% endif %}">
+                        {{ r.status }}
+                    </span>
+                </td>
+                <td class="center">
+                    <a href="{{ url_for('main.admin_penyewaan_edit', id=r.id) }}" class="btn-sm" style="display:inline-block; text-decoration:none; color:inherit;">View</a>
+                    <a href="{{ url_for('main.admin_penyewaan_edit', id=r.id) }}" class="btn-sm" style="display:inline-block; text-decoration:none; color:inherit;">Edit</a>
+                </td>
+            </tr>
+            {% else %}
+            <tr class="empty-row"><td colspan="7">Tidak ada data penyewaan.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Pagination -->
+    {% if pagination.pages > 0 %}
+    <div class="pagination">
+        <a class="page-btn {{ 'disabled' if pagination.page == 1 }}"
+           href="{{ url_for('main.admin_penyewaan', page=1, status=status_filter, tipe_kendaraan=type_filter, tanggal=date_filter) }}">|&lsaquo;</a>
+        <a class="page-btn {{ 'disabled' if not pagination.has_prev }}"
+           href="{{ url_for('main.admin_penyewaan', page=pagination.prev_num or 1, status=status_filter, tipe_kendaraan=type_filter, tanggal=date_filter) }}">&lsaquo;</a>
+
+        {% for p in pagination.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=1) %}
+            {% if p %}
+                <a class="page-btn {{ 'active' if p == pagination.page }}"
+                   href="{{ url_for('main.admin_penyewaan', page=p, status=status_filter, tipe_kendaraan=type_filter, tanggal=date_filter) }}">{{ p }}</a>
+            {% else %}
+                <span class="page-btn disabled">…</span>
+            {% endif %}
+        {% endfor %}
+
+        <a class="page-btn {{ 'disabled' if not pagination.has_next }}"
+           href="{{ url_for('main.admin_penyewaan', page=pagination.next_num or pagination.pages, status=status_filter, tipe_kendaraan=type_filter, tanggal=date_filter) }}">&rsaquo;</a>
+        <a class="page-btn {{ 'disabled' if pagination.page == pagination.pages }}"
+           href="{{ url_for('main.admin_penyewaan', page=pagination.pages, status=status_filter, tipe_kendaraan=type_filter, tanggal=date_filter) }}">&rsaquo;|</a>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

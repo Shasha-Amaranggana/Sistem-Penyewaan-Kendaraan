@@ -118,15 +118,37 @@ class Vehicle(db.Model):
         return "Tersedia"
 
 # =========================================================
+# DRIVER MODEL (Sopir)
+# =========================================================
+class Driver(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    phone = db.Column(db.String(20), nullable=False)
+    is_available = db.Column(db.Boolean, nullable=False, default=True)
+    photo = db.Column(db.String(255), nullable=True, default='default_driver.png')
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
+
+# =========================================================
 # RENTAL MODEL (Data Penyewaan)
 # =========================================================
 class Rental(db.Model):
-    # Daftar status yang valid
-    STATUS_MENUNGGU = 'Menunggu'
-    STATUS_BERJALAN = 'Berjalan'
+    # Alur Status Penyewaan Baru
+    STATUS_MENUNGGU_BAYAR = 'Menunggu Pembayaran'
+    STATUS_MENUNGGU_KONFIRMASI = 'Menunggu Konfirmasi'
+    STATUS_PENGAMBILAN = 'Kendaraan Dalam Pengambilan'
+    STATUS_DIPAKAI = 'Kendaraan Sedang Dipakai'
+    STATUS_PENGEMBALIAN = 'Dalam Proses Pengembalian'
     STATUS_SELESAI = 'Selesai'
     STATUS_BATAL = 'Batal'
-    ALL_STATUS = [STATUS_MENUNGGU, STATUS_BERJALAN, STATUS_SELESAI, STATUS_BATAL]
+    ALL_STATUS = [
+        STATUS_MENUNGGU_BAYAR, STATUS_MENUNGGU_KONFIRMASI, 
+        STATUS_PENGAMBILAN, STATUS_DIPAKAI, 
+        STATUS_PENGEMBALIAN, STATUS_SELESAI, STATUS_BATAL
+    ]
+
+    # Kompatibilitas dengan kode lama (fallback untuk property dashboard lama)
+    STATUS_MENUNGGU = STATUS_MENUNGGU_KONFIRMASI
+    STATUS_BERJALAN = STATUS_DIPAKAI
 
     DRIVER_FEE = 150000                       
     ACCESSORIES = {                           
@@ -145,11 +167,16 @@ class Rental(db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     vehicle_id = db.Column(db.Integer, db.ForeignKey('vehicle.id'), nullable=False)
+    driver_id = db.Column(db.Integer, db.ForeignKey('driver.id'), nullable=True) # Tambahan Relasi Sopir
 
     start_date = db.Column(db.Date, nullable=False)
     end_date = db.Column(db.Date, nullable=False)
-    status = db.Column(db.String(20), nullable=False, default=STATUS_MENUNGGU)
+    status = db.Column(db.String(50), nullable=False, default=STATUS_MENUNGGU_BAYAR)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
+
+    # Tambahan Data Pembayaran
+    payment_method = db.Column(db.String(50), nullable=True)
+    payment_status = db.Column(db.String(20), nullable=False, default='Belum Lunas') # 'Lunas' / 'Belum Lunas'
 
     with_driver = db.Column(db.Boolean, nullable=False, default=False)
     accessories = db.Column(db.String(200), nullable=True, default='')  
@@ -163,13 +190,14 @@ class Rental(db.Model):
     ktp_file = db.Column(db.String(255), nullable=True)
     sim_file = db.Column(db.String(255), nullable=True)
 
-    # Relasi antar objek (OOP): rental.user dan rental.vehicle
+    # Relasi antar objek (OOP)
     user = db.relationship('User', backref=db.backref('rentals', lazy=True))
     vehicle = db.relationship('Vehicle', backref=db.backref('rentals', lazy=True))
+    driver = db.relationship('Driver', backref=db.backref('rentals', lazy=True))
 
     @property
     def duration_days(self):
-        return (self.end_date - self.start_date).days
+        return max(1, (self.end_date - self.start_date).days)
 
     @property
     def accessory_keys(self):
@@ -194,7 +222,8 @@ class Rental(db.Model):
 
     @property
     def total_price(self):
-        return self.duration_days * self.vehicle.price_per_day
+        # Perbaikan kalkulasi total harga sesuai desain yang lengkap
+        return self.vehicle_cost + self.driver_cost + self.accessories_cost + self.insurance_cost
 
 # =========================================================
 # REVIEW MODEL (Ulasan Pengguna)

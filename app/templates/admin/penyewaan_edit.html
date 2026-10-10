@@ -1,0 +1,199 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block title %}Detail Penyewaan #{{ rental.booking_code }}{% endblock %}
+
+{% block content %}
+<style>
+    .grid-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 20px;
+        align-items: start;
+    }
+    .card-detail {
+        background: #fff;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .card-title {
+        font-weight: 700;
+        font-size: 16px;
+        margin-bottom: 15px;
+        color: #333;
+    }
+    .info-label {
+        font-size: 12px;
+        color: #666;
+        margin-bottom: 2px;
+    }
+    .info-val {
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 15px;
+        color: #1E1E1E;
+    }
+    .flex-between {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        font-size: 14px;
+    }
+    .total-row {
+        border-top: 1px solid #ddd;
+        padding-top: 10px;
+        margin-top: 5px;
+        font-weight: 700;
+    }
+    .badge-status {
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 600;
+        display: inline-block;
+    }
+    .badge-lunas { background: #5AD35A; color: #fff; }
+    .badge-belum { background: #FF4D4D; color: #fff; }
+</style>
+
+<div class="grid-container">
+    <!-- KOLOM 1: PELANGGAN & PEMBAYARAN -->
+    <div>
+        <div class="card-detail" style="margin-bottom: 20px;">
+            <div class="card-title">Informasi Pelanggan</div>
+            <div class="info-label">Kontak</div>
+            <div class="info-val">{{ rental.user.name }}</div>
+            
+            <div class="info-label">Email</div>
+            <div class="info-val">{{ rental.user.email }}</div>
+            
+            <div class="info-label">Nomor Kontak</div>
+            <div class="info-val" style="margin-bottom:0;">{{ rental.user.phone }}</div>
+        </div>
+
+        <div class="card-detail">
+            <div class="card-title">Pembayaran</div>
+            <div class="flex-between">
+                <span>Biaya Sewa Mobil ({{ rental.duration_days }}x)</span>
+                <span>Rp {{ rental.vehicle_cost|rupiah }}</span>
+            </div>
+            {% if rental.with_driver %}
+            <div class="flex-between">
+                <span>Biaya Sopir ({{ rental.duration_days }}x)</span>
+                <span>Rp {{ rental.driver_cost|rupiah }}</span>
+            </div>
+            {% endif %}
+            {% if rental.accessories_cost > 0 %}
+            <div class="flex-between">
+                <span>Aksesoris ({{ rental.accessories }})</span>
+                <span>Rp {{ rental.accessories_cost|rupiah }}</span>
+            </div>
+            {% endif %}
+            <div class="flex-between">
+                <span>Asuransi ({{ rental.insurance|title }})</span>
+                <span>Rp {{ rental.insurance_cost|rupiah }}</span>
+            </div>
+            
+            <div class="flex-between total-row">
+                <span>Total</span>
+                <span>Rp {{ rental.total_price|rupiah }}</span>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; margin-top: 20px; align-items: flex-end;">
+                <div>
+                    <div class="info-label">Tipe Pembayaran</div>
+                    <div style="border: 1px solid #ccc; padding: 6px 10px; border-radius: 4px; font-size: 13px;">
+                        {{ rental.payment_method or '-' }}
+                    </div>
+                </div>
+                <div>
+                    <div class="info-label">Status</div>
+                    <div class="badge-status {% if rental.payment_status == 'Lunas' %}badge-lunas{% else %}badge-belum{% endif %}">
+                        {{ rental.payment_status }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- KOLOM 2: KENDARAAN & PERJALANAN -->
+    <div>
+        <div class="card-detail" style="margin-bottom: 20px;">
+            <div class="card-title">Kendaraan</div>
+            <img src="{{ url_for('static', filename='images/' + rental.vehicle.photo) }}" alt="Mobil" style="width: 100%; height: 140px; object-fit: contain; background: #2A2F3D; border-radius: 6px; margin-bottom: 15px;">
+            
+            <div class="info-label">Tipe</div>
+            <div class="info-val">{{ rental.vehicle.vehicle_type }} {{ rental.vehicle.full_name }}</div>
+            
+            <div class="info-label">Kapasitas Kursi</div>
+            <div class="info-val">{{ rental.vehicle.seats }} Kursi</div>
+            
+            <div class="info-label">Nomor Plat</div>
+            <div class="info-val" style="margin-bottom:0;">{{ rental.vehicle.vehicle_number }}</div>
+        </div>
+
+        <div class="card-detail">
+            <div class="card-title">Tanggal Perjalanan</div>
+            <div class="info-label">Tanggal Sewa</div>
+            <div class="info-val">{{ rental.start_date|tanggal_id }}</div>
+            
+            <div class="info-label">Tanggal Kembali</div>
+            <div class="info-val">{{ rental.end_date|tanggal_id }}</div>
+            
+            <div class="info-label">Durasi</div>
+            <div class="info-val" style="margin-bottom:0;">{{ rental.duration_days }} Hari</div>
+        </div>
+    </div>
+
+    <!-- KOLOM 3: AKSI & FORM UPDATE -->
+    <div>
+        <div class="card-detail">
+            <div class="card-title">Aksi</div>
+            
+            <form method="POST" action="{{ url_for('main.admin_penyewaan_edit', id=rental.id) }}">
+                <div style="margin-bottom: 20px;">
+                    <label class="info-label" style="font-weight: 600; color: #333;">Ubah Status</label>
+                    <select name="status" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ccc; font-size: 14px;">
+                        {% for s in statuses %}
+                            <option value="{{ s }}" {% if rental.status == s %}selected{% endif %}>{{ s }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                {% if rental.with_driver %}
+                <div style="margin-bottom: 30px;">
+                    <label class="info-label" style="font-weight: 600; color: #333;">Tugaskan Sopir</label>
+                    <select name="driver_id" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ccc; font-size: 14px;">
+                        <option value="none">-- Belum Ada Sopir --</option>
+                        {% for d in drivers %}
+                            <option value="{{ d.id }}" {% if rental.driver_id == d.id %}selected{% endif %}>
+                                {{ d.name }} - {{ d.phone }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% endif %}
+
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <!-- Tombol Tolak hanya muncul jika belum sampai tahap dipakai/selesai/batal -->
+                    {% if rental.status in [
+                        'Menunggu Pembayaran', 
+                        'Menunggu Konfirmasi', 
+                        'Kendaraan Dalam Pengambilan'
+                    ] %}
+                    <button type="submit" name="btn_tolak" value="1" style="padding: 10px 24px; border: 1px solid #ccc; background: #fff; border-radius: 4px; cursor: pointer; font-weight: 600;" onclick="return confirm('Yakin ingin menolak/membatalkan pesanan ini?');">
+                        Tolak
+                    </button>
+                    {% endif %}
+                    
+                    <button type="submit" name="btn_simpan" value="1" class="btn-primary" style="padding: 10px 24px; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">
+                        Simpan
+                    </button>
+                </div>
+            </form>
+            
+        </div>
+    </div>
+</div>
+
+{% endblock %}

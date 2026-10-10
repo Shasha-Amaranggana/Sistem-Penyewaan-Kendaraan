@@ -152,7 +152,19 @@ def run_seed():
     db.session.add_all(vehicles)
     db.session.flush()  # supaya vehicle.id sudah terisi
 
-    # 4. BUAT PELANGGAN CONTOH
+    # 4. BUAT SOPIR CONTOH
+    from app.models import Driver
+    print("Membuat sopir contoh...")
+    drivers = [
+        Driver(name="Ahmad Hidayat", phone="081999888771"),
+        Driver(name="Reza Pahlevi", phone="081999888772"),
+        Driver(name="Andi Saputra", phone="081999888773"),
+    ]
+    db.session.add_all(drivers)
+    db.session.flush()
+    ahmad, reza, andi = drivers
+
+    # 5. BUAT PELANGGAN CONTOH
     print("Membuat pelanggan contoh...")
     customers = []
     for i, (nama, gender) in enumerate([
@@ -175,26 +187,26 @@ def run_seed():
     db.session.add_all(customers)
     db.session.flush()
 
-    # 5. BUAT DATA PENYEWAAN CONTOH
+    # 6. BUAT DATA PENYEWAAN CONTOH
     print("Membuat data penyewaan...")
     budi, udin, yanto, adit = customers
     rush, avanza, xenia, nmax, vario = vehicles
     now = datetime.now()
 
     rental_data = [
-        # (pelanggan, kendaraan, tgl sewa, tgl kembali, status, dibuat berapa hari lalu)
-        (budi,      rush,   date(2026, 10, 1),  date(2026, 10, 4),  "Selesai",  7),
-        (udin,      rush,   date(2026, 10, 3),  date(2026, 10, 7),  "Selesai",  6),
-        (yanto,     xenia,  date(2026, 10, 5),  date(2026, 10, 9),  "Berjalan", 5),
-        (adit,      avanza, date(2026, 10, 7),  date(2026, 10, 15), "Batal",    4),
-        (budi,      nmax,   date(2026, 10, 7),  date(2026, 10, 10), "Berjalan", 3),
-        (user_biasa, vario, date(2026, 10, 10), date(2026, 10, 12), "Menunggu", 1),
-        (udin,      avanza, date(2026, 10, 11), date(2026, 10, 14), "Menunggu", 0),
-        (yanto,     rush,   date(2026, 10, 12), date(2026, 10, 13), "Menunggu", 0),
+        # (pelanggan, kendaraan, tgl sewa, tgl kembali, status, hari lalu, metode bayar, status bayar, sopir)
+        (budi,      rush,   date(2026, 10, 1),  date(2026, 10, 4),  Rental.STATUS_SELESAI,                7, "Transfer Bank", "Lunas", ahmad),
+        (udin,      rush,   date(2026, 10, 3),  date(2026, 10, 7),  Rental.STATUS_PENGEMBALIAN,           6, "Transfer Bank", "Lunas", None),
+        (yanto,     xenia,  date(2026, 10, 5),  date(2026, 10, 9),  Rental.STATUS_DIPAKAI,                5, "E-Wallet",      "Lunas", reza),
+        (adit,      avanza, date(2026, 10, 7),  date(2026, 10, 15), Rental.STATUS_BATAL,                  4, "-",             "Belum Lunas", None),
+        (budi,      nmax,   date(2026, 10, 7),  date(2026, 10, 10), Rental.STATUS_DIPAKAI,                3, "Cash",          "Lunas", None),
+        (user_biasa, vario, date(2026, 10, 10), date(2026, 10, 12), Rental.STATUS_MENUNGGU_BAYAR,         1, "Transfer Bank", "Belum Lunas", None),
+        (udin,      avanza, date(2026, 10, 11), date(2026, 10, 14), Rental.STATUS_MENUNGGU_KONFIRMASI,    0, "E-Wallet",      "Lunas", None),
+        (yanto,     rush,   date(2026, 10, 12), date(2026, 10, 13), Rental.STATUS_PENGAMBILAN,            0, "Cash",          "Belum Lunas", None),
     ]
 
     rentals = []
-    for idx, (cust, veh, start, end, status, days_ago) in enumerate(rental_data, start=1):
+    for idx, (cust, veh, start, end, status, days_ago, p_method, p_status, sopir) in enumerate(rental_data, start=1):
         rentals.append(Rental(
             booking_code=f"RMB{1000 + idx}",
             user_id=cust.id,
@@ -202,6 +214,13 @@ def run_seed():
             start_date=start,
             end_date=end,
             status=status,
+            payment_method=p_method,
+            payment_status=p_status,
+            driver_id=sopir.id if sopir else None,
+            with_driver=True if sopir else False,
+            accessories="bantal,selimut" if idx % 2 == 0 else "",
+            insurance="lengkap" if idx % 3 == 0 else "dasar",
+            destination_city="Samarinda" if idx % 2 == 0 else "Balikpapan",
             created_at=now - timedelta(days=days_ago, minutes=idx)
         ))
     db.session.add_all(rentals)

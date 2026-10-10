@@ -637,8 +637,88 @@ def edit_kendaraan(id):
 @bp.route('/admin/penyewaan')
 @admin_required
 def admin_penyewaan():
-    return render_template('admin/placeholder.html', active_menu='penyewaan',
-                           title='Penyewaan', icon='fa-file-signature', **admin_context())
+    # Filter parameter
+    status_filter = request.args.get('status', '')
+    date_filter = request.args.get('tanggal', '')
+    type_filter = request.args.get('tipe_kendaraan', '')
+    page = request.args.get('page', 1, type=int)
+
+    query = Rental.query.join(Vehicle)
+
+    if status_filter:
+        query = query.filter(Rental.status == status_filter)
+    
+    if type_filter:
+        query = query.filter(Vehicle.vehicle_type == type_filter)
+        
+    if date_filter and ' - ' in date_filter:
+        try:
+            start_str, end_str = date_filter.split(' - ')
+            start_date = datetime.strptime(start_str, '%d-%m-%Y').date()
+            end_date = datetime.strptime(end_str, '%d-%m-%Y').date()
+            query = query.filter(Rental.start_date >= start_date, Rental.start_date <= end_date)
+        except ValueError:
+            pass # Abaikan jika format salah
+
+    pagination = query.order_by(Rental.created_at.desc()).paginate(
+        page=page, per_page=10, error_out=False)
+
+    return render_template(
+        'admin/penyewaan_list.html',
+        active_menu='penyewaan',
+        pagination=pagination,
+        status_filter=status_filter,
+        date_filter=date_filter,
+        type_filter=type_filter,
+        statuses=Rental.ALL_STATUS,
+        **admin_context()
+    )
+
+
+@bp.route('/admin/penyewaan/edit/<int:id>', methods=['GET', 'POST'])
+@admin_required
+def admin_penyewaan_edit(id):
+    from app.models import Driver
+    rental = Rental.query.get_or_404(id)
+    drivers = Driver.query.filter_by(is_available=True).all()
+    
+    # Jika rental sudah punya sopir, pastikan sopirnya masuk ke list walaupun tidak available
+    if rental.driver and rental.driver not in drivers:
+        drivers.append(rental.driver)
+
+    if request.method == 'POST':
+        # Proses Tolak
+        if 'btn_tolak' in request.form:
+            rental.status = Rental.STATUS_BATAL
+            db.session.commit()
+            flash('Penyewaan berhasil ditolak/dibatalkan.')
+            return redirect(url_for('main.admin_penyewaan'))
+            
+        # Proses Simpan
+        new_status = request.form.get('status')
+        driver_id = request.form.get('driver_id')
+        
+        if new_status in Rental.ALL_STATUS:
+            rental.status = new_status
+            
+        if rental.with_driver and driver_id:
+            if driver_id == 'none':
+                rental.driver_id = None
+            else:
+                rental.driver_id = int(driver_id)
+                
+        db.session.commit()
+        flash('Data penyewaan berhasil diperbarui.')
+        return redirect(url_for('main.admin_penyewaan'))
+
+    return render_template(
+        'admin/penyewaan_edit.html',
+        active_menu='penyewaan',
+        rental=rental,
+        statuses=Rental.ALL_STATUS,
+        drivers=drivers,
+        **admin_context()
+    )
 
 
 @bp.route('/admin/pelanggan')
