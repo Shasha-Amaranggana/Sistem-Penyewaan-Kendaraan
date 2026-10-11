@@ -85,7 +85,7 @@
 }
 
 .change-search-button {
-    width: 170px;
+    width: 160px;
     height: 38px;
     border: none;
     border-radius: 13px;
@@ -94,11 +94,10 @@
 
     font-size: 16px;
     font-weight: 800;
+    font-family: 'Poppins', sans-serif;
 
     cursor: pointer;
-    white-space: nowrap;
-    transition:
-        all 0.25s ease;
+    transition: all 0.25s ease;
 }
 
 .change-search-button:hover {
@@ -108,12 +107,6 @@
         0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
-
-/* FORM GANTI PENCARIAN */
-
-
-
-
 /* FORM GANTI PENCARIAN */
 .search-form-container[hidden] {
     display: none !important;
@@ -121,13 +114,14 @@
 
 .search-form-container {
     position: absolute;
-    top: 100%;
+    top: calc(100% - 12px);
     left: 50%;
     transform: translateX(-50%);
 
     width: 60%;
     max-width: 1050px;
     padding: 18px;
+    margin: 0;
 
     background: white;
     border-radius: 6px;
@@ -136,27 +130,19 @@
 }
 
 
-/* JUDUL FORM */
-.search-form-container h3 {
-    margin: 0 0 14px;
-    color: #111;
-    font-size: 20px;
-    font-weight: 800;
-}
-
 /* FORM UTAMA */
 .search-form {
     display: flex;
     align-items: stretch;
-    gap: 12px;
+    gap: 14px;
+    width: 100%;
 }
 
 /* LABEL INPUT */
 .search-field > span,
 .search-price-filter > span {
     display: block;
-    margin-bottom: 6px;
-    font-size: 10px;
+    font-size: 14px;
     font-weight: 600;
     color: #555;
 }
@@ -168,9 +154,30 @@
 }
 
 .field-input input,
+.field-input select,
 .price-inputs input {
-    font-size: 11px;
-    font-family: 'Poppins', sans-serif;
+    width: 100%;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: #555;
+    font: 13px 'Poppins', sans-serif !important;
+}
+
+.duration-input select {
+    width: 100%;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    font: 12px 'Poppins', sans-serif;
+    color: #555;
+    cursor: pointer;
+
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
 }
 
 /* FILTER HARGA */
@@ -178,6 +185,17 @@
     height: 34px;
 }
 
+.price-inputs span {
+    width: 18px;
+    height: 18px;
+    border: 1px solid #777;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 9px;
+    color: #777;
+}
 .price-inputs label {
     height: 34px;
 }
@@ -198,7 +216,8 @@
 /* RESPONSIVE */
 @media (max-width: 900px) {
     .search-form-container {
-        width: 90%;
+        width: 100%;
+        padding: 12px;
     }
 
     .search-form {
@@ -211,7 +230,7 @@
     }
 
     .search-form-fields {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .search-price-filter,
@@ -220,45 +239,63 @@
     }
 }
 
-
-
-
-
 /* Pilihan Mobil / Motor */
 
 .vehicle-type-options {
-    width: 145px;
+    width: 240px;
+    height: 90px;
+    margin-top: 20px;
     flex-shrink: 0;
 
     display: flex;
     flex-direction: column;
     justify-content: center;
     gap: 5px;
-
-    background: #f0f0f0;
-    border-radius: 5px;
-    padding: 6px;
+    box-sizing: border-box;
+    background: #efeded;
+    border-radius: 7px;
+    padding: 3px;
 }
 
 .vehicle-type-option {
+    flex: 1;
     min-height: 35px;
+    margin: 0;
     display: flex;
     align-items: center;
-    gap: 8px;
-
+    justify-content: flex-start;
+    padding-left: 70px !important;
+    gap: 15px;
     padding: 0 8px;
-    border-radius: 4px;
-    cursor: pointer;
+    border: none;
+    border-radius: 7px;
+    background: transparent;
 
-    font-size: 12px;
-    color: #666;
+    cursor: pointer;
+    font-size: 17px;
+    font-weight: 600;
+    color: #777;
+
+    transition: transform 0.25s ease, background-color 0.25s ease, color 0.25s ease;
 }
 
 .vehicle-type-option:has(input:checked) {
     background: white;
     color: #222;
-    font-weight: 700;
-    box-shadow: 0 1px 4px #00000020;
+    border-radius: 7px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.vehicle-type-option:has(input[value="motor"]:checked) {
+    transform: translateY(-3px);
+}
+
+.vehicle-type-option:has(input[value="mobil"]:checked) {
+    transform: translateY(3px);
+}
+
+.vehicle-type-option:hover {
+    color: #222;
 }
 
 .vehicle-type-option input {
@@ -266,19 +303,33 @@
 }
 
 .vehicle-type-option i {
-    width: 16px;
+    width: 17px;
+    font-size: 15px; 
+    flex-shrink: 0;
 }
 
 /* Bagian kanan */
-
 .search-form-fields {
     flex: 1;
     min-width: 0;
-
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 10px;
+    gap: 12px;
     align-items: end;
+}
+
+.search-field {
+    min-width: 0;
+}
+
+.field-input {
+    width: 100%;
+    min-width: 0;
+}
+
+.field-input input {
+    width: 100%;
+    min-width: 0;
 }
 
 .search-field,
@@ -319,7 +370,7 @@
     border: none;
     outline: none;
     background: transparent;
-    font: 10px 'Poppins', sans-serif;
+    font: 12px 'Poppins', sans-serif;
 }
 
 .field-input small {
@@ -346,24 +397,25 @@
 }
 
 .search-submit-button {
-    grid-column: 3;
-    justify-self: end;
-
-    width: 100%;
-    height: 32px;
-    align-self: end;
-
+    width: 160px;
+    height: 38px;
+    margin-left: 20px;
     border: none;
-    border-radius: 15px;
+    border-radius: 13px;
     background: #ffbd27;
     color: #111;
-
-    font: 800 11px 'Poppins', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
     cursor: pointer;
+    transition:
+        all 0.25s ease;
 }
 
 .search-submit-button:hover {
     background: #ffca45;
+    transform: translateY(-2px);
+    box-shadow:
+        0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 @media (max-width: 900px) {
@@ -393,7 +445,8 @@
     }
 
     .search-submit-button {
-        grid-column: 1 / -1;
+        top: 245px;
+        padding: 18px;
     }
 }
 /* =====================================================

@@ -56,7 +56,6 @@ KeSanaSini - Hasil Pencarian
             </div>
 
             <div class="search-form-container" id="searchFormContainer" hidden>
-                <h3>Ubah Pencarian</h3>
 
                 <form
                     action="{{ url_for('main.hasil_pencarian') }}"
@@ -92,9 +91,8 @@ KeSanaSini - Hasil Pencarian
                     <div class="search-form-fields">
 
                         <label class="search-field">
-                            <span>Tanggal Pengambilan</span>
+                            <span>Waktu Pengambilan</span>
                             <div class="field-input">
-                                <i class="fa-regular fa-calendar"></i>
                                 <input
                                     type="date"
                                     name="date"
@@ -105,9 +103,7 @@ KeSanaSini - Hasil Pencarian
                         </label>
 
                         <label class="search-field">
-                            <span>Waktu Pengambilan</span>
                             <div class="field-input">
-                                <i class="fa-regular fa-clock"></i>
                                 <input
                                     type="time"
                                     name="time"
@@ -118,17 +114,18 @@ KeSanaSini - Hasil Pencarian
                         </label>
 
                         <label class="search-field">
-                            <span>Durasi Sewa</span>
-                            <div class="field-input">
+                            <div class="field-input duration-input">
+                                <select name="duration" required>
+                                    {% for hari in range(1, 8) %}
+                                        <option
+                                            value="{{ hari }}"
+                                            {% if request.args.get('duration', '1')|int == hari %}selected{% endif %}
+                                        >
+                                            {{ hari }} Hari
+                                        </option>
+                                    {% endfor %}
+                                </select>
                                 <i class="fa-regular fa-hourglass-half"></i>
-                                <input
-                                    type="number"
-                                    name="duration"
-                                    min="1"
-                                    value="{{ request.args.get('duration', 1) }}"
-                                    required
-                                >
-                                <small>hari</small>
                             </div>
                         </label>
 
@@ -136,27 +133,27 @@ KeSanaSini - Hasil Pencarian
                             <span>Filter Harga</span>
 
                             <div class="price-inputs">
+                                <!-- HARGA MINIMUM -->
                                 <label>
                                     <span>Rp</span>
                                     <input
                                         type="number"
                                         name="min_price"
                                         min="0"
-                                        placeholder="300.000"
-                                        value="{{ request.args.get('min_price', '') }}"
+                                        placeholder="{{ request.args.get('min_price', '') }}"
                                     >
                                 </label>
 
                                 <span class="price-separator">-</span>
 
+                                <!-- HARGA MAKSIMUM -->
                                 <label>
                                     <span>Rp</span>
                                     <input
                                         type="number"
                                         name="max_price"
                                         min="0"
-                                        placeholder="500.000"
-                                        value="{{ request.args.get('max_price', '') }}"
+                                        placeholder="{{ request.args.get('max_price', '') }}"
                                     >
                                 </label>
                             </div>

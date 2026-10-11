@@ -52,7 +52,7 @@ def index():
     current_time = now.strftime('%H:%M')
 
     return render_template(
-        'halUtamaUser.html',
+        'user/halUtamaUser.html',
         vehicles=vehicles,
         user=user,
         current_date=current_date,
@@ -141,7 +141,7 @@ def hasil_pencarian():
         user = User.query.get(session['user_id'])
 
     return render_template(
-        'halPencarianUser.html',
+        'user/halPencarianUser.html',
         vehicles=vehicles,
         user=user,
         pickup_date=pickup_date,
@@ -198,7 +198,7 @@ def detail_kendaraan(vehicle_id):
         star = None
 
     return render_template(
-        'haldetailkendaraanUser.html',
+        'user/haldetailkendaraanUser.html',
         user=user,
         vehicle=vehicle,
         pickup_date=pickup_date,
@@ -300,7 +300,7 @@ def pesanan():
 
     def render_form(form):
         return render_template(
-            'formsewaUser.html',
+            'user/formsewaUser.html',
             user=user,
             vehicle=vehicle,
             pickup_date=pickup_date,
@@ -389,6 +389,135 @@ def pesanan():
 
     flash(f'Pesanan {booking_code} berhasil dibuat. Menunggu konfirmasi admin.')
     return redirect(url_for('main.index'))   
+
+
+
+# =========================================================
+# HALAMAN KELOLA AKUN USER
+# =========================================================
+
+@bp.route('/kelola-akun', methods=['GET', 'POST'])
+def kelola_akun():
+    # Cek login menggunakan session yang sudah ada
+    if 'user_id' not in session:
+        return redirect(url_for('main.login'))
+
+    user = User.query.get(session['user_id'])
+
+    if not user:
+        session.clear()
+        return redirect(url_for('main.login'))
+
+    if request.method == 'POST':
+        name = request.form.get('name', '').strip()
+        phone = request.form.get('phone', '').strip()
+        emergency_phone = request.form.get(
+            'emergency_phone', ''
+        ).strip()
+        gender = request.form.get('gender', '').strip()
+
+        try:
+            # Validasi data wajib
+            if not name:
+                raise ValueError('Nama lengkap wajib diisi.')
+
+            if not phone or not emergency_phone:
+                raise ValueError('Nomor telepon wajib diisi.')
+
+            if gender not in ['Laki-laki', 'Perempuan']:
+                raise ValueError('Jenis kelamin tidak valid.')
+
+            # Tanggal lahir dikirim dari tiga dropdown
+            day = int(request.form.get('birth_day', ''))
+            month = int(request.form.get('birth_month', ''))
+            year = int(request.form.get('birth_year', ''))
+
+            birth_date = date(year, month, day)
+
+            # Perbarui data pengguna
+            user.name = name
+            user.birth_date = birth_date
+            user.gender = gender
+            user.phone = phone
+            user.emergency_phone = emergency_phone
+
+            # Proses upload KTP dan SIM
+            upload_folder = os.path.join(
+                current_app.root_path,
+                'static',
+                'uploads',
+                'dokumen_akun'
+            )
+            os.makedirs(upload_folder, exist_ok=True)
+
+            for field, column in [
+                ('ktp', 'ktp_file'),
+                ('sim', 'sim_file')
+            ]:
+                uploaded_file = request.files.get(field)
+
+                if uploaded_file and uploaded_file.filename:
+                    original_name = secure_filename(
+                        uploaded_file.filename
+                    )
+
+                    if '.' not in original_name:
+                        raise ValueError(
+                            'Format dokumen tidak valid.'
+                        )
+
+                    extension = original_name.rsplit(
+                        '.', 1
+                    )[1].lower()
+
+                    if extension not in ALLOWED_DOC_EXT:
+                        raise ValueError(
+                            'Dokumen harus JPG, JPEG, PNG, atau PDF.'
+                        )
+
+                    filename = (
+                        f"{field}_{user.id}_"
+                        f"{datetime.now().strftime('%Y%m%d%H%M%S%f')}."
+                        f"{extension}"
+                    )
+
+                    uploaded_file.save(
+                        os.path.join(upload_folder, filename)
+                    )
+
+                    setattr(user, column, filename)
+
+            db.session.commit()
+
+            # Perbarui nama yang disimpan dalam session
+            session['user_name'] = user.name
+            session['user_email'] = user.email
+
+            flash('Data akun berhasil disimpan.', 'success')
+            return redirect(url_for('main.kelola_akun'))
+
+        except (ValueError, TypeError):
+            db.session.rollback()
+            flash(
+                'Data tidak valid. Periksa kembali isian formulir.',
+                'error'
+            )
+
+        except Exception:
+            db.session.rollback()
+            current_app.logger.exception(
+                'Gagal menyimpan perubahan akun'
+            )
+            flash(
+                'Terjadi kesalahan saat menyimpan data akun.',
+                'error'
+            )
+
+    return render_template(
+        'user/halKelolaAkun.html',
+        user=user
+    )
+
 
 
 # =========================================================
@@ -802,6 +931,11 @@ def logout():
     session.pop('user_email', None)
     session.pop('user_role', None)
     return redirect(url_for('main.login'))
+
+
+
+
+
 
 
 # =========================================================

@@ -15,6 +15,8 @@ class User(db.Model):
     phone = db.Column(db.String(20), nullable=False)
     emergency_phone = db.Column(db.String(20), nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
+    ktp_file = db.Column(db.String(255), nullable=True)
+    sim_file = db.Column(db.String(255), nullable=True)
     
     # Kolom baru untuk membedakan Admin dan User
     role = db.Column(db.String(20), nullable=False, default='user')
