@@ -1,0 +1,35 @@
+{% extends 'admin/base_admin.html' %}
+{% block title %}Sopir{% endblock %}
+{% block css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/sopir.css') }}">{% endblock %}
+{% block content %}
+<div class="sp">
+<div class="stats">
+  <div class="card stat"><h4>Sopir Tersedia</h4><div class="n">Total: {{ total_tersedia }}</div><p>{{ total_tersedia }} Sopir Tersedia</p></div>
+  <div class="card stat"><h4>Sopir Disewa</h4><div class="n">Total: {{ total_berjalan }}</div><p>{{ total_berjalan }} sedang berjalan</p></div>
+  <div class="card stat"><h4>Tunggu Konfirmasi</h4><div class="n">Total: {{ total_menunggu }}</div><p>{{ total_menunggu }} sopir menunggu konfirmasi</p></div>
+</div>
+<form method="get" style="margin-bottom:14px"><input class="f" name="q" value="{{ q }}" placeholder="Cari sopir (nama / no. HP)" style="max-width:360px"></form>
+<div class="card"><h2>Penyewaan Terbaru</h2>
+  <div class="tw"><table>
+    <tr><th>ID Sopir</th><th>Nama Sopir</th><th>Mobil</th><th>Tanggal Sewa</th><th>Tanggal Kembali</th><th>Status</th><th>Aksi</th></tr>
+    {% for d in pagination.items %}{% set r = d.current_rental %}
+    <tr>
+      <td>#{{ d.code }}</td>
+      <td><a href="{{ url_for('main.admin_sopir_detail', id=d.id) }}">{{ d.name }}</a></td>
+      <td>{{ r.vehicle.full_name if r else '-' }}</td>
+      <td>{{ r.start_date|tanggal_id if r else '-' }}</td>
+      <td>{{ r.end_date|tanggal_id if r else '-' }}</td>
+      <td><span class="b {{ d.status_label.split()[0] }}">{{ d.status_label }}</span></td>
+      <td><a class="btn" href="{{ url_for('main.admin_sopir_detail', id=d.id) }}">Edit</a></td>
+    </tr>
+    {% else %}<tr><td colspan="7" style="text-align:center;color:#777">Sopir tidak ditemukan</td></tr>{% endfor %}
+  </table></div>
+  <div class="pg">
+    {% if pagination.has_prev %}<a href="{{ url_for('main.admin_sopir', page=pagination.prev_num, q=q or None) }}">‹</a>{% endif %}
+    {% for i in range(1, pagination.pages + 1) %}<a class="{{ 'on' if i == pagination.page }}" href="{{ url_for('main.admin_sopir', page=i, q=q or None) }}">{{ i }}</a>{% endfor %}
+    {% if pagination.has_next %}<a href="{{ url_for('main.admin_sopir', page=pagination.next_num, q=q or None) }}">›</a>{% endif %}
+    <a class="add" href="{{ url_for('main.tambah_sopir') }}" title="Tambah sopir">+</a>
+  </div>
+</div>
+</div>
+{% endblock %}
