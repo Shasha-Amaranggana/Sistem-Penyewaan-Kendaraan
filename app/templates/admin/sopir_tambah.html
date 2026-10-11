@@ -1,0 +1,23 @@
+{% extends 'admin/base_admin.html' %}
+{% block title %}Sopir{% endblock %}
+{% block css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/sopir.css') }}">{% endblock %}
+{% block content %}
+<div class="sp">
+<div class="card"><h2 style="font-size:30px;border-bottom:1px solid #e2e5ec;padding-bottom:10px">Tambah Data Sopir</h2>
+<form method="post" enctype="multipart/form-data">
+  <div class="form">
+    <div>
+      <label for="nama">Nama :</label><input class="f" id="nama" name="nama" value="{{ f.get('nama','') }}" required>
+      <label for="alamat">Alamat :</label><input class="f" id="alamat" name="alamat" value="{{ f.get('alamat','') }}">
+      <label for="telepon">No. Handphone :</label><input class="f" id="telepon" name="telepon" type="tel" value="{{ f.get('telepon','') }}" required>
+      <label for="deskripsi" style="font-size:20px">Deskripsi :</label><textarea class="f" id="deskripsi" name="deskripsi">{{ f.get('deskripsi','') }}</textarea>
+    </div>
+    <div>
+      <label class="up"><div class="ph">Foto Sopir</div><input type="file" name="foto_sopir" accept="image/*"></label>
+      <label class="up"><div class="ph">Foto SIM</div><input type="file" name="foto_sim" accept="image/*"></label>
+    </div>
+  </div>
+  <div class="acts"><a class="btn r" href="{{ url_for('main.admin_sopir') }}">Batalkan</a><button class="btn g" type="submit">Konfirmasi</button></div>
+</form></div>
+</div>
+{% endblock %}

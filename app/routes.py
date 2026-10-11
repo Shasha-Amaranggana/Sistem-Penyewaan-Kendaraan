@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, current_app
-from app.models import User, Vehicle, Rental, Review
+from app.models import User, Vehicle, Rental, Review, Driver
 from sqlalchemy import or_
 from datetime import datetime, date, timedelta
 from werkzeug.utils import secure_filename
@@ -876,12 +876,121 @@ def admin_pelanggan():
     return render_template('admin/placeholder.html', active_menu='pelanggan',
                            title='Pelanggan', icon='fa-users', **admin_context())
 
+ALLOWED_IMG_EXT = {'jpg', 'jpeg', 'png', 'webp'}
 
+def _save_driver_file(file_storage, prefix):
+    """Simpan foto sopir / SIM ke static/uploads/sopir. Return nama file, atau None."""
+    if not file_storage or not file_storage.filename:
+        return None
+    ext = file_storage.filename.rsplit('.', 1)[-1].lower()
+    if ext not in ALLOWED_IMG_EXT:
+        return None
+    folder = os.path.join(current_app.root_path, 'static', 'uploads', 'sopir')
+    os.makedirs(folder, exist_ok=True)
+    filename = secure_filename(f"{prefix}_{datetime.now().strftime('%Y%m%d%H%M%S%f')}.{ext}")
+    file_storage.save(os.path.join(folder, filename))
+    return filename
+
+
+def _delete_driver_file(filename):
+    if filename and filename != 'default_driver.png':
+        path = os.path.join(current_app.root_path, 'static', 'uploads', 'sopir', filename)
+        if os.path.exists(path):
+            os.remove(path)
+
+
+# ---------- DAFTAR SOPIR ----------
 @bp.route('/admin/sopir')
 @admin_required
 def admin_sopir():
-    return render_template('admin/placeholder.html', active_menu='sopir',
-                           title='Sopir', icon='fa-id-card', **admin_context())
+    q = request.args.get('q', '').strip()
+    page = request.args.get('page', 1, type=int)
+
+    query = Driver.query
+    if q:
+        pola = f'%{q}%'
+        query = query.filter(or_(Driver.name.ilike(pola), Driver.phone.ilike(pola)))
+    pagination = query.order_by(Driver.id).paginate(page=page, per_page=5, error_out=False)
+
+    semua = Driver.query.all()
+    hitung = lambda label: sum(1 for d in semua if d.status_label == label)
+
+    return render_template(
+        'admin/sopir_list.html',
+        active_menu='sopir',
+        pagination=pagination,
+        q=q,
+        total_tersedia=hitung('Tersedia'),
+        total_berjalan=hitung('Berjalan'),
+        total_menunggu=hitung('Menunggu Konfirmasi'),
+        **admin_context()
+    )
+
+
+# ---------- TAMBAH SOPIR ----------
+@bp.route('/admin/sopir/tambah', methods=['GET', 'POST'])
+@admin_required
+def tambah_sopir():
+    if request.method == 'POST':
+        nama = request.form.get('nama', '').strip()
+        telepon = request.form.get('telepon', '').strip()
+        if not nama or not telepon:
+            flash('Nama dan No. Handphone wajib diisi.')
+            return render_template('admin/sopir_tambah.html', active_menu='sopir',
+                                   f=request.form, **admin_context())
+
+        sopir = Driver(
+            name=nama,
+            phone=telepon,
+            address=request.form.get('alamat', '').strip(),
+            description=request.form.get('deskripsi', '').strip(),
+            photo=_save_driver_file(request.files.get('foto_sopir'), 'foto') or 'default_driver.png',
+            sim_photo=_save_driver_file(request.files.get('foto_sim'), 'sim'),
+        )
+        db.session.add(sopir)
+        db.session.commit()
+        flash(f'Sopir {nama} berhasil ditambahkan.')
+        return redirect(url_for('main.admin_sopir'))
+
+    return render_template('admin/sopir_tambah.html', active_menu='sopir', f={}, **admin_context())
+
+
+# ---------- PROFIL + STATUS SOPIR ----------
+@bp.route('/admin/sopir/<int:id>')
+@admin_required
+def admin_sopir_detail(id):
+    sopir = Driver.query.get_or_404(id)
+    rentals = (Rental.query.filter_by(driver_id=id)
+               .order_by(Rental.created_at.desc()).all())
+    return render_template(
+        'admin/sopir_detail.html',
+        active_menu='sopir',
+        driver=sopir,
+        rentals=rentals,
+        status_menunggu=Rental.STATUS_MENUNGGU_KONFIRMASI,
+        status_verifikasi=Rental.STATUS_PENGAMBILAN,   # status tujuan setelah tombol Verifikasi
+        status_batal=Rental.STATUS_BATAL,
+        **admin_context()
+    )
+
+
+# ---------- PECAT (HAPUS) SOPIR ----------
+@bp.route('/admin/sopir/<int:id>/pecat', methods=['POST'])
+@admin_required
+def pecat_sopir(id):
+    sopir = Driver.query.get_or_404(id)
+    if sopir.current_rental:
+        flash('Sopir masih memiliki penyewaan aktif, selesaikan atau ganti sopirnya dulu.')
+        return redirect(url_for('main.admin_sopir_detail', id=id))
+
+    nama = sopir.name
+    _delete_driver_file(sopir.photo)
+    _delete_driver_file(sopir.sim_photo)
+    db.session.delete(sopir)   # rental lama otomatis dilepas (driver_id jadi NULL)
+    db.session.commit()
+    flash(f'Sopir {nama} telah dipecat.')
+    return redirect(url_for('main.admin_sopir'))
+
 
 @bp.route('/register', methods=['GET', 'POST'])
 def register():

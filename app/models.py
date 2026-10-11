@@ -1,6 +1,6 @@
 from app import db
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 # =========================================================
@@ -133,6 +133,64 @@ class Driver(db.Model):
     is_available = db.Column(db.Boolean, nullable=False, default=True)
     photo = db.Column(db.String(255), nullable=True, default='default_driver.png')
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
+
+    # ----- KOLOM BARU (dari desain "Tambah Data Sopir") -----
+    address = db.Column(db.String(255), nullable=True)
+    description = db.Column(db.Text, nullable=True)
+    sim_photo = db.Column(db.String(255), nullable=True)
+
+    @property
+    def code(self):
+        """ID tampilan, contoh: SP001"""
+        return f"SP{self.id:03d}"
+
+    @property
+    def current_rental(self):
+        """Penyewaan aktif terbaru milik sopir ini, atau None kalau sedang tidak bertugas."""
+        aktif = [Rental.STATUS_MENUNGGU_KONFIRMASI, Rental.STATUS_PENGAMBILAN,
+                 Rental.STATUS_DIPAKAI, Rental.STATUS_PENGEMBALIAN]
+        return (Rental.query
+                .filter(Rental.driver_id == self.id, Rental.status.in_(aktif))
+                .order_by(Rental.start_date.desc())
+                .first())
+
+    @property
+    def status_label(self):
+        """Tersedia / Menunggu Konfirmasi / Berjalan (dihitung dari data Rental)."""
+        r = self.current_rental
+        if r is None:
+            return 'Tersedia'
+        if r.status == Rental.STATUS_MENUNGGU_KONFIRMASI:
+            return 'Menunggu Konfirmasi'
+        return 'Berjalan'
+
+    @property
+    def total_orders(self):
+        """Jumlah pesanan (tidak batal) dalam setahun terakhir."""
+        batas = datetime.now() - timedelta(days=365)
+        return (Rental.query
+                .filter(Rental.driver_id == self.id,
+                        Rental.status != Rental.STATUS_BATAL,
+                        Rental.created_at >= batas)
+                .count())
+
+    @property
+    def avg_rating(self):
+        """Rata-rata ulasan (skala 1-5) dari pelanggan yang sudah selesai menyewa bersama sopir ini."""
+        pasangan = {(r.user_id, r.vehicle_id) for r in self.rentals
+                    if r.status == Rental.STATUS_SELESAI}
+        nilai = [rv.rating for (u, v) in pasangan
+                 for rv in Review.query.filter_by(user_id=u, vehicle_id=v)]
+        return round(sum(nilai) / len(nilai), 2) if nilai else 0
+
+    @property
+    def rating_label(self):
+        n = self.avg_rating
+        if n >= 4.5:
+            return 'Sangat Baik'
+        if n >= 3.5:
+            return 'Baik'
+        return 'Cukup' if n > 0 else 'Belum ada penilaian'
 
 # =========================================================
 # RENTAL MODEL (Data Penyewaan)

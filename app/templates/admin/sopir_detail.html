@@ -1,0 +1,44 @@
+{% extends 'admin/base_admin.html' %}
+{% block title %}Sopir{% endblock %}
+{% block css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/sopir.css') }}">{% endblock %}
+{% block content %}
+<div class="sp">
+{% set foto = ('uploads/sopir/' ~ driver.photo) if driver.photo and driver.photo != 'default_driver.png' else 'images/default_driver.png' %}
+<div class="prof">
+  <div class="card" style="margin:0">
+    <div style="display:flex;gap:20px;flex-wrap:wrap;justify-content:space-between">
+      <div><h2 style="font-size:30px">Profil Sopir</h2><div class="pn">{{ driver.name }}</div>
+        <div style="color:#777">{{ driver.phone }}{% if driver.address %} · {{ driver.address }}{% endif %}</div></div>
+      <div class="ph" style="width:240px"><img src="{{ url_for('static', filename=foto) }}" alt="{{ driver.name }}" onerror="this.replaceWith('Foto Sopir')"></div>
+    </div>
+    <div class="row"><span>Tersertifikasi</span>
+      <a class="btn" href="https://wa.me/{{ driver.phone|replace('+','')|replace(' ','')|replace('-','') }}" target="_blank" style="font-size:14px">Kirim Pesan 💬</a></div>
+  </div>
+  <div class="side">
+    <div class="card stat" style="margin:0"><h4>Total Pesanan di Terima</h4><div class="n">{{ driver.total_orders }} Pesanan*</div><p>*Selama Setahun Terakhir</p></div>
+    <div class="card stat" style="margin:0"><h4>Penilaian Pelanggan</h4><div class="n">{{ driver.avg_rating or '-' }}</div><p>{{ driver.rating_label }}</p></div>
+  </div>
+</div>
+<div class="card" style="margin-top:20px"><h2>Status</h2>
+  <div class="tw"><table>
+    <tr><th>ID Booking</th><th>Nama Pelanggan</th><th>Mobil</th><th>Tanggal Sewa</th><th>Tanggal Kembali</th><th>Status</th><th></th></tr>
+    {% for r in rentals %}
+    <tr>
+      <td>#{{ r.booking_code }}</td><td>{{ r.user.name }}</td><td>{{ r.vehicle.full_name }}</td>
+      <td>{{ r.start_date|tanggal_id }}</td><td>{{ r.end_date|tanggal_id }}</td>
+      <td>{% if r.status == status_menunggu %}<span class="b Sedang">Sedang Verifikasi</span>
+          {% elif r.status == status_batal %}<span class="b Batal">Batal</span>
+          {% else %}<span class="b Sudah">Sudah Verifikasi</span>{% endif %}</td>
+      <td><form method="post" action="{{ url_for('main.admin_update_rental_status', rental_id=r.id) }}">
+        <input type="hidden" name="status" value="{{ status_verifikasi }}">
+        <button class="btn g" {{ 'disabled' if r.status != status_menunggu }}>Verifikasi</button></form></td>
+    </tr>
+    {% else %}<tr><td colspan="7" style="text-align:center;color:#777">Belum ada penyewaan</td></tr>{% endfor %}
+  </table></div>
+  <div class="acts"><a class="btn" href="{{ url_for('main.admin_sopir') }}">← Kembali</a><a class="btn r" href="#pecat" style="font-size:16px;padding:8px 18px">Pecat</a></div>
+</div>
+<div class="modal" id="pecat"><div class="card"><h2>Pecat sopir?</h2><p>Data {{ driver.name }} akan dihapus dari daftar.</p>
+  <div class="acts"><a class="btn" href="#">Batal</a>
+    <form method="post" action="{{ url_for('main.pecat_sopir', id=driver.id) }}"><button class="btn r">Ya, Pecat</button></form></div></div></div>
+</div>
+{% endblock %}
