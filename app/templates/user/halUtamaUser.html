@@ -132,8 +132,8 @@ KeSanaSini - Menu Utama
                     <div class="search-input duration-input">
 
                         <select name="duration">
-                            <option value="1">1 Hari</option>
-                            <option value="2" selected>2 Hari</option>
+                            <option value="1" selected>1 Hari</option>
+                            <option value="2">2 Hari</option>
                             <option value="3">3 Hari</option>
                             <option value="4">4 Hari</option>
                             <option value="5">5 Hari</option>
@@ -157,43 +157,28 @@ KeSanaSini - Menu Utama
 
 
                 <div class="price-search">
-
-
                     <!-- HARGA MINIMUM -->
-
                     <div class="price-input">
-
-                        <i class="fa-solid fa-dollar-sign"></i>
-
+                        <span>Rp</span>
                         <input
                             type="number"
                             name="min_price"
-                            placeholder="Rp300.000,00"
+                            placeholder="Harga minimum"
                             min="0"
                         >
-
                     </div>
 
-
-                    <span class="price-separator">
-                        -
-                    </span>
-
+                    <span class="price-separator">-</span>
 
                     <!-- HARGA MAKSIMUM -->
-
                     <div class="price-input">
-
-                        <i class="fa-solid fa-dollar-sign"></i>
-
+                        <span>Rp</span>
                         <input
                             type="number"
                             name="max_price"
-                            placeholder="Rp500.000,00"
+                            placeholder="Harga maksimum"
                             min="0"
-                            value="{{ max_price }}"
                         >
-
                     </div>
 
 

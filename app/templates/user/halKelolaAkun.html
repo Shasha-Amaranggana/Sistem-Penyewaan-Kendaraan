@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+
+{% block title %}
+Kelola Akun - KeSanaSini
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/halKelolaAkun.css') }}">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+<main class="account-page">
+    <div class="account-layout">
+
+        <!-- SIDEBAR -->
+        <aside class="account-sidebar">
+            <div class="sidebar-profile">
+                <div class="profile-avatar">
+                    <i class="fa-solid fa-circle-user"></i>
+                </div>
+                <strong>blabla@gmail.com</strong>
+            </div>
+
+            <nav class="sidebar-menu">
+                <a href="#" class="sidebar-link active">
+                    <i class="fa-regular fa-file-lines"></i>
+                    <span>Data Diri Saya</span>
+                </a>
+
+                <a href="#" class="sidebar-link">
+                    <i class="fa-regular fa-clock"></i>
+                    <span>Pesanan Saya</span>
+                </a>
+
+                <a href="#" class="sidebar-link">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    <span>Riwayat Pesanan</span>
+                </a>
+
+                <div class="sidebar-divider"></div>
+
+                <a href="#" class="sidebar-link logout-link">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    <span>Log Out</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- KONTEN AKUN -->
+        <section class="account-content">
+            <h1>Pengaturan Akun</h1>
+
+            <form method="POST" action="{{ url_for('main.kelola_akun') }}" enctype="multipart/form-data"
+                  class="account-form">
+
+                <!-- DATA DIRI -->
+                <section class="account-card">
+                    <h2 class="card-heading">Data Diri Pribadi</h2>
+
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="full-name">Nama Lengkap</label>
+                            <input type="text" id="full-name"
+                                   name="full_name"
+                                   placeholder="Nama Pengguna">
+                        </div>
+
+                        <div class="form-row personal-row">
+                            <div class="form-group birth-group">
+                                <label>Tanggal Lahir</label>
+
+                                <div class="birth-inputs">
+                                    <select name="birth_day" aria-label="Tanggal">
+                                        <option value="10">10</option>
+                                        {% for day in range(1, 32) %}
+                                            {% if day != 10 %}
+                                            <option value="{{ day }}">{{ day }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+
+                                    <select name="birth_month" aria-label="Bulan">
+                                        {% for month in [
+                                            'Januari', 'Februari', 'Maret',
+                                            'April', 'Mei', 'Juni', 'Juli',
+                                            'Agustus', 'September', 'Oktober',
+                                            'November', 'Desember'
+                                        ] %}
+                                        <option value="{{ month }}"
+                                            {% if month == 'April' %}selected{% endif %}>
+                                            {{ month }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+
+                                    <select name="birth_year" aria-label="Tahun">
+                                        {% for year in range(2007, 1949, -1) %}
+                                        <option value="{{ year }}"
+                                            {% if year == 2007 %}selected{% endif %}>
+                                            {{ year }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group gender-group">
+                                <label for="gender">Jenis Kelamin</label>
+                                <select id="gender" name="gender">
+                                    <option value="Perempuan">Perempuan</option>
+                                    <option value="Laki-laki">Laki-laki</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="document-row">
+                            <div class="form-group document-group">
+                                <label for="ktp">Foto Kartu Tanda Penduduk</label>
+
+                                <label class="upload-box" for="ktp">
+                                    <i class="fa-regular fa-address-card"></i>
+                                    <span class="upload-status">Unggah KTP</span>
+                                </label>
+
+                                <input type="file" id="ktp" name="ktp"
+                                       accept="image/*,.pdf" hidden>
+                            </div>
+
+                            <div class="form-group document-group">
+                                <label for="sim">Foto Surat Izin Mengemudi</label>
+
+                                <label class="upload-box" for="sim">
+                                    <i class="fa-regular fa-address-card"></i>
+                                    <span class="upload-status">Unggah SIM</span>
+                                </label>
+
+                                <input type="file" id="sim" name="sim"
+                                       accept="image/*,.pdf" hidden>
+                            </div>
+                        </div>
+
+                        <div class="save-row">
+                            <button type="submit" class="save-button">
+                                SIMPAN
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- DATA LAINNYA -->
+                <section class="account-card additional-card">
+                    <h2 class="card-heading">Data Lainnya</h2>
+
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="email">E-mail</label>
+                            <input type="email" id="email" name="email"
+                                   placeholder="E-mail">
+                        </div>
+
+                        <div class="form-row contact-row">
+                            <div class="form-group">
+                                <label for="phone">No Telepon</label>
+                                <input type="tel" id="phone" name="phone"
+                                       placeholder="08xxxxxxxxxx">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="emergency-phone">No Darurat</label>
+                                <input type="tel" id="emergency-phone"
+                                       name="emergency_phone"
+                                       placeholder="08xxxxxxxxxx">
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </form>
+        </section>
+
+    </div>
+</main>
+
+<script>
+    document.querySelectorAll('input[type="file"]').forEach(input => {
+        input.addEventListener('change', function () {
+            const status = document.querySelector(
+                `label[for="${this.id}"] .upload-status`
+            );
+
+            if (this.files.length > 0) {
+                status.textContent = this.files[0].name;
+                status.classList.add('file-selected');
+            } else {
+                status.textContent = this.id === 'ktp'
+                    ? 'Unggah KTP'
+                    : 'Unggah SIM';
+                status.classList.remove('file-selected');
+            }
+        });
+    });
+</script>
+{% endblock %}
